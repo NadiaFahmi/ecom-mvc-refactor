@@ -1,6 +1,7 @@
 package com.ecommerce.view;
 
 
+import com.ecommerce.controller.LoginController;
 import com.ecommerce.controller.SignUpController;
 import com.ecommerce.model.entities.Admin;
 
@@ -26,9 +27,6 @@ public class Main {
         orderServic.validateManagers();
         orderServic.loadOrdersFromFile(productService, customerService, null);
 
-
-        LoginService loginService = new LoginService(customerService);
-
         User user;
         while (true) {
             System.out.println("👤 Welcome to Nadia’s Shop!");
@@ -40,12 +38,16 @@ public class Main {
             String choice = scanner.nextLine().trim();
 
             if (choice.equals("1")) {
-                user = loginService.login(scanner);
+                LoginService loginService =new LoginService(customerService);
+                LoginController loginController = new LoginController(loginService);
+                user = loginController.handleLogin(scanner);
+
+
             } else if (choice.equals("2")) {
                 SignUpService signUpService = new SignUpService(customerService);
                 SignUpController signUpController = new SignUpController(signUpService);
                 user = signUpController.handleSignUp(scanner);
-//                user = signUpService.registerNewCustomer(scanner);
+//
             } else if (choice.equalsIgnoreCase("exit")) {
                 System.out.println("👋 Thanks for visiting Nadia’s Shop. Goodbye!");
                 scanner.close();
