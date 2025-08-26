@@ -1,6 +1,7 @@
 package com.ecommerce.view;
 
 
+import com.ecommerce.controller.SignUpController;
 import com.ecommerce.model.entities.Admin;
 
 
@@ -42,7 +43,9 @@ public class Main {
                 user = loginService.login(scanner);
             } else if (choice.equals("2")) {
                 SignUpService signUpService = new SignUpService(customerService);
-                user = signUpService.registerNewCustomer(scanner);
+                SignUpController signUpController = new SignUpController(signUpService);
+                user = signUpController.handleSignUp(scanner);
+//                user = signUpService.registerNewCustomer(scanner);
             } else if (choice.equalsIgnoreCase("exit")) {
                 System.out.println("👋 Thanks for visiting Nadia’s Shop. Goodbye!");
                 scanner.close();
