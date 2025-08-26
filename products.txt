@@ -1,0 +1,8 @@
+1,Product_1_1,300.0,women
+2,product_2,345.5,women
+3,product_3,457.5,men
+4,product_4,444.5,men
+5,product_5,666.5,kids
+6,product_6,666.5,kids
+7,product_7,2340.5,kids
+8,Product_high,768.5,women
