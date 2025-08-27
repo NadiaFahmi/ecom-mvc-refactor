@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class OrderServic {
+public class OrderService {
     private boolean ordersLoaded = false;
 
     ProductService productService;
     CustomerService customerService;
     private List<Order> orders = new ArrayList<>();
 
-    public OrderServic(ProductService productService, CustomerService customerService) {
+    public OrderService(ProductService productService, CustomerService customerService) {
         this.productService = productService;
         this.customerService = customerService;
     }
@@ -260,7 +260,6 @@ public class OrderServic {
             }
         }
     }
-
     private void displayOrderSummary(Order order) {
         System.out.println("🆔 Order ID: " + order.getOrderId());
         System.out.println("📅 Date: " + order.getOrderDate());

@@ -1,6 +1,7 @@
 package com.ecommerce.view;
 
 
+import com.ecommerce.controller.CartController;
 import com.ecommerce.controller.LoginController;
 import com.ecommerce.controller.SignUpController;
 import com.ecommerce.model.entities.Admin;
@@ -23,9 +24,9 @@ public class Main {
         CustomerService customerService = new CustomerService();
         customerService.loadCustomersFromFile();
 
-        OrderServic orderServic = new OrderServic(productService, customerService);
-        orderServic.validateManagers();
-        orderServic.loadOrdersFromFile(productService, customerService, null);
+        OrderService orderService = new OrderService(productService, customerService);
+        orderService.validateManagers();
+        orderService.loadOrdersFromFile(productService, customerService, null);
 
         User user;
         while (true) {
@@ -62,7 +63,7 @@ public class Main {
 
 
         if (user instanceof Admin admin) {
-            AdminService adminService = new AdminService(customerService, orderServic, productService, admin);
+            AdminService adminService = new AdminService(customerService, orderService, productService, admin);
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.launch(scanner, adminService);
         } else if (user instanceof Customer customer) {
@@ -70,12 +71,12 @@ public class Main {
             cartService.loadCartFromFile();
 
             UpdateService updateService = new UpdateService(customerService);
-
+            CartController cartController = new CartController(cartService);
             CustomerDashboard customerDashboard = new CustomerDashboard(
                     customer,
                     productService,
-                    cartService,
-                    orderServic,
+                    cartController,
+                    orderService,
                     updateService,
                     scanner
             );

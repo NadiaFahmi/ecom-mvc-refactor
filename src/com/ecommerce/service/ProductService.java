@@ -45,7 +45,6 @@ public class ProductService {
             }
             System.out.println("📁 Saved to " + FILE_PATH);
         } catch (IOException e) {
-//            throw new RuntimeException(e);
             throw new RuntimeException("Failed to save products to file: " + FILE_PATH, e);
         }
     }

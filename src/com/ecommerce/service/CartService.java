@@ -36,6 +36,14 @@ public class CartService {
         customer.getCart().clearCart();
     }
 
+    public boolean tryAddProductToCart(int productId, int quantity) {
+        Product product = productService.getProductById(productId);
+        if (product == null) return false;
+
+        addToCart(product, quantity);
+        return true;
+    }
+
     private String getCartFilePath() {
         return "cart_customer_" + customer.getId() + ".txt";
     }
@@ -111,6 +119,21 @@ public class CartService {
             System.out.println("🧹 Cart file contents cleared for " + customer.getName());
         } catch (IOException e) {
             System.out.println("⚠️ Failed to clear cart file: " + e.getMessage());
+        }
+    }
+    public static void deleteCartFile(Customer customer) {
+        String filename = "cart_" + customer.getUsername() + ".txt";
+        File cartFile = new File(filename);
+
+        if (cartFile.exists()) {
+            boolean deleted = cartFile.delete();
+            if (deleted) {
+                System.out.println("Cart file deleted successfully.");
+            } else {
+                System.out.println("Failed to delete cart file.");
+            }
+        } else {
+            System.out.println("Cart file does not exist.");
         }
     }
 

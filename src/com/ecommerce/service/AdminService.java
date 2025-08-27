@@ -14,15 +14,15 @@ import java.util.List;
 public class AdminService implements TransactionViewer{
 
     private final CustomerService customerService;
-    private final OrderServic orderServic;
+    private final OrderService orderService;
     private final ProductService productService;
     private final Admin admin;
 
 
-    public AdminService(CustomerService customerService, OrderServic orderServic, ProductService productService,
+    public AdminService(CustomerService customerService, OrderService orderService, ProductService productService,
                         Admin admin) {
         this.customerService = customerService;
-        this.orderServic = orderServic;
+        this.orderService = orderService;
         this.productService = productService;
         this.admin = admin;
     }
@@ -82,7 +82,7 @@ public class AdminService implements TransactionViewer{
         }
     }
     public void filterOrdersByDateRange(LocalDate from, LocalDate to) {
-        List<Order> orders = orderServic.getOrders();
+        List<Order> orders = orderService.getOrders();
         boolean found = false;
 
         System.out.println("📅 Admin Orders from " + from + " to " + to);
@@ -108,7 +108,7 @@ public class AdminService implements TransactionViewer{
 
 
     public void viewAllTransactions() {
-            List<Order> orders = orderServic.getOrders();
+            List<Order> orders = orderService.getOrders();
             System.out.println("📦 All Transactions Overview: " + orders.size());
 
             for (Order order : orders) {
@@ -123,7 +123,7 @@ public class AdminService implements TransactionViewer{
 
     @Override
     public void viewTransactionsByUser(String email) {
-        List<Order> orders = orderServic.getOrders();
+        List<Order> orders = orderService.getOrders();
         boolean found = false;
 
         for (Order order : orders) {
