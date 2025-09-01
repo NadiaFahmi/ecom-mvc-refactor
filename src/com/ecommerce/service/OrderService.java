@@ -14,11 +14,14 @@ import java.util.*;
 public class OrderService {
     private boolean ordersLoaded = false;
 
-    ProductService productService;
-    CustomerService customerService;
-    private List<Order> orders = new ArrayList<>();
+    private final ProductService productService;
+    private final CustomerService customerService;
+    private  List<Order> orders = new ArrayList<>();
 
     public OrderService(ProductService productService, CustomerService customerService) {
+        if (productService == null || customerService == null) {
+            throw new IllegalArgumentException("❌ ProductService and CustomerService must not be null!");
+        }
         this.productService = productService;
         this.customerService = customerService;
     }

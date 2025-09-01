@@ -1,6 +1,7 @@
 package com.ecommerce.view;
 
 import com.ecommerce.controller.CartController;
+import com.ecommerce.controller.OrderController;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.service.*;
 import com.ecommerce.service.OrderService;
@@ -11,9 +12,9 @@ import java.util.Scanner;
 
 public class CustomerDashboard {
     private final CartController cartController;
+    private final OrderController orderController;
     private final Customer customer;
     private final ProductService productService;
-    private final OrderService orderService;
     private final UpdateService updateService;
     private final Scanner scanner;
 
@@ -21,13 +22,13 @@ public class CustomerDashboard {
     public CustomerDashboard(Customer customer,
                              ProductService productService,
                              CartController cartController,
-                             OrderService orderService,
+                             OrderController orderController,
                              UpdateService updateService,
                              Scanner scanner) {
         this.customer = customer;
         this.productService = productService;
         this.cartController = cartController;
-        this.orderService = orderService;
+        this.orderController = orderController;
         this.updateService = updateService;
         this.scanner = scanner;
     }
@@ -106,14 +107,14 @@ public class CustomerDashboard {
                 case "7" -> cartController.handleSaveCart();
                 case "8" -> cartController.handleClearCartFile();
                 case "9" -> cartController.handleDeleteCartFile(customer);
-                case "10" -> orderService.placeOrder(customer, scanner);
-                case "11" -> orderService.printCustomerOrders(customer);
+                case "10" -> orderController.handlePlaceOrder(customer, scanner);
+                case "11" -> orderController.handlePrintCustomerOrders(customer);
                 case "12" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();
                     try {
                         LocalDate date = LocalDate.parse(dateInput);
-                        orderService.filterCustomerOrdersByDate(customer, date);
+                        orderController.handleFilterCustomerOrdersByDate(customer, date);
                     } catch (DateTimeParseException e) {
                         System.out.println("⚠️ Invalid date format.");
                     }

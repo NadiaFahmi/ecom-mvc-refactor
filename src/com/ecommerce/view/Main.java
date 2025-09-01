@@ -3,6 +3,7 @@ package com.ecommerce.view;
 
 import com.ecommerce.controller.CartController;
 import com.ecommerce.controller.LoginController;
+import com.ecommerce.controller.OrderController;
 import com.ecommerce.controller.SignUpController;
 import com.ecommerce.model.entities.Admin;
 
@@ -25,8 +26,9 @@ public class Main {
         customerService.loadCustomersFromFile();
 
         OrderService orderService = new OrderService(productService, customerService);
-        orderService.validateManagers();
-        orderService.loadOrdersFromFile(productService, customerService, null);
+        OrderController orderController = new OrderController(orderService);
+        orderController.initializeOrders(productService, customerService, null);
+
 
         User user;
         while (true) {
@@ -76,7 +78,7 @@ public class Main {
                     customer,
                     productService,
                     cartController,
-                    orderService,
+                    orderController,
                     updateService,
                     scanner
             );
