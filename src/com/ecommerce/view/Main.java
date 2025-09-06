@@ -69,7 +69,8 @@ public class Main {
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.launch(scanner, adminService);
         } else if (user instanceof Customer customer) {
-            CartService cartService = new CartService(customer, productService);
+//            CartService cartService = new CartService(customer, productService);
+            CartService cartService = new CartService(customer.getId(), customerService, productService);
             cartService.loadCartFromFile();
 
             UpdateService updateService = new UpdateService(customerService);

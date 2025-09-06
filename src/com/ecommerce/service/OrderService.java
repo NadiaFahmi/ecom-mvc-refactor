@@ -67,7 +67,7 @@ public class OrderService {
         customer.setBalance(customer.getBalance() - total);
         customer.getCart().clearCart();
 
-        CartService cartService = new CartService(customer, productService);
+        CartService cartService = new CartService(customer.getId(), customerService, productService);
         cartService.clearCartFileContents();
 
         orders.add(newOrder);

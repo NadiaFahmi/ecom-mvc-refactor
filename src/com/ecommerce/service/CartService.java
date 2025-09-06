@@ -10,8 +10,12 @@ public class CartService {
     private final ProductService productService;
     private final Customer customer;
 
-    public CartService(Customer customer, ProductService productService) {
-        this.customer = customer;
+
+    public CartService(int customerId, CustomerService customerService, ProductService productService) {
+        this.customer = customerService.getCustomerById(customerId);
+        if (this.customer == null) {
+            throw new IllegalArgumentException("❌ Customer not found for ID: " + customerId);
+        }
         this.productService = productService;
     }
 
