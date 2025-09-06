@@ -10,6 +10,7 @@ import com.ecommerce.model.entities.Admin;
 
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.User;
+import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.service.*;
 
 import java.util.Scanner;
@@ -18,12 +19,19 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        CustomerRepository customerRepository = new CustomerRepository("customers.txt");
 
         ProductService productService = new ProductService();
         productService.loadProductsFromFile();
 
-        CustomerService customerService = new CustomerService();
-        customerService.loadCustomersFromFile();
+//        CustomerService customerService = new CustomerService();
+
+        //
+//
+        CustomerService customerService = new CustomerService(customerRepository);
+        customerService.loadCustomers();
+
+        //
 
         OrderService orderService = new OrderService(productService, customerService);
         OrderController orderController = new OrderController(orderService);

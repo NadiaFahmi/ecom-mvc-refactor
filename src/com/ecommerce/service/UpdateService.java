@@ -36,7 +36,7 @@ public class UpdateService {
                 FieldUpdater updater = updaters.get(choice);
                 if (updater != null) {
                     boolean updated = updater.update(customer, scanner);
-                    if (updated) customerService.saveCustomersToFile();
+                    if (updated) customerService.saveCustomers();
                 } else {
                     System.out.println("⚠️ Invalid choice.");
                 }

@@ -1,14 +1,22 @@
 package com.ecommerce.service;
 
 import com.ecommerce.model.entities.Customer;
+import com.ecommerce.repository.CustomerRepository;
 
 import java.io.*;
 import java.util.*;
 
 public class CustomerService {
 
+    private final CustomerRepository repository;
+
     private final Map<String, Customer> customerMap = new HashMap<>();
 
+    //
+    public CustomerService(CustomerRepository repository) {
+        this.repository = repository;
+    }
+    //
     public void addCustomer(Customer customer) {
         String emailKey = customer.getEmail().trim().toLowerCase();
         customerMap.put(emailKey, customer);
@@ -31,53 +39,17 @@ public class CustomerService {
         return customerMap.values();
     }
 
-    public void saveCustomersToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt"))) {
-            for (Customer c : customerMap.values()) {
-                writer.write(c.getId() + "," +
-                        c.getName() + "," +
-                        c.getEmail() + "," +
-                        c.getPassword() + "," +
-                        c.getBalance() + "," +
-                        c.getAddress());
-                writer.newLine();
-            }
-            System.out.println("✅ Customers saved successfully.");
-        } catch (IOException e) {
-            System.out.println("❌ Error saving customers: " + e.getMessage());
-        }
+        public void saveCustomers() {
+            repository.save(customerMap.values());
+
     }
 
-    public void loadCustomersFromFile() {
-        File file = new File("customers.txt");
-        if (!file.exists()) return;
-
-        customerMap.clear();
-        int maxId = 0;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length < 6) continue;
-
-                int customerId = Integer.parseInt(parts[0].trim());
-                String name = parts[1].trim();
-                String email = parts[2].trim().toLowerCase();
-                String password = parts[3].trim();
-                double balance = Double.parseDouble(parts[4].trim());
-                String address = parts[5].trim();
-
-                Customer customer = new Customer(customerId, name, email, password, balance, address);
-                customerMap.put(email, customer);
-
-                if (customerId > maxId) maxId = customerId;
-            }
-            Customer.setIdCount(maxId + 1);
-            System.out.println("📂 Customers loaded successfully.");
-        } catch (IOException | NumberFormatException e) {
-            System.out.println("⚠️ Failed to load customers: " + e.getMessage());
+    public void loadCustomers() {
+        List<Customer> loaded = repository.load();
+        for (Customer c : loaded) {
+            customerMap.put(c.getEmail().toLowerCase(), c);
         }
+
     }
 
     public Customer findCustomerByIdFromMap(int id) {
@@ -119,7 +91,7 @@ public class CustomerService {
     public Map<String, Customer> getCustomerMap() {
         return customerMap;
     }
-    //////
+
     public boolean existsEmail(String email) {
         if (email == null || email.isBlank()) return false;
         String emailKey = email.trim().toLowerCase();

@@ -69,7 +69,7 @@ public class SignUpService {
 
         Customer customer = new Customer(name, email, password, balance, address);
         customerService.addCustomer(customer);
-        customerService.saveCustomersToFile();
+        customerService.saveCustomers();
 
         System.out.println("✅ Registration complete! Welcome, " + name + ".");
         return customer;

@@ -88,7 +88,7 @@ public class LoginService {
 
         boolean updated = new PasswordUpdater().resetPasswordWithoutCurrent(customer, scanner);
         if (updated) {
-            customerService.saveCustomersToFile();
+            customerService.saveCustomers();
         }
     }
 }
