@@ -3,13 +3,14 @@ package com.ecommerce.service;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Product;
+import com.ecommerce.repository.CartRepository;
 
 import java.io.*;
 
 public class CartService {
     private final ProductService productService;
     private final Customer customer;
-
+    private final CartRepository cartRepository;
 
     public CartService(int customerId, CustomerService customerService, ProductService productService) {
         this.customer = customerService.getCustomerById(customerId);
@@ -17,6 +18,7 @@ public class CartService {
             throw new IllegalArgumentException("❌ Customer not found for ID: " + customerId);
         }
         this.productService = productService;
+        this.cartRepository = new CartRepository(productService);
     }
 
     public void addToCart(Product product, int quantity) {
@@ -65,80 +67,85 @@ public class CartService {
         } else {
             System.out.println("❌ Product not found in cart.");
         }
-        saveCartToFile();
+        saveCart();
     }
 
 
-    public void saveCartToFile() {
-        String filePath = getCartFilePath();
+    public void saveCart() {
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (CartItem item : customer.getCart().getCartItems()) {
-                writer.write(item.getProduct().getId() + "," + item.getQuantity());
-                writer.newLine();
-            }
-            System.out.println("✅ Cart saved for " + customer.getName());
-        } catch (IOException e) {
-            System.out.println("⚠️ Error saving cart: " + e.getMessage());
-        }
+        cartRepository.saveCart(customer);
+//        String filePath = getCartFilePath();
+//
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+//            for (CartItem item : customer.getCart().getCartItems()) {
+//                writer.write(item.getProduct().getId() + "," + item.getQuantity());
+//                writer.newLine();
+//            }
+//            System.out.println("✅ Cart saved for " + customer.getName());
+//        } catch (IOException e) {
+//            System.out.println("⚠️ Error saving cart: " + e.getMessage());
+//        }
     }
 
 
 
         public void loadCartFromFile() {
-            String filePath = getCartFilePath();
-
-            File file = new File(filePath);
-
-            if (!file.exists()) {
-                System.out.println("No saved cart found for " + customer.getName());
-                return;
-            }
-
-            try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.trim().split(",");
-                    if (parts.length == 2) {
-                        int productId = Integer.parseInt(parts[0]);
-                        int quantity = Integer.parseInt(parts[1]);
-
-                        Product product = productService.getProductById(productId);
-                        if (product != null) {
-                            customer.getCart().addItem(product, quantity);
-                        }
-                    }
-                }
-                System.out.println("🛒 Cart loaded for " + customer.getName());
-            } catch (IOException | NumberFormatException e) {
-                System.out.println("❌ Error loading cart: " + e.getMessage());
-                System.out.println("📁 Tried to load from: " + filePath);
-            }
+            cartRepository.loadCart(customer);
+//            String filePath = getCartFilePath();
+//
+//            File file = new File(filePath);
+//
+//            if (!file.exists()) {
+//                System.out.println("No saved cart found for " + customer.getName());
+//                return;
+//            }
+//
+//            try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    String[] parts = line.trim().split(",");
+//                    if (parts.length == 2) {
+//                        int productId = Integer.parseInt(parts[0]);
+//                        int quantity = Integer.parseInt(parts[1]);
+//
+//                        Product product = productService.getProductById(productId);
+//                        if (product != null) {
+//                            customer.getCart().addItem(product, quantity);
+//                        }
+//                    }
+//                }
+//                System.out.println("🛒 Cart loaded for " + customer.getName());
+//            } catch (IOException | NumberFormatException e) {
+//                System.out.println("❌ Error loading cart: " + e.getMessage());
+//                System.out.println("📁 Tried to load from: " + filePath);
+//            }
     }
 
     public void clearCartFileContents() {
-        String filePath = getCartFilePath(); // Make sure this returns the correct path
-        try (PrintWriter writer = new PrintWriter(filePath)) {
-            writer.write("");
-            System.out.println("🧹 Cart file contents cleared for " + customer.getName());
-        } catch (IOException e) {
-            System.out.println("⚠️ Failed to clear cart file: " + e.getMessage());
-        }
+        cartRepository.clearCartFileContents(customer.getId(), customer.getName());
+//        String filePath = getCartFilePath();
+//        try (PrintWriter writer = new PrintWriter(filePath)) {
+//            writer.write("");
+//            System.out.println("🧹 Cart file contents cleared for " + customer.getName());
+//        } catch (IOException e) {
+//            System.out.println("⚠️ Failed to clear cart file: " + e.getMessage());
+//        }
     }
-    public static void deleteCartFile(Customer customer) {
-        String filename = "cart_" + customer.getUsername() + ".txt";
-        File cartFile = new File(filename);
-
-        if (cartFile.exists()) {
-            boolean deleted = cartFile.delete();
-            if (deleted) {
-                System.out.println("Cart file deleted successfully.");
-            } else {
-                System.out.println("Failed to delete cart file.");
-            }
-        } else {
-            System.out.println("Cart file does not exist.");
-        }
+    public  void deleteCartFile(Customer customer) {
+//        cartRepository.deleteCartFile(customer.getId(), customer.getUsername());
+//        String filename = "cart_" + customer.getUsername() + ".txt";
+//        File cartFile = new File(filename);
+//
+//        if (cartFile.exists()) {
+//            boolean deleted = cartFile.delete();
+//            if (deleted) {
+//                System.out.println("Cart file deleted successfully.");
+//            } else {
+//                System.out.println("Failed to delete cart file.");
+//            }
+//        } else {
+//            System.out.println("Cart file does not exist.");
+//        }
     }
 
 }

@@ -74,17 +74,7 @@ public class OrderService {
         customer.addOrder(newOrder);
         appendOrderToFile(newOrder);
 
-        System.out.println("\n🎉 THANK YOU FOR YOUR PURCHASE, " + customer.getName() + "!");
-        System.out.println("🆔 Order ID: " + newOrder.getOrderId());
-        System.out.println("🛒 Items:");
-        for (CartItem item : cartItems) {
-            String name = item.getProduct().getName();
-            double price = item.getProduct().getPrice() * item.getQuantity();
-            System.out.printf(" - %s x%d = $%.2f%n", name, item.getQuantity(), price);
-        }
-        System.out.printf("💰 TOTAL: $%.2f%n", total);
-        System.out.printf("💳 Remaining Balance: $%.2f%n", customer.getBalance());
-        System.out.println("✨ Your order is confirmed and being processed!\n");
+        printOrderDetails(newOrder, customer);
 
         return newOrder;
     }
@@ -303,6 +293,25 @@ public class OrderService {
             System.out.println("------");
         }
     }
+    public void printOrderDetails(Order order, Customer customer) {
+        System.out.println("\n🎉 THANK YOU FOR YOUR PURCHASE, " + customer.getName() + "!");
+        System.out.println("🆔 Order ID: " + order.getOrderId());
+        System.out.println("📅 Date: " + order.getOrderDate());
+        System.out.println("📦 Status: " + order.getStatus());
+        System.out.println("🛒 Items:");
 
+        double total = 0.0;
+        for (CartItem item : order.getCartItems()) {
+            String name = item.getProduct().getName();
+            int quantity = item.getQuantity();
+            double price = item.getProduct().getPrice() * quantity;
+            total += price;
+            System.out.printf(" - %s x%d = $%.2f%n", name, quantity, price);
+        }
+
+        System.out.printf("💰 TOTAL: $%.2f%n", total);
+        System.out.printf("💳 Remaining Balance: $%.2f%n", customer.getBalance());
+        System.out.println("✨ Your order is confirmed and being processed!\n");
+    }
 }
 

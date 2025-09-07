@@ -37,7 +37,7 @@ public class CartController {
     }
 
     public void handleSaveCart() {
-        cartService.saveCartToFile();
+        cartService.saveCart();
     }
 
     public void handleLoadCart() {
@@ -49,7 +49,7 @@ public class CartController {
     }
 
     public void handleDeleteCartFile(Customer customer) {
-        CartService.deleteCartFile(customer);
+        cartService.deleteCartFile(customer);
     }
 
 

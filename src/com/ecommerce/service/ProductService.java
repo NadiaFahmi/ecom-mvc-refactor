@@ -33,9 +33,7 @@ private int calculateInitialCounter(Map<Integer, Product> map) {
         productMap.put(id, product);
         saveProducts();
         System.out.println("✅ Product '" + name + "' added successfully with ID " + id + ".");
-
     }
-
     public void listProducts() {
         if (productMap.isEmpty()) {
             System.out.println("No products available.");
