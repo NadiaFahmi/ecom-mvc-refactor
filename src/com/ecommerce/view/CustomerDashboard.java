@@ -35,7 +35,6 @@ public class CustomerDashboard {
 
     public void launch() {
 
-        cartController.handleLoadCart();
         System.out.printf("👋 Hello, %s! You have %d item(s) in your cart.%n",
                 customer.getName(),
                 customer.getCart().getCartItems().size());
@@ -59,7 +58,7 @@ public class CustomerDashboard {
                         System.out.print("Enter quantity: ");
                         int quantity = Integer.parseInt(scanner.nextLine().trim());
 
-                        cartController.handleAddToCart(productId, quantity); // ✅ use controller
+                        cartController.handleAddToCart(productId, quantity);
                     } catch (NumberFormatException e) {
                         System.out.println("❌ Invalid input. Please enter numeric values.");
                     }
@@ -77,7 +76,6 @@ public class CustomerDashboard {
                     }
                 }
 
-//
                 case "5" -> cartController.handleTotalPrice();
                 case "6" -> {
                     try {
@@ -107,14 +105,14 @@ public class CustomerDashboard {
                 case "7" -> cartController.handleSaveCart();
                 case "8" -> cartController.handleClearCartFile();
                 case "9" -> cartController.handleDeleteCartFile(customer);
-                case "10" -> orderController.handlePlaceOrder(customer, scanner);
-                case "11" -> orderController.handlePrintCustomerOrders(customer);
+                case "10" -> orderController.createOrder(customer, scanner);
+                case "11" -> orderController.printCustomerOrders(customer);
                 case "12" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();
                     try {
                         LocalDate date = LocalDate.parse(dateInput);
-                        orderController.handleFilterCustomerOrdersByDate(customer, date);
+                        orderController.filterCustomerOrdersByDate(customer, date);
                     } catch (DateTimeParseException e) {
                         System.out.println("⚠️ Invalid date format.");
                     }

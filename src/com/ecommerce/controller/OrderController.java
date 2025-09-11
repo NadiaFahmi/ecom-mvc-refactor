@@ -1,11 +1,15 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
+import com.ecommerce.model.entities.Order;
 import com.ecommerce.service.CustomerService;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.service.ProductService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class OrderController {
@@ -16,22 +20,77 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    public void handlePlaceOrder(Customer customer, Scanner scanner) {
-        orderService.placeOrder(customer, scanner);
-        System.out.println("✅ Order placed successfully.");
+public Order createOrder(Customer customer, Scanner scanner) {
+    return orderService.placeOrder(customer, scanner);
+}
+
+
+public List<Order> getAllOrders() {
+    return orderService.getOrders();
+}
+    public void loadOrdersFromFile() {
+        orderService.loadOrdersFromFile();
+    }
+    public void printCustomerOrders(Customer customer) {
+        List<Order> myOrders = customer.getOrders();
+
+        if (myOrders.isEmpty()) {
+            System.out.println("📭 You haven’t placed any orders yet.");
+            return;
+        }
+
+        for (Order ord : myOrders) {
+            System.out.println("🆔 Order ID: " + ord.getOrderId());
+            System.out.println("🗓️ Date: " + ord.getOrderDate());
+            System.out.println("🛒 Items:");
+            for (CartItem item : ord.getCartItems()) {
+                String name = item.getProduct().getName();
+                double price = item.getProduct().getPrice() * item.getQuantity();
+                System.out.printf(" - %s x%d = $%.2f%n", name, item.getQuantity(), price);
+            }
+            System.out.printf("💰 Total: $%.2f%n", ord.getOrder_total());
+            System.out.println("📌 Status: " + ord.getStatus());
+            System.out.println("------");
+        }
     }
 
-    public void handlePrintCustomerOrders(Customer customer) {
-        orderService.printCustomerOrders(customer);
-        System.out.println("📦 Displayed all orders for customer: " + customer.getName());
-    }
+    public void printOrderDetails(Order order, Customer customer) {
+        System.out.println("\n🎉 THANK YOU FOR YOUR PURCHASE, " + customer.getName() + "!");
+        System.out.println("🆔 Order ID: " + order.getOrderId());
+        System.out.println("📅 Date: " + order.getOrderDate());
+        System.out.println("📦 Status: " + order.getStatus());
+        System.out.println("🛒 Items:");
 
-    public void handleFilterCustomerOrdersByDate(Customer customer, LocalDate date) {
-        orderService.filterCustomerOrdersByDate(customer, date);
-        System.out.println("📅 Orders filtered by date: " + date);
-    }
+        double total = 0.0;
+        for (CartItem item : order.getCartItems()) {
+            String name = item.getProduct().getName();
+            int quantity = item.getQuantity();
+            double price = item.getProduct().getPrice() * quantity;
+            total += price;
+            System.out.printf(" - %s x%d = $%.2f%n", name, quantity, price);
+        }
 
-    public void initializeOrders(ProductService productService, CustomerService customerService, Customer loggedInCustomer) {
-        orderService.loadOrdersFromFile(productService, customerService, loggedInCustomer);
+        System.out.printf("💰 TOTAL: $%.2f%n", total);
+        System.out.printf("💳 Remaining Balance: $%.2f%n", customer.getBalance());
+        System.out.println("✨ Your order is confirmed and being processed!\n");
+    }
+    public void filterCustomerOrdersByDate(Customer customer, LocalDate date) {
+        List<Order> filteredOrders = new ArrayList<Order>();
+
+        for (Order order : customer.getOrders()) {
+            if (order.getOrderDate().toLocalDate().equals(date)) {
+                filteredOrders.add(order);
+            }
+        }
+
+        if (filteredOrders.isEmpty()) {
+            System.out.println("📭 No orders found for " + date);
+            return;
+        }
+
+        for (Order order : filteredOrders) {
+            printOrderDetails(order, customer);
+            System.out.println("–––––––––––––––––––––––");
+        }
     }
 }

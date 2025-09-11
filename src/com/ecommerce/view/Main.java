@@ -9,11 +9,13 @@ import com.ecommerce.model.entities.Admin;
 
 
 import com.ecommerce.model.entities.Customer;
+import com.ecommerce.model.entities.Order;
 import com.ecommerce.model.entities.User;
 import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.service.*;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -29,8 +31,8 @@ public class Main {
         customerService.loadCustomers();
 
         OrderService orderService = new OrderService(productService, customerService);
-        OrderController orderController = new OrderController(orderService);
-        orderController.initializeOrders(productService, customerService, null);
+
+        orderService.validateManagers();
 
 
         User user;
@@ -72,11 +74,25 @@ public class Main {
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.launch(scanner, adminService);
         } else if (user instanceof Customer customer) {
-            CartService cartService = new CartService(customer.getId(), customerService, productService);
+            //
+            Customer loggedInCustomer = customerService.getCustomerById(user.getId());
+            CartService cartService = new CartService(loggedInCustomer.getId(), customerService, productService);
             cartService.loadCartFromFile();
 
             UpdateService updateService = new UpdateService(customerService);
             CartController cartController = new CartController(cartService);
+            OrderController orderController = new OrderController(orderService);
+
+            orderController.loadOrdersFromFile();
+            List<Order> allOrders = orderController.getAllOrders();
+
+            for (Order order : allOrders) {
+                if (order.getCustomer().getId() == loggedInCustomer.getId()) {
+                    order.setCustomer(loggedInCustomer);
+                    customer.addOrder(order);
+                }
+            }
+
             CustomerDashboard customerDashboard = new CustomerDashboard(
                     customer,
                     productService,
