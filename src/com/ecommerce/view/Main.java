@@ -67,9 +67,12 @@ public class Main {
 
 
         if (user instanceof Admin admin) {
+
             AdminService adminService = new AdminService(customerService, orderService, productService, admin);
-            AdminDashboard adminDashboard = new AdminDashboard();
-            adminDashboard.launch(scanner, adminService);
+            AdminController adminController =new AdminController(adminService);
+
+            AdminDashboard adminDashboard = new AdminDashboard(adminController,productService,scanner );
+            adminDashboard.launch();
         } else if (user instanceof Customer customer) {
             //
             Customer loggedInCustomer = customerService.findCustomerById(user.getId());

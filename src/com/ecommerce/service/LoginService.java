@@ -2,7 +2,6 @@ package com.ecommerce.service;
 
 import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
-import com.ecommerce.action.customer.PasswordUpdater;
 import com.ecommerce.model.entities.User;
 
 import java.util.Scanner;

@@ -7,80 +7,98 @@ import java.io.*;
 import java.util.*;
 
 public class ProductService {
-
     private int productIdCounter;
-    private final Map<Integer, Product> productMap;
     private final ProductRepository repository;
 
     public ProductService(ProductRepository repository) {
         this.repository = repository;
-        this.productMap = repository.load();
-        this.productIdCounter = calculateInitialCounter(productMap);
+        this.productIdCounter = calculateInitialCounter(repository.load());
     }
-private int calculateInitialCounter(Map<Integer, Product> map) {
-    int maxId = 0;
-    for (int id : map.keySet()) {
-        if (id > maxId) {
-            maxId = id;
+
+    private int calculateInitialCounter(Collection<Product> products) {
+        int maxId = 0;
+        for (Product product : products) {
+            if (product.getId() > maxId) {
+                maxId = product.getId();
+            }
         }
+        return maxId + 1;
     }
-    return maxId + 1;
-}
 
     public void addProduct(String name, double price, String category) {
         int id = productIdCounter++;
         Product product = new Product(id, name, price, category);
-        productMap.put(id, product);
-        saveProducts();
+        List<Product> products = new ArrayList<>(repository.load());
+        products.add(product);
+        repository.save(products);
         System.out.println("✅ Product '" + name + "' added successfully with ID " + id + ".");
     }
+
     public void listProducts() {
-        if (productMap.isEmpty()) {
+        Collection<Product> products = repository.load();
+        if (products.isEmpty()) {
             System.out.println("No products available.");
             return;
         }
         System.out.println("Product List:");
-        for (Product product : productMap.values()) {
+        for (Product product : products) {
             System.out.println("ID: " + product.getId() + ", Name: " + product.getName() +
                     ", Price: " + product.getPrice() + ", Category: " + product.getCategory());
         }
     }
-        public void saveProducts() {
-            repository.save(productMap.values());}
-//
-    public void updateProduct(int id, String newName, double newPrice, String newCategory) {
 
-        if (!productMap.containsKey(id)) {
-            System.out.println("Product ID not found.");
-            return;
+    public Map<Integer, Product> getAllProducts() {
+        Map<Integer, Product> map = new HashMap<>();
+        for (Product product : repository.load()) {
+            map.put(product.getId(), product);
+        }
+        return map;
+    }
+
+    public void updateProduct(int id, String newName, double newPrice, String newCategory) {
+        List<Product> products = new ArrayList<>(repository.load());
+        boolean found = false;
+
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getId() == id) {
+                products.set(i, new Product(id, newName, newPrice, newCategory));
+                found = true;
+                break;
+            }
         }
 
-        Product updatedProduct = new Product(id, newName, newPrice, newCategory);
-        productMap.put(id, updatedProduct);
-
-        saveProducts();
-        System.out.println("Product updated.");
+        if (found) {
+            repository.save(products);
+            System.out.println("✅ Product updated.");
+        } else {
+            System.out.println("❌ Product ID not found.");
+        }
     }
 
     public void removeProduct(int id) {
+        List<Product> products = new ArrayList<>(repository.load());
+        boolean removed = products.removeIf(p -> p.getId() == id);
 
-        if (productMap.containsKey(id)) {
-            productMap.remove(id);
-            saveProducts();
+        if (removed) {
+            repository.save(products);
             System.out.println("✅ Product with ID " + id + " successfully removed.");
         } else {
             System.out.println("❌ Product ID not found.");
         }
-
     }
 
     public Product getProductById(int id) {
-        return productMap.get(id);
+        for (Product product : repository.load()) {
+            if (product.getId() == id) {
+                return product;
+            }
+        }
+        return null;
     }
 
     public List<Product> getFilteredProducts(ProductFilter filter, String criteria) {
-        List<Product> productList = new ArrayList<>(productMap.values());
-        return filter.filter(productList, criteria);
+        List<Product> products = new ArrayList<>(repository.load());
+        return filter.filter(products, criteria);
     }
 
 }
