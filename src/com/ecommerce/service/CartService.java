@@ -13,7 +13,7 @@ public class CartService {
     private final CartRepository cartRepository;
 
     public CartService(int customerId, CustomerService customerService, ProductService productService) {
-        this.customer = customerService.getCustomerById(customerId);
+        this.customer = customerService.findCustomerById(customerId);
         if (this.customer == null) {
             throw new IllegalArgumentException("❌ Customer not found for ID: " + customerId);
         }

@@ -55,7 +55,7 @@ public class OrderRepository {
                     }
                 }
 
-                Customer customer = customerService.getCustomerById(customerId);
+                Customer customer = customerService.findCustomerById(customerId);
                 if (customer != null) {
                     Order order = new Order(cartItems, customer);
                     order.setOrderId(orderId);

@@ -36,7 +36,7 @@ public class AdminService implements TransactionViewer{
     }
 
     public void viewAllUsers() {
-        Collection<Customer> customers = customerService.getAllCustomers();
+        Collection<Customer> customers = customerService.listAllCustomers();
         System.out.println("👥 Total Users: " + customers.size());
         for (Customer customer : customers) {
             System.out.println("🆔 " + customer.getId() + " | " + customer.getName() +
@@ -45,7 +45,7 @@ public class AdminService implements TransactionViewer{
     }
 
     public void filterUsersByNameKeyword(String keyword) {
-        Collection<Customer> customers = customerService.getAllCustomers();
+        Collection<Customer> customers = customerService.listAllCustomers();
         System.out.println("🔍 Users with name containing: \"" + keyword + "\"");
         for (Customer customer : customers) {
             if (customer.getName().toLowerCase().contains(keyword.toLowerCase())) {
@@ -55,7 +55,7 @@ public class AdminService implements TransactionViewer{
     }
     public List<Customer> getUsersByBalanceRange(double min, double max) {
         List<Customer> matching = new ArrayList<>();
-        Collection<Customer> customers = customerService.getAllCustomers();
+        Collection<Customer> customers = customerService.listAllCustomers();
 
         for (Customer customer : customers) {
             if (customer.getBalance() >= min && customer.getBalance() <= max) {

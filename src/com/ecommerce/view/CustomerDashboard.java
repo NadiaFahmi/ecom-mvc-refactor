@@ -1,8 +1,10 @@
 package com.ecommerce.view;
 
 import com.ecommerce.controller.CartController;
+import com.ecommerce.controller.CustomerController;
 import com.ecommerce.controller.OrderController;
 import com.ecommerce.model.entities.Customer;
+import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.service.*;
 import com.ecommerce.service.OrderService;
 
@@ -11,30 +13,38 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class CustomerDashboard {
-    private final CartController cartController;
-    private final OrderController orderController;
     private final Customer customer;
     private final ProductService productService;
-    private final UpdateService updateService;
+    private final CartController cartController;
+    private CustomerRepository customerRepository;
+    //
+    CustomerService customerService = new CustomerService(customerRepository);
+    CustomerController customerController = new CustomerController(customerService);
+    //
+    private final OrderService orderService;
     private final Scanner scanner;
 
+    private final OrderController orderController;
 
     public CustomerDashboard(Customer customer,
                              ProductService productService,
+
                              CartController cartController,
+                             OrderService orderService,
                              OrderController orderController,
-                             UpdateService updateService,
+                             CustomerController customerController,
                              Scanner scanner) {
         this.customer = customer;
         this.productService = productService;
         this.cartController = cartController;
+        this.orderService = orderService;
+
         this.orderController = orderController;
-        this.updateService = updateService;
         this.scanner = scanner;
+        this.customerController = customerController;
     }
 
     public void launch() {
-
         System.out.printf("👋 Hello, %s! You have %d item(s) in your cart.%n",
                 customer.getName(),
                 customer.getCart().getCartItems().size());
@@ -42,7 +52,22 @@ public class CustomerDashboard {
         boolean running = true;
 
         while (running) {
-            printMenu();
+            System.out.println("\n🛒 Customer Dashboard — Choose an action:");
+            System.out.println("🛍️ --- Product & Cart Actions ---");
+            System.out.println("1 - View Products");
+            System.out.println("2 - Add Product to Cart");
+            System.out.println("3 - View Cart");
+            System.out.println("4 - Remove Item from Cart");
+            System.out.println("5 - Check Total Price");
+            System.out.println("6 - Update Cart Item");
+            System.out.println("7 - Save Cart");
+            System.out.println("📦 --- Order Processing ---");
+            System.out.println("8 - Place Order");
+            System.out.println("9 - View My Orders");
+            System.out.println("10 - Filter My Orders By Date");
+            System.out.println("👤 --- Account ---");
+            System.out.println("11 - Update My Account Info");
+            System.out.println("🔚 exit - Logout");
 
             System.out.print("Your choice: ");
             String input = scanner.nextLine().trim();
@@ -58,12 +83,11 @@ public class CustomerDashboard {
                         System.out.print("Enter quantity: ");
                         int quantity = Integer.parseInt(scanner.nextLine().trim());
 
-                        cartController.handleAddToCart(productId, quantity);
+                        cartController.handleAddToCart(productId, quantity); // ✅ use controller
                     } catch (NumberFormatException e) {
                         System.out.println("❌ Invalid input. Please enter numeric values.");
                     }
                 }
-//
                 case "3" -> cartController.handlelistCartItems();
                 case "4" -> {
                     System.out.print("Enter Product ID to remove from cart: ");
@@ -103,11 +127,9 @@ public class CustomerDashboard {
                 }
 
                 case "7" -> cartController.handleSaveCart();
-                case "8" -> cartController.handleClearCartFile();
-                case "9" -> cartController.handleDeleteCartFile(customer);
-                case "10" -> orderController.createOrder(customer, scanner);
-                case "11" -> orderController.printCustomerOrders(customer);
-                case "12" -> {
+                case "8" -> orderController.createOrder(customer, scanner);
+                case "9" -> orderController.printCustomerOrders(customer);
+                case "10" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();
                     try {
@@ -118,41 +140,14 @@ public class CustomerDashboard {
                     }
                 }
 
-            case "13" -> updateService.launchUpdateMenu(customer, scanner);
-
-            case "exit" -> {
-                System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");
-                running = false;
+                case "11" -> customerController.launchUpdateMenu(customer, scanner);
+                case "exit" -> {
+                    System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");
+                    running = false;
+                }
+                default -> System.out.println("⚠️ Invalid choice. Please try again.");
             }
-            default -> System.out.println("⚠️ Invalid choice. Please try again.");
-
         }
-    }
-}
-    private void printMenu() {
-        System.out.println("\n🛒 === Customer Dashboard ===");
-        System.out.println("Choose an action below:\n");
-
-        System.out.println("🛍️  Product & Cart Actions");
-        System.out.printf("  %-3s %-30s%n", "1", "View Products");
-        System.out.printf("  %-3s %-30s%n", "2", "Add to Cart");
-        System.out.printf("  %-3s %-30s%n", "3", "View Cart");
-        System.out.printf("  %-3s %-30s%n", "4", "Remove from Cart");
-        System.out.printf("  %-3s %-30s%n", "5", "Total Price");
-        System.out.printf("  %-3s %-30s%n", "6", "Update Item");
-        System.out.printf("  %-3s %-30s%n", "7", "Save Cart");
-        System.out.printf("  %-3s %-30s%n", "8", "Clear Cart File");
-        System.out.printf("  %-3s %-30s%n", "9", "Delete Cart File");
-
-        System.out.println("\n📦  Order Processing");
-        System.out.printf("  %-3s %-30s%n", "10", "Place Order");
-        System.out.printf("  %-3s %-30s%n", "11", "My Orders");
-        System.out.printf("  %-3s %-30s%n", "12", "Filter Orders");
-
-        System.out.println("\n👤  Account");
-        System.out.printf("  %-3s %-30s%n", "13", "Update Info");
-
-        System.out.println("\n🔚  Type 'exit' to Logout");
     }
 
 

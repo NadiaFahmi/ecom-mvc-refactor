@@ -22,14 +22,15 @@ public class EmailUpdater implements FieldUpdater{
             return false;
         }
 
-        if (customerService.existsEmail(newEmail)) {
-            System.out.println("⚠️ This email is already taken.");
-            return false;
-        }
+//        if (customerService.existsEmail(newEmail)) {
+//            System.out.println("⚠️ This email is already taken.");
+//            return false;
+//        }
 
-        customerService.getCustomerMap().remove(customer.getEmail().toLowerCase());
+        customerService.listAllCustomers().remove(customer.getEmail().toLowerCase());
         customer.setEmail(newEmail);
-        customerService.getCustomerMap().put(newEmail, customer);
+
+        customerService.updateCustomerEmail(customer, newEmail);
 
         System.out.println("✅ Email updated successfully.");
         return true;

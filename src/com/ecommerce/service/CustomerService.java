@@ -10,93 +10,201 @@ public class CustomerService {
 
     private final CustomerRepository repository;
 
-    private final Map<String, Customer> customerMap = new HashMap<>();
-
-    //
     public CustomerService(CustomerRepository repository) {
         this.repository = repository;
     }
-    //
-    public void addCustomer(Customer customer) {
-        String emailKey = customer.getEmail().trim().toLowerCase();
-        customerMap.put(emailKey, customer);
+
+    public void registerCustomer(Customer customer) {
+        repository.addCustomer(customer);
+        repository.saveAll();
     }
 
     public Customer getCustomerByEmail(String email) {
-        return customerMap.get(email.trim().toLowerCase());
-    }
-
-    public Customer getCustomerById(int id) {
-        for (Customer c : customerMap.values()) {
-            if (c.getId() == id) {
-                return c;
-            }
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email must not be empty");
         }
-        return null;
+        return repository.getCustomerByEmail(email);
     }
 
-    public Collection<Customer> getAllCustomers() {
-        return customerMap.values();
+    public Collection<Customer> listAllCustomers() {
+        return repository.getAllCustomers();
     }
 
-        public void saveCustomers() {
-            repository.save(customerMap.values());
-
-    }
 
     public void loadCustomers() {
-        List<Customer> loaded = repository.load();
-        for (Customer c : loaded) {
-            customerMap.put(c.getEmail().toLowerCase(), c);
-        }
-
+        repository.load();
     }
 
-
-    public Customer findCustomerByIdFromMap(int id) {
-        for (Customer c : customerMap.values()) {
-            if (c.getId() == id) {
-                return c;
-            }
-        }
-        return null;
+    public Customer findCustomerById(int id) {
+        return repository.getCustomer(id);
     }
-    public void updateCustomerEmail(int customerId, String newEmail) {
-        Customer customer = findCustomerByIdFromMap(customerId);
 
+    //
+    public boolean updateCustomerEmail(Customer customer, String newEmail) {
         if (customer == null) {
             System.out.println("❌ Customer not found.");
-            return;
+            return false;
         }
 
-        if (newEmail == null || newEmail.isBlank() ||
-                !newEmail.matches("^[\\w-.]+@[\\w-]+\\.[a-z]{2,}$")) {
+        if (newEmail == null || newEmail.trim().isEmpty()) {
+            System.out.println("⚠️ Email cannot be empty.");
+            return false;
+        }
+
+        newEmail = newEmail.trim();
+        if (!isValidEmail(newEmail)) {
             System.out.println("⚠️ Invalid email format.");
-            return;
+            return false;
         }
 
-        String emailKey = newEmail.trim().toLowerCase();
-        if (customerMap.containsKey(emailKey)) {
-
-            System.out.println("⚠️ This email is already used by another customer.");
-            return;
-        }
-
-        customerMap.remove(customer.getEmail().toLowerCase());
-        customer.setEmail(emailKey);
-        customerMap.put(emailKey, customer);
-
+        customer.setEmail(newEmail);
+        repository.updateCustomer(customer);
+        repository.saveAll();
         System.out.println("✅ Email updated successfully.");
-
-    }
-    public Map<String, Customer> getCustomerMap() {
-        return customerMap;
+        return true;
     }
 
-    public boolean existsEmail(String email) {
-        if (email == null || email.isBlank()) return false;
-        String emailKey = email.trim().toLowerCase();
-        return customerMap.containsKey(emailKey);
+
+
+    private boolean isValidEmail(String email) {
+        if (email == null || email.isEmpty()) return false;
+        return email.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$");
     }
+
+
+    public boolean updatePassword(Customer customer, String currentPassword, String newPassword, String confirmPassword) {
+        if (customer == null) {
+            System.out.println("❌ Customer not found.");
+            return false;
+        }
+
+        if (currentPassword == null || !isCurrentPasswordCorrect(customer, currentPassword.trim())) {
+            System.out.println("❌ Current password is incorrect.");
+            return false;
+        }
+
+        if (newPassword == null || !isValidLength(newPassword.trim())) {
+            System.out.println("⚠️ New password must be at least 6 characters.");
+            return false;
+        }
+
+        if (!newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim())) {
+            System.out.println("⚠️ Password confirmation does not match.");
+            return false;
+        }
+
+        customer.setPassword(newPassword.trim());
+        repository.updateCustomer(customer);
+        repository.saveAll();
+        System.out.println("✅ Password updated successfully.");
+        return true;
     }
+
+
+    public boolean resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
+        if (customer == null) {
+            System.out.println("❌ Customer not found.");
+            return false;
+        }
+
+        if (inputEmail == null || !customer.getEmail().equalsIgnoreCase(inputEmail.trim())) {
+            System.out.println("❌ Email does not match our records.");
+            return false;
+        }
+
+        if (newPassword == null || !isValidLength(newPassword.trim())) {
+            System.out.println("⚠️ New password must be at least 6 characters.");
+            return false;
+        }
+
+        if (!newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim())) {
+            System.out.println("⚠️ Password confirmation does not match.");
+            return false;
+        }
+
+        customer.setPassword(newPassword.trim());
+        repository.updateCustomer(customer);
+        repository.saveAll();
+        System.out.println("✅ Password reset successfully.");
+        return true;
+    }
+
+    private boolean isCurrentPasswordCorrect(Customer customer, String inputPassword) {
+        return customer.getPassword().equals(inputPassword);
+    }
+
+    private boolean isValidLength(String password) {
+        return password != null && password.length() >= 6;
+    }
+
+    public boolean updateCustomerName(Customer customer, String newName) {
+        if (customer == null) {
+            System.out.println("❌ Customer not found.");
+            return false;
+        }
+
+        if (newName == null || newName.trim().isBlank()) {
+            System.out.println("⚠️ Name can't be empty.");
+            return false;
+        }
+
+        newName = newName.trim();
+        customer.setName(newName);
+        repository.updateCustomer(customer);
+        repository.saveAll();
+        System.out.println("✅ Name updated.");
+        return true;
+    }
+
+
+    public boolean updateCustomerAddress(Customer customer, String newAddress) {
+        if (customer == null) {
+            System.out.println("❌ Customer not found.");
+            return false;
+        }
+
+        if (newAddress == null || newAddress.trim().isEmpty()) {
+            System.out.println("⚠️ Address cannot be empty.");
+            return false;
+        }
+
+        newAddress = newAddress.trim();
+        customer.setAddress(newAddress);
+        repository.updateCustomer(customer);
+        repository.saveAll();
+        System.out.println("✅ Address updated successfully.");
+        return true;
+    }
+
+    public boolean updateCustomerBalance(Customer customer, double amount) {
+        if (customer == null) {
+            System.out.println("❌ Customer not found.");
+            return false;
+        }
+
+        double currentBalance = customer.getBalance();
+        double newBalance = currentBalance + amount;
+
+        if (newBalance < 0) {
+            System.out.println("⚠️ Insufficient funds. Cannot set negative balance.");
+            return false;
+        }
+
+        customer.setBalance(newBalance);
+        repository.updateCustomer(customer);
+        repository.saveAll();
+        System.out.println("✅ Balance updated successfully. New balance: " + newBalance);
+        return true;
+    }
+
+
+    public boolean deleteCustomer(int customerId) {
+
+            repository.removeCustomer(customerId);
+            repository.saveAll();
+            return true;
+
+    }
+
+}
 

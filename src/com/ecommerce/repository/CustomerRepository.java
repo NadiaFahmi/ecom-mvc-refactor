@@ -3,66 +3,119 @@ package com.ecommerce.repository;
 import com.ecommerce.model.entities.Customer;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CustomerRepository {
 
-    private final String filePath;
 
-    public CustomerRepository(String filePath) {
-        this.filePath = filePath;
-    }
+private final String filePath;
+private Map<Integer, Customer> customerMap = new HashMap<>();
 
-    public void save(Collection<Customer> customers) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (Customer c : customers) {
-                writer.write(c.getId() + "," +
-                        c.getName() + "," +
-                        c.getEmail() + "," +
-                        c.getPassword() + "," +
-                        c.getBalance() + "," +
-                        c.getAddress());
-                writer.newLine();
-            }
-            System.out.println("✅ Customers saved successfully.");
-        } catch (IOException e) {
-            System.out.println("❌ Error saving customers: " + e.getMessage());
+public CustomerRepository(String filePath) {
+    this.filePath = filePath;
+}
+
+public void saveAll() {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+        for (Customer c : customerMap.values()) {
+            writer.write(c.getId() + "," +
+                    c.getName() + "," +
+                    c.getEmail() + "," +
+                    c.getPassword() + "," +
+                    c.getBalance() + "," +
+                    c.getAddress());
+            writer.newLine();
         }
-    }
-
-    public List<Customer> load() {
-        List<Customer> customers = new ArrayList<>();
-        File file = new File(filePath);
-        if (!file.exists()) return customers;
-
-        int maxId = 0;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length < 6) continue;
-
-                int customerId = Integer.parseInt(parts[0].trim());
-                String name = parts[1].trim();
-                String email = parts[2].trim().toLowerCase();
-                String password = parts[3].trim();
-                double balance = Double.parseDouble(parts[4].trim());
-                String address = parts[5].trim();
-
-                Customer customer = new Customer(customerId, name, email, password, balance, address);
-                customers.add(customer);
-
-                if (customerId > maxId) maxId = customerId;
-            }
-            Customer.setIdCount(maxId + 1);
-            System.out.println("📂 Customers loaded successfully.");
-        } catch (IOException | NumberFormatException e) {
-            System.out.println("⚠️ Failed to load customers: " + e.getMessage());
-        }
-
-        return customers;
+        System.out.println("✅ Customers saved successfully.");
+    } catch (IOException e) {
+        System.out.println("❌ Error saving customers: " + e.getMessage());
     }
 }
+
+public void addCustomer(Customer customer) {
+    customerMap.put(customer.getId(), customer);
+}
+
+public Customer getCustomerByEmail(String email) {
+    String normalized = email.trim().toLowerCase();
+    for (Customer customer : customerMap.values()) {
+        if (customer.getEmail().trim().toLowerCase().equals(normalized)) {
+            return customer;
+        }
+    }
+    return null;
+}
+
+//
+public Customer getCustomer(int id) {
+    Customer customer = customerMap.get(id);
+    if (customer == null) {
+                   throw new NoSuchElementException("❌ Customer with ID " + id + " not found.");
+    }
+    return customer;
+
+}
+
+//
+public Collection<Customer> getAllCustomers() {
+    return customerMap.values();
+}
+
+
+
+public void updateCustomer(Customer updatedCustomer) {
+    int id = updatedCustomer.getId();
+    if (!customerMap.containsKey(id)) {
+                    throw new NoSuchElementException("❌ Customer with ID " + id + " not found.");
+    }
+    customerMap.put(id, updatedCustomer);
+}
+
+//
+public boolean emailExists(String email) {
+    String normalized = email.trim().toLowerCase();
+    for (Customer customer : customerMap.values()) {
+        if (customer.getEmail().trim().toLowerCase().equals(normalized)) {
+            return true;
+        }
+    }
+    return false;
+}
+public void removeCustomer(int customerId) {
+    if (!customerMap.containsKey(customerId)) {
+                    throw new NoSuchElementException("❌ Customer with ID " + customerId + " not found.");
+    }
+    customerMap.remove(customerId);
+    System.out.println("✅ Customer removed from memory.");
+}
+
+public void load() {
+    File file = new File(filePath);
+    if (!file.exists()) return;
+
+    int maxId = 0;
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(",");
+            if (parts.length < 6) continue;
+
+            int customerId = Integer.parseInt(parts[0].trim());
+            String name = parts[1].trim();
+            String email = parts[2].trim().toLowerCase();
+            String password = parts[3].trim();
+            double balance = Double.parseDouble(parts[4].trim());
+            String address = parts[5].trim();
+
+            Customer customer = new Customer(customerId, name, email, password, balance, address);
+            customerMap.put(customerId, customer); // inject directly
+
+            if (customerId > maxId) maxId = customerId;
+        }
+        Customer.setIdCounter(maxId + 1);
+        System.out.println("📂 Customers loaded into map.");
+    } catch (IOException | NumberFormatException e) {
+        System.out.println("⚠️ Failed to load customers: " + e.getMessage());
+    }
+}}

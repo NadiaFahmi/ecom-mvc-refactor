@@ -1,10 +1,7 @@
 package com.ecommerce.view;
 
 
-import com.ecommerce.controller.CartController;
-import com.ecommerce.controller.LoginController;
-import com.ecommerce.controller.OrderController;
-import com.ecommerce.controller.SignUpController;
+import com.ecommerce.controller.*;
 import com.ecommerce.model.entities.Admin;
 
 
@@ -31,7 +28,7 @@ public class Main {
         customerService.loadCustomers();
 
         OrderService orderService = new OrderService(productService, customerService);
-
+        CustomerController customerController = new CustomerController(customerService);
         orderService.validateManagers();
 
 
@@ -75,11 +72,11 @@ public class Main {
             adminDashboard.launch(scanner, adminService);
         } else if (user instanceof Customer customer) {
             //
-            Customer loggedInCustomer = customerService.getCustomerById(user.getId());
+            Customer loggedInCustomer = customerService.findCustomerById(user.getId());
             CartService cartService = new CartService(loggedInCustomer.getId(), customerService, productService);
             cartService.loadCartFromFile();
 
-            UpdateService updateService = new UpdateService(customerService);
+
             CartController cartController = new CartController(cartService);
             OrderController orderController = new OrderController(orderService);
 
@@ -97,8 +94,9 @@ public class Main {
                     customer,
                     productService,
                     cartController,
+                    orderService,
                     orderController,
-                    updateService,
+                    customerController,
                     scanner
             );
 
