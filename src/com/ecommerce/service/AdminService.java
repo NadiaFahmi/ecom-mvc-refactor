@@ -109,6 +109,7 @@ public class AdminService implements TransactionViewer{
 
     public void viewAllTransactions() {
             List<Order> orders = orderService.getOrders();
+
             System.out.println("📦 All Transactions Overview: " + orders.size());
 
             for (Order order : orders) {

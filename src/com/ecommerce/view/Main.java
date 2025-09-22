@@ -71,7 +71,9 @@ public class Main {
             AdminService adminService = new AdminService(customerService, orderService, productService, admin);
             AdminController adminController =new AdminController(adminService);
 
-            AdminDashboard adminDashboard = new AdminDashboard(adminController,productService,scanner );
+            ProductController productController = new ProductController(productService);
+
+            AdminDashboard adminDashboard = new AdminDashboard(adminController,productController,scanner );
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
             //

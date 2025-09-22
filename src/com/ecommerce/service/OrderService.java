@@ -64,10 +64,14 @@ public class OrderService {
         return newOrder;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
+//    public List<Order> getOrders() {
+//        return orders;
+//    }
+//
+public List<Order> getOrders() {
+    return orderRepository.loadOrders();
+}
+    //
     private double calculateTotal(List<CartItem> cartItems) {
         double total = 0.0;
         for (CartItem item : cartItems) {

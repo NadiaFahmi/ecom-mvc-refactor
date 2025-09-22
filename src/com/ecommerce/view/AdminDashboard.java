@@ -1,8 +1,8 @@
 package com.ecommerce.view;
-import com.ecommerce.action.admin.*;
+
 import com.ecommerce.controller.AdminController;
-import com.ecommerce.service.AdminService;
-import com.ecommerce.service.ProductService;
+import com.ecommerce.controller.ProductController;
+import com.ecommerce.model.entities.Order;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -10,13 +10,16 @@ import java.util.*;
 public class AdminDashboard {
 
     private final AdminController adminController;
-    private final ProductService productService;
+    private final ProductController productController;
 
     private final Scanner scanner;
 
-    public AdminDashboard(AdminController adminController, ProductService productService, Scanner scanner) {
+    public AdminDashboard(AdminController adminController,
+                          ProductController productController,
+
+                          Scanner scanner) {
         this.adminController = adminController;
-        this.productService = productService;
+        this.productController = productController;
         this.scanner = scanner;
     }
 
@@ -66,6 +69,7 @@ public class AdminDashboard {
                     adminController.handleUsersByBalanceRange(min, max);
                 }
                 case "4" -> adminController.handleViewAllTransactions();
+
                 case "5" -> {
                     System.out.print("📅 From date (yyyy-MM-dd): ");
                     LocalDate from = LocalDate.parse(scanner.nextLine());
@@ -84,35 +88,21 @@ public class AdminDashboard {
                     adminController.handleFilterProductsByCategory(category);
                 }
                 case "8" -> {
-                    System.out.print("🆕 Product name: ");
-                    String name = scanner.nextLine();
-                    System.out.print("💰 Price: ");
-                    double price = Double.parseDouble(scanner.nextLine());
-                    System.out.print("📂 Category: ");
-                    String category = scanner.nextLine();
-                    productService.addProduct(name, price, category);
+
+                    productController.handleAddProduct();
 
                 }
                 case "9" -> {
-                    System.out.print("🔄 Product ID to update: ");
-                    int id = Integer.parseInt(scanner.nextLine());
-                    System.out.print("🆕 New name: ");
-                    String name = scanner.nextLine();
-                    System.out.print("💰 New price: ");
-                    double price = Double.parseDouble(scanner.nextLine());
-                    System.out.print("📂 New category: ");
-                    String category = scanner.nextLine();
-                    productService.updateProduct(id, name, price, category);
-
+                    productController.handleUpdateProduct();
                 }
                 case "10" -> {
                     System.out.print("❌ Product ID to remove: ");
                     int id = Integer.parseInt(scanner.nextLine());
-                    productService.removeProduct(id);
+                    productController.handleRemoveProduct();
 
                 }
                 case "11" ->
-                        productService.listProducts();
+                productController.handleListProducts();
                 default -> System.out.println("⚠️ Invalid choice. Please try again.");
             }
         }

@@ -28,14 +28,14 @@ public class ProductService {
     public void addProduct(String name, double price, String category) {
         int id = productIdCounter++;
         Product product = new Product(id, name, price, category);
-        List<Product> products = new ArrayList<>(repository.load());
+        List<Product> products = loadProductList();
         products.add(product);
         repository.save(products);
         System.out.println("✅ Product '" + name + "' added successfully with ID " + id + ".");
     }
 
     public void listProducts() {
-        Collection<Product> products = repository.load();
+        List<Product> products = loadProductList();
         if (products.isEmpty()) {
             System.out.println("No products available.");
             return;
@@ -46,17 +46,13 @@ public class ProductService {
                     ", Price: " + product.getPrice() + ", Category: " + product.getCategory());
         }
     }
-
-    public Map<Integer, Product> getAllProducts() {
-        Map<Integer, Product> map = new HashMap<>();
-        for (Product product : repository.load()) {
-            map.put(product.getId(), product);
-        }
-        return map;
+    public List<Product> getAllProducts() {
+        return loadProductList();
     }
 
+//
     public void updateProduct(int id, String newName, double newPrice, String newCategory) {
-        List<Product> products = new ArrayList<>(repository.load());
+        List<Product> products = loadProductList();
         boolean found = false;
 
         for (int i = 0; i < products.size(); i++) {
@@ -76,7 +72,7 @@ public class ProductService {
     }
 
     public void removeProduct(int id) {
-        List<Product> products = new ArrayList<>(repository.load());
+        List<Product> products = loadProductList();
         boolean removed = products.removeIf(p -> p.getId() == id);
 
         if (removed) {
@@ -97,8 +93,10 @@ public class ProductService {
     }
 
     public List<Product> getFilteredProducts(ProductFilter filter, String criteria) {
-        List<Product> products = new ArrayList<>(repository.load());
+        List<Product> products = loadProductList();
         return filter.filter(products, criteria);
     }
-
+    private List<Product> loadProductList() {
+        return new ArrayList<>(repository.load());
+    }
 }
