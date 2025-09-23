@@ -48,7 +48,7 @@ public class Main {
             } else if (choice.equals("2")) {
                 SignUpService signUpService = new SignUpService(customerService);
                 SignUpController signUpController = new SignUpController(signUpService);
-                user = signUpController.handleSignUp(scanner);
+                user = signUpController.handleSignUp();
 //
             } else if (choice.equalsIgnoreCase("exit")) {
                 System.out.println("👋 Thanks for visiting Nadia’s Shop. Goodbye!");
