@@ -60,11 +60,11 @@ public class CartRepository {
             System.out.println("❌ Error loading cart: " + e.getMessage());
         }
     }
-    public void clearCartFileContents(int customerId, String customerName) {
+    public void clearCartFileContents(int customerId) {
         String filePath = getCartFilePath(customerId);
         try (PrintWriter writer = new PrintWriter(filePath)) {
             writer.write("");
-            System.out.println("🧹 Cart file contents cleared for " + customerName);
+            System.out.println("🧹 Cart file contents cleared for " );
         } catch (IOException e) {
             System.out.println("⚠️ Failed to clear cart file: " + e.getMessage());
         }

@@ -26,7 +26,7 @@ public class Cart {
         System.out.println("Added to cart: " + product.getName() + " (x" + quantity + ")");
     }
 
-    public CartItem getItemByProductId(int productId) {
+    public CartItem findItemByProductId(int productId) {
         for (CartItem item : cartItems) {
             if (item.getProduct().getId() == productId) {
                 return item;

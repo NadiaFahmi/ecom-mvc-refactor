@@ -15,6 +15,9 @@ public class CustomerController {
 
         customerService.registerCustomer(customer);
     }
+    public void load() {
+        customerService.loadCustomers();
+    }
 
     public void listAllCustomers() {
         for (Customer c : customerService.listAllCustomers()) {

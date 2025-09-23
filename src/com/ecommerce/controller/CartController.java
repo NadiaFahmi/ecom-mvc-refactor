@@ -8,8 +8,10 @@ public class CartController {
     private final CartService cartService;
 
     public CartController(CartService cartService) {
+
         this.cartService = cartService;
     }
+
 
     public void handleAddToCart(int productId, int quantity) {
         boolean success = cartService.tryAddProductToCart(productId, quantity);
@@ -41,15 +43,15 @@ public class CartController {
     }
 
     public void handleLoadCart() {
-        cartService.loadCartFromFile();
+        cartService.loadCart();
     }
 
     public void handleClearCartFile() {
         cartService.clearCartFileContents();
     }
 
-    public void handleDeleteCartFile(Customer customer) {
-        cartService.deleteCartFile(customer);
+    public void handleDeleteCartFile() {
+        cartService.deleteCartFile();
     }
 
 

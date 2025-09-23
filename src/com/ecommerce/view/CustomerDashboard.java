@@ -3,6 +3,7 @@ package com.ecommerce.view;
 import com.ecommerce.controller.CartController;
 import com.ecommerce.controller.CustomerController;
 import com.ecommerce.controller.OrderController;
+import com.ecommerce.controller.ProductController;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.service.*;
@@ -13,35 +14,28 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class CustomerDashboard {
-    private final Customer customer;
-    private final ProductService productService;
-    private final CartController cartController;
-    private CustomerRepository customerRepository;
-    //
-    CustomerService customerService = new CustomerService(customerRepository);
-    CustomerController customerController = new CustomerController(customerService);
-    //
-    private final OrderService orderService;
+    private  Customer customer;
+    private CartController cartController;
+    private ProductController productController;
+    private CustomerController customerController;
+    private  OrderController orderController;
     private final Scanner scanner;
 
-    private final OrderController orderController;
+
 
     public CustomerDashboard(Customer customer,
-                             ProductService productService,
-
+                             ProductController productController,
                              CartController cartController,
-                             OrderService orderService,
                              OrderController orderController,
                              CustomerController customerController,
                              Scanner scanner) {
         this.customer = customer;
-        this.productService = productService;
         this.cartController = cartController;
-        this.orderService = orderService;
-
+        this.productController = productController;
         this.orderController = orderController;
-        this.scanner = scanner;
         this.customerController = customerController;
+        this.scanner = scanner;
+
     }
 
     public void launch() {
@@ -73,7 +67,7 @@ public class CustomerDashboard {
             String input = scanner.nextLine().trim();
 
             switch (input) {
-                case "1" -> productService.listProducts();
+                case "1" -> productController.handleListProducts();
                 case "2" -> {
                     System.out.print("🆔 Enter Product ID: ");
                     String productIdInput = scanner.nextLine().trim();
@@ -83,7 +77,7 @@ public class CustomerDashboard {
                         System.out.print("Enter quantity: ");
                         int quantity = Integer.parseInt(scanner.nextLine().trim());
 
-                        cartController.handleAddToCart(productId, quantity); // ✅ use controller
+                        cartController.handleAddToCart(productId, quantity);
                     } catch (NumberFormatException e) {
                         System.out.println("❌ Invalid input. Please enter numeric values.");
                     }
@@ -127,7 +121,7 @@ public class CustomerDashboard {
                 }
 
                 case "7" -> cartController.handleSaveCart();
-                case "8" -> orderController.createOrder(customer, scanner);
+                case "8" -> orderController.handlePlaceOrder(customer, scanner);
                 case "9" -> orderController.printCustomerOrders(customer);
                 case "10" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
@@ -149,6 +143,5 @@ public class CustomerDashboard {
             }
         }
     }
-
 
 }

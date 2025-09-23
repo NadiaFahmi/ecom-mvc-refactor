@@ -23,15 +23,13 @@ public class Main {
 
         ProductRepository productRepo = new ProductRepository("products.txt");
         ProductService productService = new ProductService(productRepo);
-
+        ProductController productController = new ProductController(productService);
         CustomerService customerService = new CustomerService(customerRepository);
-        customerService.loadCustomers();
-
-        OrderService orderService = new OrderService(productService, customerService);
         CustomerController customerController = new CustomerController(customerService);
-        orderService.validateManagers();
+        customerController.load();
 
 
+        LoginService loginService = new LoginService(customerService);
         User user;
         while (true) {
             System.out.println("👤 Welcome to Nadia’s Shop!");
@@ -43,7 +41,6 @@ public class Main {
             String choice = scanner.nextLine().trim();
 
             if (choice.equals("1")) {
-                LoginService loginService =new LoginService(customerService);
                 LoginController loginController = new LoginController(loginService);
                 user = loginController.handleLogin(scanner);
 
@@ -67,39 +64,32 @@ public class Main {
 
 
         if (user instanceof Admin admin) {
-
+            OrderService orderService = new OrderService(productService, customerService, null);
             AdminService adminService = new AdminService(customerService, orderService, productService, admin);
             AdminController adminController =new AdminController(adminService);
-
-            ProductController productController = new ProductController(productService);
-
             AdminDashboard adminDashboard = new AdminDashboard(adminController,productController,scanner );
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
-            //
-            Customer loggedInCustomer = customerService.findCustomerById(user.getId());
-            CartService cartService = new CartService(loggedInCustomer.getId(), customerService, productService);
-            cartService.loadCartFromFile();
-
+            CartService cartService = new CartService(customer.getId(), customerService, productService);
+            OrderService orderService = new OrderService(productService, customerService, cartService);
 
             CartController cartController = new CartController(cartService);
+            cartController.handleLoadCart();
+
             OrderController orderController = new OrderController(orderService);
-
             orderController.loadOrdersFromFile();
-            List<Order> allOrders = orderController.getAllOrders();
 
+            List<Order> allOrders = orderController.getAllOrders();
             for (Order order : allOrders) {
-                if (order.getCustomer().getId() == loggedInCustomer.getId()) {
-                    order.setCustomer(loggedInCustomer);
+                if (order.getCustomer().getId() == customer.getId()) {
                     customer.addOrder(order);
                 }
             }
 
             CustomerDashboard customerDashboard = new CustomerDashboard(
                     customer,
-                    productService,
+                    productController,
                     cartController,
-                    orderService,
                     orderController,
                     customerController,
                     scanner
