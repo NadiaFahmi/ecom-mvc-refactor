@@ -34,40 +34,43 @@ public class ProductService {
         System.out.println("✅ Product '" + name + "' added successfully with ID " + id + ".");
     }
 
-    public void listProducts() {
-        List<Product> products = loadProductList();
+
+    public List<Product> getAllProducts() {
+        List<Product> products  =   loadProductList();
         if (products.isEmpty()) {
             System.out.println("No products available.");
-            return;
+
         }
+
         System.out.println("Product List:");
         for (Product product : products) {
-            System.out.println("ID: " + product.getId() + ", Name: " + product.getName() +
-                    ", Price: " + product.getPrice() + ", Category: " + product.getCategory());
+            System.out.println("ID: " + product.getId() +
+                    ", Name: " + product.getName() +
+                    ", Price: " + product.getPrice() +
+                    ", Category: " + product.getCategory());
         }
-    }
-    public List<Product> getAllProducts() {
-        return loadProductList();
+        return products;
     }
 
 //
     public void updateProduct(int id, String newName, double newPrice, String newCategory) {
         List<Product> products = loadProductList();
-        boolean found = false;
+        Product updatedProduct = new Product(id, newName, newPrice, newCategory);
+        boolean updated= false;
 
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getId() == id) {
-                products.set(i, new Product(id, newName, newPrice, newCategory));
-                found = true;
+                products.set(i, updatedProduct);
+                updated = true;
                 break;
             }
         }
 
-        if (found) {
+        if (updated) {
             repository.save(products);
-            System.out.println("✅ Product updated.");
+            System.out.println("✅ Product updated: " + updatedProduct.getName());
         } else {
-            System.out.println("❌ Product ID not found.");
+            System.out.println("❌ Product ID " + id + " not found.");
         }
     }
 

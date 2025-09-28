@@ -26,6 +26,7 @@ public class Main {
         ProductController productController = new ProductController(productService);
         CustomerService customerService = new CustomerService(customerRepository);
         CustomerController customerController = new CustomerController(customerService);
+        ViewUpdates viewUpdates = new ViewUpdates(customerController);
         customerController.load();
 
 
@@ -92,6 +93,7 @@ public class Main {
                     cartController,
                     orderController,
                     customerController,
+                    viewUpdates,
                     scanner
             );
 

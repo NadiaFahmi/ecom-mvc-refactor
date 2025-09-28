@@ -11,12 +11,10 @@ public class AdminDashboard {
 
     private final AdminController adminController;
     private final ProductController productController;
-
     private final Scanner scanner;
 
     public AdminDashboard(AdminController adminController,
                           ProductController productController,
-
                           Scanner scanner) {
         this.adminController = adminController;
         this.productController = productController;
@@ -88,17 +86,30 @@ public class AdminDashboard {
                     adminController.handleFilterProductsByCategory(category);
                 }
                 case "8" -> {
-
-                    productController.handleAddProduct();
+                    System.out.print("🆕 Product name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("💰 Price: ");
+                    double price = Double.parseDouble(scanner.nextLine());
+                    System.out.print("📂 Category: ");
+                    String category = scanner.nextLine();
+                    productController.handleAddProduct(name, price, category);
 
                 }
                 case "9" -> {
-                    productController.handleUpdateProduct();
+                    System.out.print("🔄 Product ID to update: ");
+                    int id = Integer.parseInt(scanner.nextLine());
+                    System.out.print("🆕 New name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("💰 New price: ");
+                    double price = Double.parseDouble(scanner.nextLine());
+                    System.out.print("📂 New category: ");
+                    String category = scanner.nextLine();
+                    productController.handleUpdateProduct(id,name,price,category);
                 }
                 case "10" -> {
                     System.out.print("❌ Product ID to remove: ");
                     int id = Integer.parseInt(scanner.nextLine());
-                    productController.handleRemoveProduct();
+                    productController.handleRemoveProduct(id);
 
                 }
                 case "11" ->

@@ -5,13 +5,13 @@ import com.ecommerce.controller.CustomerController;
 import com.ecommerce.controller.OrderController;
 import com.ecommerce.controller.ProductController;
 import com.ecommerce.model.entities.Customer;
-import com.ecommerce.repository.CustomerRepository;
-import com.ecommerce.service.*;
-import com.ecommerce.service.OrderService;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+
+
 
 public class CustomerDashboard {
     private  Customer customer;
@@ -19,6 +19,7 @@ public class CustomerDashboard {
     private ProductController productController;
     private CustomerController customerController;
     private  OrderController orderController;
+    private ViewUpdates viewUpdates;
     private final Scanner scanner;
 
 
@@ -28,12 +29,14 @@ public class CustomerDashboard {
                              CartController cartController,
                              OrderController orderController,
                              CustomerController customerController,
+                             ViewUpdates viewUpdates,
                              Scanner scanner) {
         this.customer = customer;
         this.cartController = cartController;
         this.productController = productController;
         this.orderController = orderController;
         this.customerController = customerController;
+        this.viewUpdates =viewUpdates;
         this.scanner = scanner;
 
     }
@@ -123,6 +126,9 @@ public class CustomerDashboard {
                 case "7" -> cartController.handleSaveCart();
                 case "8" -> orderController.handlePlaceOrder(customer, scanner);
                 case "9" -> orderController.printCustomerOrders(customer);
+
+
+
                 case "10" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();
@@ -134,7 +140,7 @@ public class CustomerDashboard {
                     }
                 }
 
-                case "11" -> customerController.launchUpdateMenu(customer, scanner);
+                case "11" -> viewUpdates.launchUpdateMenu(customer, scanner);
                 case "exit" -> {
                     System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");
                     running = false;
