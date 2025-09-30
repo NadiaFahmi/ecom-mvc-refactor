@@ -19,7 +19,7 @@ public class CustomerDashboard {
     private ProductController productController;
     private CustomerController customerController;
     private  OrderController orderController;
-    private ViewUpdates viewUpdates;
+    private CustomerUpdateView customerUpdateView;
     private final Scanner scanner;
 
 
@@ -29,14 +29,14 @@ public class CustomerDashboard {
                              CartController cartController,
                              OrderController orderController,
                              CustomerController customerController,
-                             ViewUpdates viewUpdates,
+                             CustomerUpdateView customerUpdateView,
                              Scanner scanner) {
         this.customer = customer;
         this.cartController = cartController;
         this.productController = productController;
         this.orderController = orderController;
         this.customerController = customerController;
-        this.viewUpdates =viewUpdates;
+        this.customerUpdateView = customerUpdateView;
         this.scanner = scanner;
 
     }
@@ -64,7 +64,8 @@ public class CustomerDashboard {
             System.out.println("10 - Filter My Orders By Date");
             System.out.println("👤 --- Account ---");
             System.out.println("11 - Update My Account Info");
-            System.out.println("🔚 exit - Logout");
+            System.out.println("12 - Delete My Account");
+            System.out.println("0  - Logout and Exit Dashboard");
 
             System.out.print("Your choice: ");
             String input = scanner.nextLine().trim();
@@ -140,7 +141,11 @@ public class CustomerDashboard {
                     }
                 }
 
-                case "11" -> viewUpdates.launchUpdateMenu(customer, scanner);
+                case "11" -> customerUpdateView.launchUpdateMenu(customer, scanner);
+                case "12" ->  {  System.out.print("📅 Enter Your email: ");
+                    String emailInput = scanner.nextLine().trim();
+                    customerController.handleDeleteCustomer(emailInput);
+                }
                 case "exit" -> {
                     System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");
                     running = false;

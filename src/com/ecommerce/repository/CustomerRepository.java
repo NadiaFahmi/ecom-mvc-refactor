@@ -71,23 +71,25 @@ public void updateCustomer(Customer updatedCustomer) {
     customerMap.put(id, updatedCustomer);
 }
 
+
 //
-public boolean emailExists(String email) {
-    String normalized = email.trim().toLowerCase();
-    for (Customer customer : customerMap.values()) {
-        if (customer.getEmail().trim().toLowerCase().equals(normalized)) {
-            return true;
-        }
+//public boolean emailExists(String email) {
+//    String normalized = email.trim().toLowerCase();
+//    for (Customer customer : customerMap.values()) {
+//        if (customer.getEmail().trim().toLowerCase().equals(normalized)) {
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+    public boolean deleteByEmail(String email) {
+
+        Customer customer = customerMap.values().stream()
+                .filter(c -> c.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
+        return customer != null && customerMap.remove(customer.getId()) != null;
     }
-    return false;
-}
-public void removeCustomer(int customerId) {
-    if (!customerMap.containsKey(customerId)) {
-                    throw new NoSuchElementException("❌ Customer with ID " + customerId + " not found.");
-    }
-    customerMap.remove(customerId);
-    System.out.println("✅ Customer removed from memory.");
-}
 
 public void load() {
     File file = new File(filePath);

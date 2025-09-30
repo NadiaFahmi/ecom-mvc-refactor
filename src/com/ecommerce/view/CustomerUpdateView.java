@@ -5,11 +5,11 @@ import com.ecommerce.model.entities.Customer;
 
 import java.util.Scanner;
 
-public class ViewUpdates {
+public class CustomerUpdateView {
 
     private CustomerController customerController;
 
-    public ViewUpdates(CustomerController customerController) {
+    public CustomerUpdateView(CustomerController customerController) {
         this.customerController = customerController;
     }
 

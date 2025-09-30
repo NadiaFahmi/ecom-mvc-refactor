@@ -83,6 +83,7 @@ public class CartService {
     }
     public void clearCart() {
         customer.getCart().clearCart();
+
         clearCartFileContents();
     }
     public void clearCartFileContents() {

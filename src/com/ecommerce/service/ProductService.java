@@ -36,20 +36,8 @@ public class ProductService {
 
 
     public List<Product> getAllProducts() {
-        List<Product> products  =   loadProductList();
-        if (products.isEmpty()) {
-            System.out.println("No products available.");
-
-        }
-
-        System.out.println("Product List:");
-        for (Product product : products) {
-            System.out.println("ID: " + product.getId() +
-                    ", Name: " + product.getName() +
-                    ", Price: " + product.getPrice() +
-                    ", Category: " + product.getCategory());
-        }
-        return products;
+        Collection<Product> loaded = repository.load();
+        return new ArrayList<>(loaded); // ensures it's mutable and list-based
     }
 
 //

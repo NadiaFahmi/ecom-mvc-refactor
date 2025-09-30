@@ -6,6 +6,7 @@ import com.ecommerce.model.entities.Order;
 import com.ecommerce.service.CustomerService;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.service.ProductService;
+import com.ecommerce.view.OrderView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,51 +17,43 @@ public class OrderController {
 
 private final OrderService orderService;
 
-    public OrderController(OrderService orderService) {
+    private final OrderView orderView;
+    public OrderController(OrderService orderService, OrderView orderView) {
         this.orderService = orderService;
+        this.orderView = orderView;
     }
     public void handlePlaceOrder(Customer customer, Scanner scanner) {
         List<CartItem> cartItems = customer.getCart().getCartItems();
         if (cartItems.isEmpty()) {
-            System.out.println("🛒 Your cart is empty. Add items before placing an order.");
+            orderView.showCartEmpty();
             return;
         }
 
         double total = orderService.calculateTotal(cartItems);
         if (customer.getBalance() < total) {
-            System.out.printf("❌ Insufficient balance. Cart total: $%.2f | Your balance: $%.2f%n", total, customer.getBalance());
-            System.out.print("Would you like to add funds to complete the purchase? (Y/N): ");
-            String response = scanner.nextLine().trim();
 
-            if (response.equalsIgnoreCase("Y")) {
-                System.out.print("Enter amount to add: ");
-                try {
-                    double additional = Double.parseDouble(scanner.nextLine());
-                    boolean success = orderService.tryAddFunds(customer, additional, total);
 
-                    if (!success) {
-                        System.out.println("🚫 Still insufficient. Please adjust your cart or add more funds.");
-                        return;
-                    }
-
-                    System.out.printf("💳 New balance: $%.2f%n", customer.getBalance());
-                } catch (NumberFormatException e) {
-                    System.out.println("⚠️ Invalid amount entered. Order cancelled.");
+            if (orderView.confirmAddFunds(total, customer.getBalance())) {
+                double additional = orderView.promptAmountToAdd();
+                if (additional <= 0 || !orderService.tryAddFunds(customer, additional, total)) {
+                    orderView.showInsufficientAfterAdd();
                     return;
                 }
+                orderView.showNewBalance(customer.getBalance());
             } else {
-                System.out.println("🕳️ Order cancelled. Feel free to come back anytime.");
+                orderView.showOrderCancelled();
                 return;
             }
         }
 
         Order order = orderService.placeOrder(customer);
         if (order != null) {
-            System.out.println("✅ Order placed successfully!");
+            orderView.showOrderSuccess();
         } else {
-            System.out.println("❌ Order could not be placed.");
+            orderView.showOrderFailure();
         }
     }
+
 
 
     public List<Order> getAllOrders() {

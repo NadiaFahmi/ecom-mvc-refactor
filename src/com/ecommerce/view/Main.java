@@ -23,10 +23,11 @@ public class Main {
 
         ProductRepository productRepo = new ProductRepository("products.txt");
         ProductService productService = new ProductService(productRepo);
-        ProductController productController = new ProductController(productService);
+        ProductView productView = new ProductView();
+        ProductController productController = new ProductController(productService, productView);
         CustomerService customerService = new CustomerService(customerRepository);
         CustomerController customerController = new CustomerController(customerService);
-        ViewUpdates viewUpdates = new ViewUpdates(customerController);
+        CustomerUpdateView customerUpdateView = new CustomerUpdateView(customerController);
         customerController.load();
 
 
@@ -48,7 +49,8 @@ public class Main {
 
             } else if (choice.equals("2")) {
                 SignUpService signUpService = new SignUpService(customerService);
-                SignUpController signUpController = new SignUpController(signUpService);
+                SignUpView signUpView = new SignUpView(scanner);
+                SignUpController signUpController = new SignUpController(signUpService, signUpView);
                 user = signUpController.handleSignUp();
 //
             } else if (choice.equalsIgnoreCase("exit")) {
@@ -76,8 +78,8 @@ public class Main {
 
             CartController cartController = new CartController(cartService);
             cartController.handleLoadCart();
-
-            OrderController orderController = new OrderController(orderService);
+            OrderView orderView = new OrderView(scanner);
+            OrderController orderController = new OrderController(orderService, orderView);
             orderController.loadOrdersFromFile();
 
             List<Order> allOrders = orderController.getAllOrders();
@@ -93,7 +95,7 @@ public class Main {
                     cartController,
                     orderController,
                     customerController,
-                    viewUpdates,
+                    customerUpdateView,
                     scanner
             );
 

@@ -5,6 +5,7 @@ import com.ecommerce.repository.CustomerRepository;
 
 import java.io.*;
 import java.util.*;
+import java.util.NoSuchElementException;
 
 public class CustomerService {
 
@@ -26,7 +27,8 @@ public class CustomerService {
         return repository.getCustomerByEmail(email);
     }
 
-    public Collection<Customer> listAllCustomers() {
+    public Collection<Customer> listAllCustomers()
+    {
         return repository.getAllCustomers();
     }
 
@@ -36,6 +38,7 @@ public class CustomerService {
     }
 
     public Customer findCustomerById(int id) {
+
         return repository.getCustomer(id);
     }
 
@@ -198,13 +201,20 @@ public class CustomerService {
     }
 
 
-    public boolean deleteCustomer(int customerId) {
-
-            repository.removeCustomer(customerId);
+    public boolean deleteCustomer(String email) {
+        try {
+            repository.deleteByEmail(email);
             repository.saveAll();
             return true;
-
+        } catch (NoSuchElementException e) {
+            System.out.println("❌ " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.out.println("⚠️ Unexpected error: " + e.getMessage());
+            return false;
+        }
     }
+
 
 }
 

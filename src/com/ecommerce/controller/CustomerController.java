@@ -3,7 +3,7 @@ import com.ecommerce.model.entities.Customer;
 
 import com.ecommerce.service.CustomerService;
 
-import java.util.Scanner;
+
 public class CustomerController {
 
     private  CustomerService customerService;
@@ -11,34 +11,34 @@ public class CustomerController {
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
-    public void registerCustomer(Customer customer) {
-
-        customerService.registerCustomer(customer);
-    }
+//    public void registerCustomer(Customer customer) {
+//
+//        customerService.registerCustomer(customer);
+//    }
     public void load() {
         customerService.loadCustomers();
     }
 
-    public void listAllCustomers() {
-        for (Customer c : customerService.listAllCustomers()) {
-            System.out.println(c);
-        }
-    }
+//    public void listAllCustomers() {
+//        for (Customer c : customerService.listAllCustomers()) {
+//            System.out.println(c);
+//        }
+//    }
 
-    public void getCustomerByEmail(String email) {
-        Customer customer = customerService.getCustomerByEmail(email);
-        if (customer != null) {
-            System.out.println(customer);
-        } else {
-            System.out.println("❌ No customer found with email: " + email);
-        }
-    }
+//    public void getCustomerByEmail(String email) {
+//        Customer customer = customerService.getCustomerByEmail(email);
+//        if (customer != null) {
+//            System.out.println(customer);
+//        } else {
+//            System.out.println("❌ No customer found with email: " + email);
+//        }
+//    }
 
-    public void findCustomerById(int id) {
-            Customer customer = customerService.findCustomerById(id);
-            System.out.println(customer);
-
-    }
+//    public void findCustomerById(int id) {
+//            Customer customer = customerService.findCustomerById(id);
+//            System.out.println(customer);
+//
+//    }
 
     public void updateEmail(int customerId, String newEmail) {
         Customer customer = customerService.findCustomerById(customerId);
@@ -70,8 +70,8 @@ public class CustomerController {
         customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
     }
 
-    public void delete(int customerId) {
-        customerService.deleteCustomer(customerId);
+    public boolean handleDeleteCustomer(String email) {
+        return customerService.deleteCustomer(email);
     }
 
 

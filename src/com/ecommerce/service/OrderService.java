@@ -15,8 +15,7 @@ import java.util.*;
 public class OrderService {
 //
 
-//    private  ProductService productService;
-//    private  CustomerService customerService;
+
     private List<Order> orders = new ArrayList<>();
     private CartService cartService;
     private  OrderRepository orderRepository;
@@ -27,8 +26,6 @@ public class OrderService {
             ProductService productService,
             CustomerService customerService,
             CartService cartService) {
-//        this.productService = productService;
-//        this.customerService = customerService;
         this.cartService = cartService;
 
         this.orderRepository = new OrderRepository(productService, customerService);
