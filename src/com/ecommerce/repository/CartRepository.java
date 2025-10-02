@@ -70,19 +70,5 @@ public class CartRepository {
         }
     }
 
-    public void deleteCartFile(int customerId, String username) {
-        String filename = "cart_" + customerId + ".txt";
-        File cartFile = new File(filename);
 
-        if (cartFile.exists()) {
-            boolean deleted = cartFile.delete();
-            if (deleted) {
-                System.out.println("🗑️ Cart file deleted successfully.");
-            } else {
-                System.out.println("⚠️ Failed to delete cart file.");
-            }
-        } else {
-            System.out.println("📁 Cart file does not exist.");
-        }
-    }
 }

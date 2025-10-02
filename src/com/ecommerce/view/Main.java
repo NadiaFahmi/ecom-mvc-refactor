@@ -43,8 +43,9 @@ public class Main {
             String choice = scanner.nextLine().trim();
 
             if (choice.equals("1")) {
-                LoginController loginController = new LoginController(loginService);
-                user = loginController.handleLogin(scanner);
+                LoginView loginView = new LoginView(scanner);
+                LoginController loginController = new LoginController(loginService,loginView);
+                user = loginController.handleLogin();
 
 
             } else if (choice.equals("2")) {
@@ -68,8 +69,10 @@ public class Main {
 
         if (user instanceof Admin admin) {
             OrderService orderService = new OrderService(productService, customerService, null);
-            AdminService adminService = new AdminService(customerService, orderService, productService, admin);
-            AdminController adminController =new AdminController(adminService);
+            AdminService adminService = new AdminService(customerService, orderService, admin);
+            TransactionView transactionView = new TransactionView();
+            CustomerView customerView = new CustomerView();
+            AdminController adminController =new AdminController(adminService, transactionView, customerView);
             AdminDashboard adminDashboard = new AdminDashboard(adminController,productController,scanner );
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
@@ -106,5 +109,5 @@ public class Main {
         System.out.println("📦 Session ended. Thank you!");
     }
 }
-//    admin@email.com
+//    admin@gmail.com
 //    adminPass

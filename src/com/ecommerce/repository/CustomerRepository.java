@@ -26,9 +26,9 @@ public void saveAll() {
                     c.getAddress());
             writer.newLine();
         }
-        System.out.println("✅ Customers saved successfully.");
+        System.out.println("✅ Processed successfully.");
     } catch (IOException e) {
-        System.out.println("❌ Error saving customers: " + e.getMessage());
+        System.out.println("❌ Error saving: " + e.getMessage());
     }
 }
 
@@ -61,8 +61,6 @@ public Collection<Customer> getAllCustomers() {
     return customerMap.values();
 }
 
-
-
 public void updateCustomer(Customer updatedCustomer) {
     int id = updatedCustomer.getId();
     if (!customerMap.containsKey(id)) {
@@ -71,17 +69,6 @@ public void updateCustomer(Customer updatedCustomer) {
     customerMap.put(id, updatedCustomer);
 }
 
-
-//
-//public boolean emailExists(String email) {
-//    String normalized = email.trim().toLowerCase();
-//    for (Customer customer : customerMap.values()) {
-//        if (customer.getEmail().trim().toLowerCase().equals(normalized)) {
-//            return true;
-//        }
-//    }
-//    return false;
-//}
     public boolean deleteByEmail(String email) {
 
         Customer customer = customerMap.values().stream()

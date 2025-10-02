@@ -91,10 +91,6 @@ public class CartService {
 
 
     }
-    public  void deleteCartFile() {
-        cartRepository.deleteCartFile(customer.getId(), customer.getUsername());
-//
-    }
 
 }
 

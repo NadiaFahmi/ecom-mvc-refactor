@@ -34,6 +34,7 @@ public class CartController {
     public void handleTotalPrice() {
         System.out.println("💰 Total: " + cartService.getTotalPrice());
     }
+
     public void handlelistCartItems() {
         cartService.listCartItems();
     }
@@ -44,14 +45,6 @@ public class CartController {
 
     public void handleLoadCart() {
         cartService.loadCart();
-    }
-
-    public void handleClearCartFile() {
-        cartService.clearCartFileContents();
-    }
-
-    public void handleDeleteCartFile() {
-        cartService.deleteCartFile();
     }
 
 

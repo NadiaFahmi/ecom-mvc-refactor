@@ -26,11 +26,20 @@ public class ProductController {
         productService.addProduct(name, price, category);
     }
 
-public void handleRemoveProduct(int id) {
-    productService.removeProduct(id);
-}
-public void handleUpdateProduct(int id, String newName, double newPrice, String newCategory) {
-    productService.updateProduct( id,newName, newPrice, newCategory);
+    public void handleRemoveProduct(int id) {
+        productService.removeProduct(id);
+    }
+
+    public void handleUpdateProduct(int id, String newName, double newPrice, String newCategory) {
+        productService.updateProduct(id, newName, newPrice, newCategory);
+    }
+
+public void filterProductsByCategory(String category) {
+    List<Product> filteredProducts = productService.getProductsByCategory(category);
+    productView.displayFilteredProducts(filteredProducts, category);
 }
 
+
 }
+
+

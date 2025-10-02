@@ -64,7 +64,7 @@ public class AdminDashboard {
                     double min = Double.parseDouble(scanner.nextLine());
                     System.out.print("💰 Max balance: ");
                     double max = Double.parseDouble(scanner.nextLine());
-                    adminController.handleUsersByBalanceRange(min, max);
+                    adminController.handleViewUsersByBalanceRange(min, max);
                 }
                 case "4" -> adminController.handleViewAllTransactions();
 
@@ -73,7 +73,7 @@ public class AdminDashboard {
                     LocalDate from = LocalDate.parse(scanner.nextLine());
                     System.out.print("📅 To date (yyyy-MM-dd): ");
                     LocalDate to = LocalDate.parse(scanner.nextLine());
-                    adminController.handleFilterOrdersByDate(from, to);
+                    adminController.showOrdersByDateRange(from, to);
                 }
                 case "6" -> {
                     System.out.print("📧 Enter user email: ");
@@ -83,7 +83,8 @@ public class AdminDashboard {
                 case "7" -> {
                     System.out.print("📦 Enter category: ");
                     String category = scanner.nextLine();
-                    adminController.handleFilterProductsByCategory(category);
+//                    adminController.handleFilterProductsByCategory(category);
+                    productController.filterProductsByCategory(category);
                 }
                 case "8" -> {
                     System.out.print("🆕 Product name: ");

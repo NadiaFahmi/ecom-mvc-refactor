@@ -5,7 +5,6 @@ import com.ecommerce.service.SignUpService;
 import com.ecommerce.view.SignUpView;
 
 
-
 public class SignUpController {
     private final SignUpService signUpService;
     private final SignUpView signUpView;

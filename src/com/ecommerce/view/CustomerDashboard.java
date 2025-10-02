@@ -11,8 +11,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
-
-
 public class CustomerDashboard {
     private  Customer customer;
     private CartController cartController;
@@ -21,8 +19,6 @@ public class CustomerDashboard {
     private  OrderController orderController;
     private CustomerUpdateView customerUpdateView;
     private final Scanner scanner;
-
-
 
     public CustomerDashboard(Customer customer,
                              ProductController productController,
@@ -65,7 +61,7 @@ public class CustomerDashboard {
             System.out.println("👤 --- Account ---");
             System.out.println("11 - Update My Account Info");
             System.out.println("12 - Delete My Account");
-            System.out.println("0  - Logout and Exit Dashboard");
+            System.out.println("exit - Logout and Exit Dashboard");
 
             System.out.print("Your choice: ");
             String input = scanner.nextLine().trim();
@@ -121,15 +117,11 @@ public class CustomerDashboard {
                     } catch (Exception e) {
                         System.out.println("⚠️ An unexpected error occurred while updating the cart.");
                     }
-
                 }
 
                 case "7" -> cartController.handleSaveCart();
-                case "8" -> orderController.handlePlaceOrder(customer, scanner);
+                case "8" -> orderController.handlePlaceOrder(customer);
                 case "9" -> orderController.printCustomerOrders(customer);
-
-
-
                 case "10" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();

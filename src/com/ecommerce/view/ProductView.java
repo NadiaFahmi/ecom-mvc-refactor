@@ -6,19 +6,18 @@ import java.util.List;
 
 public class ProductView {
 
-    public void displayProductsByCategory(String category, List<Product> products) {
-        if (products == null || products.isEmpty()) {
+
+    public void displayFilteredProducts(List<Product> products, String category) {
+        if (products.isEmpty()) {
             System.out.println("🚫 No products found in category: " + category);
-            return;
+        } else {
+            System.out.println("📦 Products in category: " + category);
+            for (Product p : products) {
+                System.out.println("🔹 ID: " + p.getId() +
+                        ", Name: " + p.getName() +
+                        ", Price: $" + p.getPrice());
+            }
         }
-
-        System.out.println("📦 Products in category: " + category);
-        for (Product p : products) {
-            System.out.println("🔹 ID: " + p.getId() +
-                    ", Name: " + p.getName() +
-                    ", Price: $" + p.getPrice());
-        }
-
     }
 
     public void displayAllProducts(List<Product> products) {

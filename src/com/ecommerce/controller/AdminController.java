@@ -1,58 +1,56 @@
 package com.ecommerce.controller;
 
-import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 import com.ecommerce.service.AdminService;
+import com.ecommerce.view.CustomerView;
+import com.ecommerce.view.TransactionView;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public class AdminController {
 
     private final AdminService adminService;
+    private final TransactionView transactionView;
+    private final CustomerView customerView;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService,TransactionView transactionView, CustomerView customerView) {
+
         this.adminService = adminService;
+        this.transactionView = transactionView;
+        this.customerView = customerView;
     }
 
     public void handleViewAllUsers() {
-        adminService.viewAllUsers();
+        Collection<Customer> customers = adminService.getAllCustomers();
+        customerView.showAllCustomers(customers);
     }
 
     public void handleFilterUsersByName(String keyword) {
 
-
         adminService.filterUsersByNameKeyword(keyword);
     }
 
-    public void handleUsersByBalanceRange(double min, double max) {
+    public void handleViewUsersByBalanceRange(double min, double max) {
         List<Customer> users = adminService.getUsersByBalanceRange(min, max);
-        System.out.println("💰 Users with balance between $" + min + " and $" + max + ": " + users.size());
-        for (Customer user : users) {
-            System.out.println("🆔 " + user.getId() + " | " + user.getName() + " | 💰 $" + user.getBalance());
-        }
+        transactionView.showUsersByBalanceRange(min, max,users);
     }
 
-    public void handleFilterProductsByCategory(String category) {
-        adminService.filterProductsByCategory(category);
-    }
 
-    public void handleFilterOrdersByDate(LocalDate from, LocalDate to) {
-        adminService.filterOrdersByDateRange(from, to);
+    public void showOrdersByDateRange(LocalDate from, LocalDate to) {
+        List<Order> orders = adminService.getOrdersByDateRange(from, to);
+        transactionView.displayOrdersByDateRange(orders, from, to);
     }
 
     public void handleViewAllTransactions() {
-        adminService.viewAllTransactions();
+        List<Order> orders = adminService.getAllTransactions();
+        transactionView.viewAllTransactions(orders);
     }
-
 
     public void handleViewTransactionsByUser(String email) {
-        adminService.viewTransactionsByUser(email);
-    }
-
-    public void showAdminProfile() {
-        Admin admin = adminService.getAdmin();
-        System.out.println("👑 Admin: " + admin.getName() + " | 📧 " + admin.getEmail());
+        List<Order> orders = adminService.getTransactionsByUser(email);
+        transactionView.viewTransactionsByUser(email, orders);
     }
 }

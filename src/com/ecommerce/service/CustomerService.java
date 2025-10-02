@@ -2,8 +2,6 @@ package com.ecommerce.service;
 
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.repository.CustomerRepository;
-
-import java.io.*;
 import java.util.*;
 import java.util.NoSuchElementException;
 
@@ -202,6 +200,10 @@ public class CustomerService {
 
 
     public boolean deleteCustomer(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            System.out.println("⚠️ email cannot be empty.");
+            return false;
+        }
         try {
             repository.deleteByEmail(email);
             repository.saveAll();

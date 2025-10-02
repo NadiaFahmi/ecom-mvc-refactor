@@ -37,10 +37,9 @@ public class ProductService {
 
     public List<Product> getAllProducts() {
         Collection<Product> loaded = repository.load();
-        return new ArrayList<>(loaded); // ensures it's mutable and list-based
+        return new ArrayList<>(loaded);
     }
 
-//
     public void updateProduct(int id, String newName, double newPrice, String newCategory) {
         List<Product> products = loadProductList();
         Product updatedProduct = new Product(id, newName, newPrice, newCategory);
@@ -83,11 +82,21 @@ public class ProductService {
         return null;
     }
 
-    public List<Product> getFilteredProducts(ProductFilter filter, String criteria) {
-        List<Product> products = loadProductList();
-        return filter.filter(products, criteria);
-    }
     private List<Product> loadProductList() {
         return new ArrayList<>(repository.load());
     }
+
+    public List<Product> getProductsByCategory(String category) {
+        List<Product> products = loadProductList(); // assume this loads all products
+        List<Product> filtered = new ArrayList<>();
+
+        for (Product product : products) {
+            if (product.getCategory().equalsIgnoreCase(category)) {
+                filtered.add(product);
+            }
+        }
+
+        return filtered;
+    }
+
 }
