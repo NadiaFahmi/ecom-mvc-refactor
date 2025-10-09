@@ -46,4 +46,21 @@ public class LoginView {
         System.out.print("Forgot your password? Type 'yes' to reset, 'no' to retry, or 'exit' to cancel: ");
         return scanner.nextLine().trim().toLowerCase();
     }
+    public String promptNewPassword() {
+        System.out.print("🔒 Enter new password: ");
+        return scanner.nextLine().trim();
+    }
+
+    public String promptConfirmPassword() {
+        System.out.print("🔁 Confirm new password: ");
+        return scanner.nextLine().trim();
+    }
+
+    public void showPasswordResetResult(boolean success) {
+
+        if (!success) {
+
+            System.out.println("⚠️ Password reset failed. Please try again.");
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.User;
 import com.ecommerce.service.LoginService;
 import com.ecommerce.view.LoginView;
@@ -22,26 +23,32 @@ public class LoginController {
         User user = loginService.login(email, password);
         if (user == null) {
             loginView.showLoginFailed();
-            return handleRetry(email); // return result of retry
         } else {
             loginView.showWelcome(user);
             return user;
         }
+        return null;
     }
 
+    public User handleRetry(Customer customer, String email) {
 
-    private User handleRetry(String email) {
         while (true) {
             String choice = loginView.promptRetryChoice();
 
             switch (choice) {
                 case "yes" -> {
-                    loginService.resetPassword(email);
+                    String newPassword = loginView.promptNewPassword();
+                    String confirmPassword = loginView.promptConfirmPassword();
+
+                    boolean success = loginService.resetPassword(customer, email, newPassword, confirmPassword);
+                    loginView.showPasswordResetResult(success);
                     return null;
                 }
+
                 case "no" -> {
                     String password = loginView.promptPassword();
                     User user = loginService.login(email, password);
+
                     if (user != null) {
                         loginView.showWelcome(user);
                         return user;
@@ -49,12 +56,13 @@ public class LoginController {
                         loginView.showIncorrectPassword();
                     }
                 }
+
                 case "exit" -> {
                     loginView.showExitMessage();
                     return null;
                 }
+
                 default -> loginView.showInvalidChoice();
             }
-        }
-    }
+        }}
 }

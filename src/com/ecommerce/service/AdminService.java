@@ -34,14 +34,18 @@ import java.util.List;
     }
 
 
-    public void filterUsersByNameKeyword(String keyword) {
-        Collection<Customer> customers = customerService.listAllCustomers();
-        System.out.println("Users with name containing: \"" + keyword + "\"");
-        for (Customer customer : customers) {
-            if (customer.getName().toLowerCase().contains(keyword.toLowerCase())) {
-                System.out.println("🆔 " + customer.getId() + " | " + customer.getName());
+    public List<Customer> filterUsersByNameKeyword(String keyword) {
+        Collection<Customer> allCustomers = getAllCustomers();
+        List<Customer> filtered = new ArrayList<>();
+
+        for (Customer customer : allCustomers) {
+            String name = customer.getName();
+            if (name != null && name.toLowerCase().contains(keyword.toLowerCase())) {
+                filtered.add(customer);
             }
         }
+
+        return filtered;
     }
     public List<Customer> getUsersByBalanceRange(double min, double max) {
         List<Customer> matching = new ArrayList<>();

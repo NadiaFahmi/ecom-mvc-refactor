@@ -32,11 +32,12 @@ public class Main {
 
 
         LoginService loginService = new LoginService(customerService);
-        User user;
+        User user = null;
         while (true) {
             System.out.println("👤 Welcome to Nadia’s Shop!");
             System.out.println("1 - Log In");
             System.out.println("2 - Sign Up");
+            System.out.println("3 - Forgot your password");
             System.out.println("Type 'exit' to leave the app.");
             System.out.print("Choose an option: ");
 
@@ -54,7 +55,18 @@ public class Main {
                 SignUpController signUpController = new SignUpController(signUpService, signUpView);
                 user = signUpController.handleSignUp();
 //
-            } else if (choice.equalsIgnoreCase("exit")) {
+            } else if (choice.equals("3")) {
+                LoginView loginView = new LoginView(scanner);
+                LoginController loginController = new LoginController(loginService, loginView);
+
+                System.out.print("📧 Enter your email: ");
+                String email = scanner.nextLine().trim();
+
+                Customer customer = loginService.getCustomerByEmail(email);
+                loginController.handleRetry(customer,email);
+
+            }
+            else if (choice.equalsIgnoreCase("exit")) {
                 System.out.println("👋 Thanks for visiting Nadia’s Shop. Goodbye!");
                 scanner.close();
                 return;

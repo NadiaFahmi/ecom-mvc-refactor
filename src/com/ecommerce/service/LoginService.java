@@ -43,15 +43,13 @@ public class LoginService {
         return null;
     }
 
-    public void resetPassword(String email) {
-        Customer customer = customerService.getCustomerByEmail(email);
-        if (customer == null) {
-            System.out.println("❌ Email not found. Please make sure you registered first.");
-            return;
-        }
 
-        customerService.registerCustomer(customer);
-        System.out.println("🔁 Password reset initiated.");
+public boolean resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
+    return    customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
+
+}
+    public Customer getCustomerByEmail(String email) {
+
+        return customerService.getCustomerByEmail(email);
     }
-
 }

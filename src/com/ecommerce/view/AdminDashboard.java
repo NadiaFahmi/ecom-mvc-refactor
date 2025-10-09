@@ -2,7 +2,6 @@ package com.ecommerce.view;
 
 import com.ecommerce.controller.AdminController;
 import com.ecommerce.controller.ProductController;
-import com.ecommerce.model.entities.Order;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -53,32 +52,32 @@ public class AdminDashboard {
                     System.out.println("\n👋 Logging out of Admin Dashboard. Have a productive day!");
                     return;
                 }
-                case "1" -> adminController.handleViewAllUsers();
+                case "1" -> adminController.viewAllUsers();
                 case "2" -> {
                     System.out.print("🔍 Enter keyword: ");
                     String keyword = scanner.nextLine();
-                    adminController.handleFilterUsersByName(keyword);
+                    adminController.viewUsersByNameKeyword(keyword);
                 }
                 case "3" -> {
                     System.out.print("💰 Min balance: ");
                     double min = Double.parseDouble(scanner.nextLine());
                     System.out.print("💰 Max balance: ");
                     double max = Double.parseDouble(scanner.nextLine());
-                    adminController.handleViewUsersByBalanceRange(min, max);
+                    adminController.viewUsersByBalanceRange(min, max);
                 }
-                case "4" -> adminController.handleViewAllTransactions();
+                case "4" -> adminController.viewAllTransactions();
 
                 case "5" -> {
                     System.out.print("📅 From date (yyyy-MM-dd): ");
                     LocalDate from = LocalDate.parse(scanner.nextLine());
                     System.out.print("📅 To date (yyyy-MM-dd): ");
                     LocalDate to = LocalDate.parse(scanner.nextLine());
-                    adminController.showOrdersByDateRange(from, to);
+                    adminController.viewOrdersByDateRange(from, to);
                 }
                 case "6" -> {
                     System.out.print("📧 Enter user email: ");
                     String email = scanner.nextLine();
-                    adminController.handleViewTransactionsByUser(email);
+                    adminController.viewTransactionsByUser(email);
                 }
                 case "7" -> {
                     System.out.print("📦 Enter category: ");

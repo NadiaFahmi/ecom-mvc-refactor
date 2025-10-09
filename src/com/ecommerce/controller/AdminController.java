@@ -23,33 +23,35 @@ public class AdminController {
         this.customerView = customerView;
     }
 
-    public void handleViewAllUsers() {
+    public void viewAllUsers() {
         Collection<Customer> customers = adminService.getAllCustomers();
         customerView.showAllCustomers(customers);
     }
 
-    public void handleFilterUsersByName(String keyword) {
-
-        adminService.filterUsersByNameKeyword(keyword);
+    public void viewUsersByNameKeyword(String keyword) {
+        List<Customer> customers = adminService.filterUsersByNameKeyword(keyword);
+        customerView.displayFilteredUsers(customers,keyword);
     }
 
-    public void handleViewUsersByBalanceRange(double min, double max) {
+
+    public void viewUsersByBalanceRange(double min, double max) {
         List<Customer> users = adminService.getUsersByBalanceRange(min, max);
         transactionView.showUsersByBalanceRange(min, max,users);
     }
 
 
-    public void showOrdersByDateRange(LocalDate from, LocalDate to) {
+
+    public void viewOrdersByDateRange(LocalDate from, LocalDate to) {
         List<Order> orders = adminService.getOrdersByDateRange(from, to);
         transactionView.displayOrdersByDateRange(orders, from, to);
     }
 
-    public void handleViewAllTransactions() {
+    public void viewAllTransactions() {
         List<Order> orders = adminService.getAllTransactions();
         transactionView.viewAllTransactions(orders);
     }
 
-    public void handleViewTransactionsByUser(String email) {
+    public void viewTransactionsByUser(String email) {
         List<Order> orders = adminService.getTransactionsByUser(email);
         transactionView.viewTransactionsByUser(email, orders);
     }
