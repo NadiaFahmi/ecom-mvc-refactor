@@ -2,6 +2,7 @@ package com.ecommerce.service;
 
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.repository.CustomerRepository;
+
 import java.util.*;
 import java.util.NoSuchElementException;
 
@@ -25,8 +26,7 @@ public class CustomerService {
         return repository.getCustomerByEmail(email);
     }
 
-    public Collection<Customer> listAllCustomers()
-    {
+    public Collection<Customer> listAllCustomers() {
         return repository.getAllCustomers();
     }
 
@@ -64,7 +64,6 @@ public class CustomerService {
         System.out.println("✅ Email updated successfully.");
         return true;
     }
-
 
 
     private boolean isValidEmail(String email) {
@@ -108,7 +107,7 @@ public class CustomerService {
             return false;
         }
 
-        if (inputEmail == null || !customer.getEmail().equalsIgnoreCase(inputEmail.trim())) {
+        if (!isEmailMatching(customer, inputEmail)) {
             System.out.println("❌ Email does not match our records.");
             return false;
         }
@@ -118,7 +117,7 @@ public class CustomerService {
             return false;
         }
 
-        if (!newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim())) {
+        if (!isPasswordConfirmed(newPassword, confirmPassword)) {
             System.out.println("⚠️ Password confirmation does not match.");
             return false;
         }
@@ -130,8 +129,18 @@ public class CustomerService {
         return true;
     }
 
+    private boolean isEmailMatching(Customer customer, String inputEmail) {
+        return inputEmail != null && customer.getEmail().equalsIgnoreCase(inputEmail.trim());
+    }
+
+    private boolean isPasswordConfirmed(String newPassword, String confirmPassword) {
+        return newPassword != null && newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim());
+    }
+
     private boolean isCurrentPasswordCorrect(Customer customer, String inputPassword) {
-        return customer.getPassword().equals(inputPassword);
+//        return customer.getPassword().equals(inputPassword);
+        return inputPassword != null && inputPassword.equals(customer.getPassword());
+
     }
 
     private boolean isValidLength(String password) {

@@ -28,20 +28,18 @@ public class AdminController {
         customerView.showAllCustomers(customers);
     }
 
-    public void viewUsersByNameKeyword(String keyword) {
+    public void filterUsersByNameKeyword(String keyword) {
         List<Customer> customers = adminService.filterUsersByNameKeyword(keyword);
         customerView.displayFilteredUsers(customers,keyword);
     }
 
 
-    public void viewUsersByBalanceRange(double min, double max) {
+    public void ordersByBalanceRange(double min, double max) {
         List<Customer> users = adminService.getUsersByBalanceRange(min, max);
         transactionView.showUsersByBalanceRange(min, max,users);
     }
 
-
-
-    public void viewOrdersByDateRange(LocalDate from, LocalDate to) {
+    public void ordersByDateRange(LocalDate from, LocalDate to) {
         List<Order> orders = adminService.getOrdersByDateRange(from, to);
         transactionView.displayOrdersByDateRange(orders, from, to);
     }
@@ -51,8 +49,8 @@ public class AdminController {
         transactionView.viewAllTransactions(orders);
     }
 
-    public void viewTransactionsByUser(String email) {
-        List<Order> orders = adminService.getTransactionsByUser(email);
+    public void viewOrdersByUser(String email) {
+        List<Order> orders = adminService.getOrdersByUser(email);
         transactionView.viewTransactionsByUser(email, orders);
     }
 }

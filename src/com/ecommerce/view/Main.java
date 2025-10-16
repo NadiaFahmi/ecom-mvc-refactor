@@ -81,11 +81,11 @@ public class Main {
 
         if (user instanceof Admin admin) {
             OrderService orderService = new OrderService(productService, customerService, null);
-            AdminService adminService = new AdminService(customerService, orderService, admin);
+            AdminService adminService = new AdminService(customerService, orderService);
             TransactionView transactionView = new TransactionView();
             CustomerView customerView = new CustomerView();
             AdminController adminController =new AdminController(adminService, transactionView, customerView);
-            AdminDashboard adminDashboard = new AdminDashboard(adminController,productController,scanner );
+            AdminDashboard adminDashboard = new AdminDashboard(adminController,productController,productView,scanner );
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
             CartService cartService = new CartService(customer.getId(), customerService, productService);

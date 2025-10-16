@@ -13,13 +13,28 @@ public class LoginView {
     }
 
     public String promptEmail() {
-        System.out.print("📧 Enter your registered email: ");
-        return scanner.nextLine().trim().toLowerCase();
+        String email = "";
+        while (true) {
+            System.out.print("📧 Enter your registered email: ");
+            email = scanner.nextLine().trim().toLowerCase();
+            if (!email.isEmpty()) {
+                return email;
+            }
+            System.out.println("❌ Email must not be empty. Please try again.");
+        }
     }
 
+
     public String promptPassword() {
-        System.out.print("🔒 Enter your password: ");
-        return scanner.nextLine().trim();
+        String password = "";
+        while (true) {
+            System.out.print("🔒 Enter your password: ");
+            password = scanner.nextLine().trim();
+            if (!password.isEmpty()) {
+                return password;
+            }
+            System.out.println("❌ Password must not be empty. Please try again.");
+        }
     }
 
     public void showWelcome(User user) {
@@ -33,6 +48,8 @@ public class LoginView {
     public void showIncorrectPassword() {
         System.out.println("❌ Still incorrect.");
     }
+
+
 
     public void showExitMessage() {
         System.out.println("👋 Exiting login.");

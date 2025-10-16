@@ -1,6 +1,5 @@
 package com.ecommerce.service;
 
-import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 
@@ -15,17 +14,11 @@ import java.util.List;
 
     private final CustomerService customerService;
     private final OrderService orderService;
-    private final Admin admin;
 
-
-    public AdminService(CustomerService customerService, OrderService orderService,
-                        Admin admin) {
+    public AdminService(CustomerService customerService, OrderService orderService
+                        ) {
         this.customerService = customerService;
         this.orderService = orderService;
-        this.admin = admin;
-    }
-    public Admin getAdmin() {
-        return admin;
     }
 
 
@@ -82,7 +75,7 @@ import java.util.List;
     }
 
 
-public List<Order> getTransactionsByUser(String email) {
+public List<Order> getOrdersByUser(String email) {
     List<Order> filteredOrders = new ArrayList<>();
 
     for (Order order : orderService.getOrders()) {

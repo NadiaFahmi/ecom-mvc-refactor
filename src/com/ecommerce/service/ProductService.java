@@ -31,7 +31,7 @@ public class ProductService {
         List<Product> products = loadProductList();
         products.add(product);
         repository.save(products);
-        System.out.println("✅ Product '" + name + "' added successfully with ID " + id + ".");
+//        System.out.println("✅ Product '" + name + "' added successfully with ID " + id + ".");
     }
 
 
@@ -61,17 +61,27 @@ public class ProductService {
         }
     }
 
-    public void removeProduct(int id) {
-        List<Product> products = loadProductList();
-        boolean removed = products.removeIf(p -> p.getId() == id);
+//    public void removeProduct(int id) {
+//        List<Product> products = loadProductList();
+//        boolean removed = products.removeIf(p -> p.getId() == id);
+//
+//        if (removed) {
+//            repository.save(products);
+//            System.out.println("✅ Product with ID " + id + " successfully removed.");
+//        } else {
+//            System.out.println("❌ Product ID not found.");
+//        }
+//    }
+public boolean removeProduct(int id) {
+    List<Product> products = loadProductList();
+    boolean removed = products.removeIf(p -> p.getId() == id);
 
-        if (removed) {
-            repository.save(products);
-            System.out.println("✅ Product with ID " + id + " successfully removed.");
-        } else {
-            System.out.println("❌ Product ID not found.");
-        }
+    if (removed) {
+        repository.save(products);
     }
+
+    return removed;
+}
 
     public Product getProductById(int id) {
         for (Product product : repository.load()) {
@@ -87,7 +97,7 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategory(String category) {
-        List<Product> products = loadProductList(); // assume this loads all products
+        List<Product> products = loadProductList();
         List<Product> filtered = new ArrayList<>();
 
         for (Product product : products) {

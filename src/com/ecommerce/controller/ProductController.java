@@ -17,29 +17,28 @@ public class ProductController {
         this.productView = productView;
     }
 
-    public void handleListProducts() {
+    public void listProducts() {
         List<Product> products = productService.getAllProducts();
         productView.displayAllProducts(products);
     }
 
-    public void handleAddProduct(String name, double price, String category) {
+
+    public void addProduct(String name, double price, String category) {
         productService.addProduct(name, price, category);
     }
 
-    public void handleRemoveProduct(int id) {
-        productService.removeProduct(id);
-    }
 
-    public void handleUpdateProduct(int id, String newName, double newPrice, String newCategory) {
+    public void updateProduct(int id, String newName, double newPrice, String newCategory) {
         productService.updateProduct(id, newName, newPrice, newCategory);
     }
 
-public void filterProductsByCategory(String category) {
-    List<Product> filteredProducts = productService.getProductsByCategory(category);
-    productView.displayFilteredProducts(filteredProducts, category);
+public List<Product> filterProductsByCategory(String category) {
+    return productService.getProductsByCategory(category);
 }
 
-
+    public boolean removeProduct(int id) {
+        return productService.removeProduct(id);
+    }
 }
 
 

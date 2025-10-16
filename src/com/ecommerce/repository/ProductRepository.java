@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 
 public class ProductRepository {
-
+    private static final String ITEM_PART_DELIMITER = ",";
     private final String filePath;
 
     public ProductRepository(String filePath) {
@@ -58,6 +58,6 @@ public class ProductRepository {
     }
 
     private String formatProduct(Product product) {
-        return product.getId() + "," + product.getName() + "," + product.getPrice() + "," + product.getCategory();
+        return product.getId() + ITEM_PART_DELIMITER + product.getName() + ITEM_PART_DELIMITER + product.getPrice() + ITEM_PART_DELIMITER + product.getCategory();
     }
 }

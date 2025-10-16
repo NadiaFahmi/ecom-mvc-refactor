@@ -67,7 +67,7 @@ public class CustomerDashboard {
             String input = scanner.nextLine().trim();
 
             switch (input) {
-                case "1" -> productController.handleListProducts();
+                case "1" -> productController.listProducts();
                 case "2" -> {
                     System.out.print("🆔 Enter Product ID: ");
                     String productIdInput = scanner.nextLine().trim();

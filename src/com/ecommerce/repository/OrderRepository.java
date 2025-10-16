@@ -15,6 +15,11 @@ import java.util.List;
 
 public class OrderRepository {
 
+    private static final String FIELD_DELIMITER = "|";
+    private static final String ITEM_DELIMITER = ";";
+    private static final String ITEM_PART_DELIMITER = ",";
+
+
     private final ProductService productService;
     private final CustomerService customerService;
     private final File file = new File("orders.txt");
@@ -37,7 +42,7 @@ public class OrderRepository {
                 int customerId = Integer.parseInt(parts[0]);
                 String orderId = parts[1];
                 LocalDateTime orderDate = LocalDateTime.parse(parts[2], formatter);
-                String[] itemParts = parts[3].split(";");
+                String[] itemParts = parts[3].split(ITEM_DELIMITER);
                 //
                 String status = parts[4];
                 //
@@ -45,7 +50,7 @@ public class OrderRepository {
                 List<CartItem> cartItems = new ArrayList<>();
                 for (String item : itemParts) {
                     if (item.trim().isEmpty()) continue;
-                    String[] itemDetails = item.split(",");
+                    String[] itemDetails = item.split(ITEM_PART_DELIMITER);
                     int productId = Integer.parseInt(itemDetails[0]);
                     int quantity = Integer.parseInt(itemDetails[1]);
 
@@ -74,16 +79,16 @@ public class OrderRepository {
     public void saveOrder(Order order) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
             StringBuilder sb = new StringBuilder();
-            sb.append(order.getCustomer().getId()).append("|")
-                    .append(order.getOrderId()).append("|")
-                    .append(order.getOrderDate().format(formatter)).append("|");
+            sb.append(order.getCustomer().getId()).append(FIELD_DELIMITER)
+                    .append(order.getOrderId()).append(FIELD_DELIMITER)
+                    .append(order.getOrderDate().format(formatter)).append(FIELD_DELIMITER);
 
             for (CartItem item : order.getCartItems()) {
-                sb.append(item.getProduct().getId()).append(",")
-                        .append(item.getQuantity()).append(";");
+                sb.append(item.getProduct().getId()).append(ITEM_PART_DELIMITER)
+                        .append(item.getQuantity()).append("ITEM_DELIMITER");
 
             }
-            sb.append("|").append(order.getStatus());
+            sb.append(FIELD_DELIMITER).append(order.getStatus());
 
             writer.write(sb.toString());
             writer.newLine();

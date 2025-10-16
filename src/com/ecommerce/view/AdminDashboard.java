@@ -2,7 +2,9 @@ package com.ecommerce.view;
 
 import com.ecommerce.controller.AdminController;
 import com.ecommerce.controller.ProductController;
+import com.ecommerce.model.entities.Product;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -10,13 +12,15 @@ public class AdminDashboard {
 
     private final AdminController adminController;
     private final ProductController productController;
+    private final ProductView productView;
     private final Scanner scanner;
 
     public AdminDashboard(AdminController adminController,
-                          ProductController productController,
+                          ProductController productController,ProductView productView,
                           Scanner scanner) {
         this.adminController = adminController;
         this.productController = productController;
+        this.productView = productView;
         this.scanner = scanner;
     }
 
@@ -56,64 +60,114 @@ public class AdminDashboard {
                 case "2" -> {
                     System.out.print("🔍 Enter keyword: ");
                     String keyword = scanner.nextLine();
-                    adminController.viewUsersByNameKeyword(keyword);
+                    adminController.filterUsersByNameKeyword(keyword);
                 }
                 case "3" -> {
-                    System.out.print("💰 Min balance: ");
-                    double min = Double.parseDouble(scanner.nextLine());
-                    System.out.print("💰 Max balance: ");
-                    double max = Double.parseDouble(scanner.nextLine());
-                    adminController.viewUsersByBalanceRange(min, max);
+                    try {
+                        System.out.print("💰 Min balance: ");
+                        double min = Double.parseDouble(scanner.nextLine());
+
+                        System.out.print("💰 Max balance: ");
+                        double max = Double.parseDouble(scanner.nextLine());
+
+                        adminController.ordersByBalanceRange(min, max);
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("⚠️ Please enter valid numbers for balance.");
+                    }
                 }
                 case "4" -> adminController.viewAllTransactions();
 
                 case "5" -> {
-                    System.out.print("📅 From date (yyyy-MM-dd): ");
-                    LocalDate from = LocalDate.parse(scanner.nextLine());
-                    System.out.print("📅 To date (yyyy-MM-dd): ");
-                    LocalDate to = LocalDate.parse(scanner.nextLine());
-                    adminController.viewOrdersByDateRange(from, to);
+                    try {
+                        System.out.print("From date (yyyy-MM-dd): ");
+                        LocalDate from = LocalDate.parse(scanner.nextLine());
+
+                        System.out.print("To date (yyyy-MM-dd): ");
+                        LocalDate to = LocalDate.parse(scanner.nextLine());
+
+                        adminController.ordersByDateRange(from, to);
+
+                    } catch (DateTimeException e) {
+                        System.out.println("⚠️ Invalid date format. Please use yyyy-MM-dd (e.g., 2025-10-10).");
+                    }
                 }
                 case "6" -> {
                     System.out.print("📧 Enter user email: ");
                     String email = scanner.nextLine();
-                    adminController.viewTransactionsByUser(email);
+                    adminController.viewOrdersByUser(email);
                 }
                 case "7" -> {
                     System.out.print("📦 Enter category: ");
-                    String category = scanner.nextLine();
-//                    adminController.handleFilterProductsByCategory(category);
-                    productController.filterProductsByCategory(category);
+                    String category = scanner.nextLine().trim();
+
+                    if (category.isEmpty()) {
+                        System.out.println("⚠️ Category cannot be empty. Please try again.");
+                        break;
+                    }
+
+                    List<Product> filtered = productController.filterProductsByCategory(category);
+                    productView.displayFilteredProducts(filtered, category);
                 }
                 case "8" -> {
-                    System.out.print("🆕 Product name: ");
-                    String name = scanner.nextLine();
-                    System.out.print("💰 Price: ");
-                    double price = Double.parseDouble(scanner.nextLine());
-                    System.out.print("📂 Category: ");
-                    String category = scanner.nextLine();
-                    productController.handleAddProduct(name, price, category);
+                    try {
+                        System.out.print("🆕System.out.println(Product name: ");
+                        String name = scanner.nextLine();
+
+                        System.out.print("Price: ");
+                        double price = Double.parseDouble(scanner.nextLine());
+
+                        System.out.print("Category: ");
+                        String category = scanner.nextLine();
+
+                        if (name.isEmpty() || category.isEmpty()) {
+                            System.out.println("⚠️ Product name and category cannot be empty.");
+                            break;
+                        }
+                        productController.addProduct(name, price, category);
+                        System.out.println("✅ Product '" + name + "' added successfully");
+                    } catch (NumberFormatException e) {
+                        System.out.println("⚠️ Invalid price format. Please enter a valid number.");
+
+                    } catch (Exception e) {
+                        System.out.println("⚠️ Something went wrong while adding the product. Please try again.");
+                    }
 
                 }
                 case "9" -> {
-                    System.out.print("🔄 Product ID to update: ");
-                    int id = Integer.parseInt(scanner.nextLine());
-                    System.out.print("🆕 New name: ");
-                    String name = scanner.nextLine();
-                    System.out.print("💰 New price: ");
-                    double price = Double.parseDouble(scanner.nextLine());
-                    System.out.print("📂 New category: ");
-                    String category = scanner.nextLine();
-                    productController.handleUpdateProduct(id,name,price,category);
+                    try {
+                        System.out.print("🔄 Product ID to update: ");
+                        int id = Integer.parseInt(scanner.nextLine());
+
+                        System.out.print("New name: ");
+                        String name = scanner.nextLine();
+
+                        System.out.print("New price: ");
+                        double price = Double.parseDouble(scanner.nextLine());
+
+                        System.out.print("New category: ");
+                        String category = scanner.nextLine();
+                        productController.updateProduct(id, name, price, category);
+                    } catch (NumberFormatException e) {
+
+                        System.out.println("⚠️ Invalid number format. Please enter valid numeric values for ID and price.");
+                    } catch (Exception e) {
+                        System.out.println("⚠️ Something went wrong while updating the product. Please try again.");
+                    }
                 }
                 case "10" -> {
                     System.out.print("❌ Product ID to remove: ");
                     int id = Integer.parseInt(scanner.nextLine());
-                    productController.handleRemoveProduct(id);
 
+                    boolean success = productController.removeProduct(id);
+                    if (success) {
+                        System.out.println("✅ Product with ID " + id + " successfully removed.");
+                    } else {
+                        System.out.println("❌ Product ID not found.");
+                    }
                 }
                 case "11" ->
-                productController.handleListProducts();
+                productController.listProducts();
                 default -> System.out.println("⚠️ Invalid choice. Please try again.");
             }
         }

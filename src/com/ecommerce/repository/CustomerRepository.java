@@ -7,7 +7,7 @@ import java.util.*;
 
 public class CustomerRepository {
 
-
+    private static final String DELIMITER = ",";
 private final String filePath;
 private Map<Integer, Customer> customerMap = new HashMap<>();
 
@@ -18,12 +18,19 @@ public CustomerRepository(String filePath) {
 public void saveAll() {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
         for (Customer c : customerMap.values()) {
-            writer.write(c.getId() + "," +
-                    c.getName() + "," +
-                    c.getEmail() + "," +
-                    c.getPassword() + "," +
-                    c.getBalance() + "," +
-                    c.getAddress());
+//            writer.write(c.getId() + "," +
+//                    c.getName() + "," +
+//                    c.getEmail() + "," +
+//                    c.getPassword() + "," +
+//                    c.getBalance() + "," +
+//                    c.getAddress());
+            writer.write(String.join(DELIMITER,
+                    String.valueOf(c.getId()),
+                    c.getName(),
+                    c.getEmail(),
+                    c.getPassword(),
+                    String.valueOf(c.getBalance()),
+                    c.getAddress()));
             writer.newLine();
         }
         System.out.println("✅ Processed successfully.");
