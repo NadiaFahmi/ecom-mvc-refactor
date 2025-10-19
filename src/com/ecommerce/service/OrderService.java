@@ -46,8 +46,7 @@ public class OrderService {
         orderRepository.saveOrder(newOrder);
         customer.addOrder(newOrder);
         orders.add(newOrder);
-        cartService.clearCart();
-
+        cartService.clearCartFileContents(customer);
         return newOrder;
     }
     public boolean tryAddFunds(Customer customer, double amount, double requiredTotal) {

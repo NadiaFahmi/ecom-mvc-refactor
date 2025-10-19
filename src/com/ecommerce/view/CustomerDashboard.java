@@ -77,24 +77,24 @@ public class CustomerDashboard {
                         System.out.print("Enter quantity: ");
                         int quantity = Integer.parseInt(scanner.nextLine().trim());
 
-                        cartController.handleAddToCart(productId, quantity);
+                        cartController.addToCart(customer,productId, quantity);
                     } catch (NumberFormatException e) {
                         System.out.println("❌ Invalid input. Please enter numeric values.");
                     }
                 }
-                case "3" -> cartController.handlelistCartItems();
+                case "3" -> cartController.listCartItems(customer);
                 case "4" -> {
                     System.out.print("Enter Product ID to remove from cart: ");
                     try {
                         int productId = Integer.parseInt(scanner.nextLine().trim());
-                        cartController.handleRemoveFromCart(productId);
-                        cartController.handleSaveCart();
+                        cartController.removeFromCart(customer,productId);
+                        cartController.saveCart(customer);
                     } catch (NumberFormatException e) {
                         System.out.println("⚠️ Invalid product ID. Please enter a number.");
                     }
                 }
 
-                case "5" -> cartController.handleTotalPrice();
+                case "5" -> cartController.totalPrice(customer);
                 case "6" -> {
                     try {
                         System.out.print("Enter Product ID: ");
@@ -108,7 +108,7 @@ public class CustomerDashboard {
                         if (newQty < 0) {
                             System.out.println("❌ Quantity cannot be negative.");
                         } else {
-                            cartController.handleUpdateQuantity(productId, newQty);
+                            cartController.updateQuantity(customer,productId, newQty);
                             System.out.println("✅ Cart item updated.");
                         }
 
@@ -119,7 +119,7 @@ public class CustomerDashboard {
                     }
                 }
 
-                case "7" -> cartController.handleSaveCart();
+                case "7" -> cartController.saveCart(customer);
                 case "8" -> orderController.handlePlaceOrder(customer);
                 case "9" -> orderController.printCustomerOrders(customer);
                 case "10" -> {

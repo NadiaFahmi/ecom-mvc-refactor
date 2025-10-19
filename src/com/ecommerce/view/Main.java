@@ -8,6 +8,7 @@ import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 import com.ecommerce.model.entities.User;
+import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.service.*;
@@ -19,12 +20,14 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        CustomerRepository customerRepository = new CustomerRepository("customers.txt");
+
 
         ProductRepository productRepo = new ProductRepository("products.txt");
         ProductService productService = new ProductService(productRepo);
         ProductView productView = new ProductView();
         ProductController productController = new ProductController(productService, productView);
+
+        CustomerRepository customerRepository = new CustomerRepository("customers.txt");
         CustomerService customerService = new CustomerService(customerRepository);
         CustomerController customerController = new CustomerController(customerService);
         CustomerUpdateView customerUpdateView = new CustomerUpdateView(customerController);
@@ -88,11 +91,12 @@ public class Main {
             AdminDashboard adminDashboard = new AdminDashboard(adminController,productController,productView,scanner );
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
-            CartService cartService = new CartService(customer.getId(), customerService, productService);
+            CartRepository cartRepository = new CartRepository(productService);
+            CartService cartService = new CartService(productService, cartRepository);
             OrderService orderService = new OrderService(productService, customerService, cartService);
-
-            CartController cartController = new CartController(cartService);
-            cartController.handleLoadCart();
+            CartView cartView = new CartView();
+            CartController cartController = new CartController(cartService,cartView);
+            cartController.loadCart(customer);
             OrderView orderView = new OrderView(scanner);
             OrderController orderController = new OrderController(orderService, orderView);
             orderController.loadOrdersFromFile();

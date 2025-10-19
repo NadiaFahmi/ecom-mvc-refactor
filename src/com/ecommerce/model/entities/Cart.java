@@ -7,26 +7,29 @@ import java.util.*;
 public class Cart {
     private List<CartItem> cartItems = new ArrayList<>();
 
-
-
     public void addItem(Product product, int quantity) {
-        if (product == null || quantity <= 0) {
-            System.out.println("Invalid product or quantity.");
+        //
+        if (!isValid(product, quantity)) {
+            System.out.println("⚠️ Invalid product or quantity.");
             return;
         }
-        for (CartItem item : cartItems) {
-            if (item.getProduct().getId() == product.getId()) {
-                item.setQuantity(item.getQuantity() + quantity);
-                System.out.println("Updated quantity for: " + product.getName());
-                return;
-            }
+        CartItem existingItem = findItem(product.getId());
+        if (existingItem != null) {
+            existingItem.increaseQuantity(quantity);
+            System.out.println("🔄 Updated quantity for: " + product.getName());
+        } else {
+            cartItems.add(new CartItem(product, quantity));
+            System.out.println("✅ Added to cart: " + product.getName() + " (x" + quantity + ")");
+
         }
 
-        cartItems.add(new CartItem(product, quantity));
-        System.out.println("Added to cart: " + product.getName() + " (x" + quantity + ")");
     }
+    public boolean isEmpty() {
+            return cartItems.isEmpty();
+        }
 
-    public CartItem findItemByProductId(int productId) {
+
+    public CartItem findItem(int productId) {
         for (CartItem item : cartItems) {
             if (item.getProduct().getId() == productId) {
                 return item;
@@ -34,23 +37,21 @@ public class Cart {
         }
         return null;
     }
-
     public void removeItem(int productId) {
-        cartItems.removeIf(item -> item.getProduct().getId() == productId);
-        System.out.println("Removed product ID " + productId + " from cart.");
-    }
+        CartItem item = findItem(productId);
 
-    public void listItems() {
-        if (cartItems.isEmpty()) {
-            System.out.println("Cart is empty.");
+        if (item == null) {
+            System.out.println("⚠️ Product ID " + productId + " not found in cart.");
             return;
         }
 
-        System.out.println("Cart Contents:");
-        for (CartItem item : cartItems) {
-            Product p = item.getProduct();
-            System.out.printf("- %s x%d = $%.2f%n", p.getName(), item.getQuantity(), p.getPrice() * item.getQuantity());
-        }
+        cartItems.remove(item);
+        System.out.println("🗑️ Removed product: " + item.getProduct().getName());
+    }
+
+    public void clearCart() {
+        cartItems.clear();
+        System.out.println("Cart cleared.");
     }
 
     public double getTotalPrice() {
@@ -61,15 +62,12 @@ public class Cart {
         return total;
     }
 
-    public void clearCart() {
-        cartItems.clear();
-        System.out.println("Cart cleared.");
-    }
-
     public List<CartItem> getCartItems() {
         return cartItems;
     }
 
-
+    private boolean isValid(Product product, int quantity) {
+        return product != null && quantity > 0;
+    }
 }
 
