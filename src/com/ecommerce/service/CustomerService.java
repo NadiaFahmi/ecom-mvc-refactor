@@ -1,6 +1,7 @@
 package com.ecommerce.service;
 
 import com.ecommerce.model.entities.Customer;
+import com.ecommerce.model.entities.Order;
 import com.ecommerce.repository.CustomerRepository;
 
 import java.util.*;
@@ -8,12 +9,15 @@ import java.util.NoSuchElementException;
 
 public class CustomerService {
 
+    private static final String EMAIL_REGEX = "^[\\w.-]+@[\\w.-]+\\.\\w{2,}$";
+
     private final CustomerRepository repository;
-
-    public CustomerService(CustomerRepository repository) {
+    private final OrderService orderService;
+    public CustomerService(CustomerRepository repository, OrderService orderService) {
         this.repository = repository;
-    }
+        this.orderService = orderService;
 
+    }
     public void registerCustomer(Customer customer) {
         repository.addCustomer(customer);
         repository.saveAll();
@@ -37,7 +41,7 @@ public class CustomerService {
 
     public Customer findCustomerById(int id) {
 
-        return repository.getCustomer(id);
+        return repository.getCustomerById(id);
     }
 
     //
@@ -68,7 +72,7 @@ public class CustomerService {
 
     private boolean isValidEmail(String email) {
         if (email == null || email.isEmpty()) return false;
-        return email.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$");
+        return email.matches(EMAIL_REGEX);
     }
 
 
@@ -225,7 +229,16 @@ public class CustomerService {
             return false;
         }
     }
+    public Customer getLoggedInCustomerWithOrders(List<Order> outputOrders) {
+        Customer customer = orderService.getLoggedInCustomer();
+        if (customer == null) return null;
 
+        List<Order> orders = orderService.getOrdersForCustomer(customer.getEmail());
+        outputOrders.clear();
+        outputOrders.addAll(orders);
+
+        return customer;
+    }
 
 }
 

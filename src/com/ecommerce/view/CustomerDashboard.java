@@ -61,6 +61,7 @@ public class CustomerDashboard {
             System.out.println("👤 --- Account ---");
             System.out.println("11 - Update My Account Info");
             System.out.println("12 - Delete My Account");
+            System.out.println("13 - Customer info");
             System.out.println("exit - Logout and Exit Dashboard");
 
             System.out.print("Your choice: ");
@@ -137,6 +138,10 @@ public class CustomerDashboard {
                 case "12" ->  {  System.out.print("📅 Enter Your email: ");
                     String emailInput = scanner.nextLine().trim();
                     customerController.handleDeleteCustomer(emailInput);
+                }
+                case "13" -> {
+
+                    customerController.showLoggedInCustomerOrders();
                 }
                 case "exit" -> {
                     System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");

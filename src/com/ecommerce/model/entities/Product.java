@@ -44,7 +44,9 @@ public class Product {
     public String getCategory() {
         return category;
     }
-   public String toString(){
+
+    @Override
+    public String toString(){
        return "Product{id=" + id + ", name='" + name + "', price=" + price + ", category=" + category+ "}";
    }
 }

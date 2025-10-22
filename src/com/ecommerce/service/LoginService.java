@@ -18,9 +18,10 @@ public class LoginService {
         email = email.trim().toLowerCase();
         password = password.trim();
 
-        if (email.equals("admin@email.com")) {
+        if (email.equals("admin@gmail.com")) {
             if (password.equals("adminPass")) {
                 System.out.println("✅ Welcome back, Admin!");
+                SessionContext.setLoggedInEmail(email);
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
                 System.out.println("❌ Invalid admin password.");
@@ -36,6 +37,7 @@ public class LoginService {
 
         if (customer.getPassword().equals(password)) {
             System.out.println("✅ Welcome back, " + customer.getName() + "!");
+            SessionContext.setLoggedInEmail(email);
             return customer;
         }
 

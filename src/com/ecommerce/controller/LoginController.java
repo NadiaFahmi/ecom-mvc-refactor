@@ -24,7 +24,7 @@ public class LoginController {
         if (user == null) {
             loginView.showLoginFailed();
         } else {
-//            loginView.showWelcome(user);
+            loginView.showWelcome(user);
             return user;
         }
         return null;

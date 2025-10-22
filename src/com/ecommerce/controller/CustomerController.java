@@ -2,15 +2,24 @@ package com.ecommerce.controller;
 
 import com.ecommerce.model.entities.Customer;
 
+import com.ecommerce.model.entities.Order;
 import com.ecommerce.service.CustomerService;
+import com.ecommerce.view.CustomerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CustomerController {
 
     private CustomerService customerService;
+    private CustomerView customerView;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService
+            , CustomerView customerView
+    ) {
         this.customerService = customerService;
+        this.customerView = customerView;
     }
 
     public void load() {
@@ -51,5 +60,15 @@ public class CustomerController {
     public boolean handleDeleteCustomer(String email) {
         return customerService.deleteCustomer(email);
     }
+    public void showLoggedInCustomerOrders() {
+        List<Order> orders = new ArrayList<>();
+        Customer customer = customerService.getLoggedInCustomerWithOrders(orders);
 
+        if (customer == null) {
+            System.out.println("⚠️ No customer is currently logged in.");
+            return;
+        }
+
+        customerView.displayCustomerWithOrders(customer, orders);
+    }
 }

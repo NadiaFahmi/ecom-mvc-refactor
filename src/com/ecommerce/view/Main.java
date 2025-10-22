@@ -10,6 +10,7 @@ import com.ecommerce.model.entities.Order;
 import com.ecommerce.model.entities.User;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.CustomerRepository;
+import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.service.*;
 
@@ -23,13 +24,22 @@ public class Main {
 
 
         ProductRepository productRepo = new ProductRepository("products.txt");
+        CustomerRepository customerRepository = new CustomerRepository("customers.txt");
+
+        // Services
         ProductService productService = new ProductService(productRepo);
+        CartRepository cartRepository = new CartRepository(productService);
+        CartService cartService = new CartService(productService, cartRepository);
+        OrderRepository orderRepository = new OrderRepository(productService);
+        OrderService orderService = new OrderService(cartService, orderRepository, customerRepository);
+        CustomerService customerService = new CustomerService(customerRepository, orderService);
+
+        // Views and Controllers
         ProductView productView = new ProductView();
         ProductController productController = new ProductController(productService, productView);
 
-        CustomerRepository customerRepository = new CustomerRepository("customers.txt");
-        CustomerService customerService = new CustomerService(customerRepository);
-        CustomerController customerController = new CustomerController(customerService);
+        CustomerView customerView = new CustomerView();
+        CustomerController customerController = new CustomerController(customerService, customerView);
         CustomerUpdateView customerUpdateView = new CustomerUpdateView(customerController);
         customerController.load();
 
@@ -50,7 +60,6 @@ public class Main {
                 LoginView loginView = new LoginView(scanner);
                 LoginController loginController = new LoginController(loginService,loginView);
                 user = loginController.handleLogin();
-
 
             } else if (choice.equals("2")) {
                 SignUpService signUpService = new SignUpService(customerService);
@@ -83,22 +92,16 @@ public class Main {
 
 
         if (user instanceof Admin admin) {
-            OrderService orderService = new OrderService(productService, customerService, null);
             AdminService adminService = new AdminService(customerService, orderService);
             TransactionView transactionView = new TransactionView();
-            CustomerView customerView = new CustomerView();
-            AdminController adminController =new AdminController(adminService, transactionView, customerView);
-            AdminDashboard adminDashboard = new AdminDashboard(adminController,productController,productView,scanner );
+            AdminController adminController = new AdminController(adminService, transactionView, customerView);
+            AdminDashboard adminDashboard = new AdminDashboard(adminController, productController, productView, scanner);
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
-            CartRepository cartRepository = new CartRepository(productService);
-            CartService cartService = new CartService(productService, cartRepository);
-            OrderService orderService = new OrderService(productService, customerService, cartService);
-            CartView cartView = new CartView();
-            CartController cartController = new CartController(cartService,cartView);
+            CartController cartController = new CartController(cartService, new CartView());
             cartController.loadCart(customer);
-            OrderView orderView = new OrderView(scanner);
-            OrderController orderController = new OrderController(orderService, orderView);
+
+            OrderController orderController = new OrderController(orderService, new OrderView(scanner));
             orderController.loadOrdersFromFile();
 
             List<Order> allOrders = orderController.getAllOrders();

@@ -45,7 +45,7 @@ public class OrderController {
             }
         }
 
-        Order order = orderService.placeOrder(customer);
+        Order order = orderService.placeOrder();
         if (order != null) {
             orderView.showOrderSuccess();
         } else {

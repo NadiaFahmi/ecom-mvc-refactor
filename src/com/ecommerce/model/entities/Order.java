@@ -17,10 +17,11 @@ public class Order {
         this.orderId = UUID.randomUUID().toString();
         this.cartItems = new ArrayList<>(cartItems);
         this.customer = customer;
-        this.order_total =calculateTotal();
+        this.order_total = calculateTotal();
         this.status = "pending";
         this.orderDate = LocalDateTime.now();
     }
+
     private double calculateTotal() {
         double total = 0.0;
         for (CartItem item : cartItems) {
@@ -28,6 +29,7 @@ public class Order {
         }
         return total;
     }
+
     public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
     }
@@ -35,9 +37,6 @@ public class Order {
     public LocalDateTime getOrderDate() {
         return orderDate;
     }
-
-
-
 
     public String getOrderId() {
         return orderId;
@@ -51,9 +50,12 @@ public class Order {
         return cartItems;
     }
 
+    public void setOrder_total(double order_total) {
+        this.order_total = order_total;
+    }
+
     public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = new ArrayList<>(cartItems);
-        this.order_total = calculateTotal();
+        this.cartItems = cartItems;
     }
 
     public Customer getCustomer() {
@@ -67,7 +69,6 @@ public class Order {
     public double getOrder_total() {
         return order_total;
     }
-
 
 
     public String getStatus() {
@@ -84,6 +85,8 @@ public class Order {
             this.status = "paid";
         }
     }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("🆔 Order ID: ").append(orderId)
