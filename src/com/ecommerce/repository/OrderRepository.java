@@ -95,72 +95,72 @@ public class OrderRepository {
             System.out.println("⚠️ Failed to save order: " + e.getMessage());
         }
     }
-    public List<Order> getOrdersByCustomerEmail(String email) {
-        List<Order> orders = new ArrayList<>();
-
-        if (!file.exists()) return orders;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length < 11) continue;
-
-                // Match customer email
-                String customerEmail = parts[3];
-                if (!customerEmail.equalsIgnoreCase(email)) continue;
-
-                // Reconstruct Customer
-                int customerId = Integer.parseInt(parts[1]);
-                String name = parts[2];
-                String password = parts[4];
-                double balance = Double.parseDouble(parts[5]);
-                String address = parts[6];
-                Customer customer = new Customer(customerId, name, customerEmail, password, balance, address);
-
-                // Reconstruct Order
-                String orderId = parts[0];
-                LocalDateTime orderDate = LocalDateTime.parse(parts[7], formatter);
-                String status = parts[8];
-                String itemsRaw = parts[9];
-                double total = Double.parseDouble(parts[10]);
-
-                List<CartItem> cartItems = new ArrayList<>();
-                if (!itemsRaw.isBlank()) {
-                    String[] itemParts = itemsRaw.split(ITEM_DELIMITER);
-                    for (String item : itemParts) {
-                        String[] itemFields = item.split(ITEM_PART_DELIMITER);
-                        if (itemFields.length < 2) continue;
-
-                        int productId = Integer.parseInt(itemFields[0]);
-                        try {
-
-                            int quantity = Integer.parseInt(itemFields[1]);
-                            Product product = productService.getProductById(productId);
-                            if (product != null) {
-                                cartItems.add(new CartItem(product, quantity));
-                            } else {
-                                System.out.println("⚠️ Product not found: " + productId);
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Invalid quantity for product " + productId);
-                        }
-                    }
-                }
-
-                Order order = new Order(cartItems, customer);
-                order.setOrderId(orderId);
-                order.setOrderDate(orderDate);
-                order.setStatus(status);
-                order.setOrder_total(total);
-
-                orders.add(order);
-            }
-        } catch (IOException | NumberFormatException | DateTimeParseException e) {
-            e.printStackTrace();
-        }
-
-        return orders;
-    }
+//    public List<Order> getOrdersByCustomerEmail(String email) {
+//        List<Order> orders = new ArrayList<>();
+//
+//        if (!file.exists()) return orders;
+//
+//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                String[] parts = line.split("\\|");
+//                if (parts.length < 11) continue;
+//
+//                // Match customer email
+//                String customerEmail = parts[3];
+//                if (!customerEmail.equalsIgnoreCase(email)) continue;
+//
+//                // Reconstruct Customer
+//                int customerId = Integer.parseInt(parts[1]);
+//                String name = parts[2];
+//                String password = parts[4];
+//                double balance = Double.parseDouble(parts[5]);
+//                String address = parts[6];
+//                Customer customer = new Customer(customerId, name, customerEmail, password, balance, address);
+//
+//                // Reconstruct Order
+//                String orderId = parts[0];
+//                LocalDateTime orderDate = LocalDateTime.parse(parts[7], formatter);
+//                String status = parts[8];
+//                String itemsRaw = parts[9];
+//                double total = Double.parseDouble(parts[10]);
+//
+//                List<CartItem> cartItems = new ArrayList<>();
+//                if (!itemsRaw.isBlank()) {
+//                    String[] itemParts = itemsRaw.split(ITEM_DELIMITER);
+//                    for (String item : itemParts) {
+//                        String[] itemFields = item.split(ITEM_PART_DELIMITER);
+//                        if (itemFields.length < 2) continue;
+//
+//                        int productId = Integer.parseInt(itemFields[0]);
+//                        try {
+//
+//                            int quantity = Integer.parseInt(itemFields[1]);
+//                            Product product = productService.getProductById(productId);
+//                            if (product != null) {
+//                                cartItems.add(new CartItem(product, quantity));
+//                            } else {
+//                                System.out.println("⚠️ Product not found: " + productId);
+//                            }
+//                        } catch (NumberFormatException e) {
+//                            System.out.println("⚠️ Invalid quantity for product " + productId);
+//                        }
+//                    }
+//                }
+//
+//                Order order = new Order(cartItems, customer);
+//                order.setOrderId(orderId);
+//                order.setOrderDate(orderDate);
+//                order.setStatus(status);
+//                order.setOrder_total(total);
+//
+//                orders.add(order);
+//            }
+//        } catch (IOException | NumberFormatException | DateTimeParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return orders;
+//    }
 
 }
