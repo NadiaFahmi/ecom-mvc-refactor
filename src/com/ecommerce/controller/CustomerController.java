@@ -57,7 +57,7 @@ public class CustomerController {
         customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
     }
 
-    public boolean handleDeleteCustomer(String email) {
+    public boolean deleteCustomer(String email) {
         return customerService.deleteCustomer(email);
     }
     public void showLoggedInCustomerOrders() {

@@ -46,9 +46,7 @@ public class Customer extends User{
     public void setAddress(String address) {
         this.address = address;
     }
-    public String getUsername() {
-        return email;
-    }
+
     public void addOrder(Order order) {
         orders.add(order);
     }
@@ -71,16 +69,6 @@ public class Customer extends User{
         return cart;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-    public boolean tryAddToBalance(double amount) {
-        if (amount > 0) {
-            this.balance += amount;
-            return true;
-        }
-        return false;
-    }
 
 
     @Override

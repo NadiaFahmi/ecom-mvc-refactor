@@ -53,13 +53,10 @@ public class OrderService {
 
         return newOrder;
     }
-
-    //Add funds and check if balance is enough
     public boolean tryAddFunds(Customer customer, double amount, double requiredTotal) {
         customer.setBalance(customer.getBalance() + amount);
         return customer.getBalance() >= requiredTotal;
     }
-
 
     //Get the currently logged-in customer using session
     public Customer getLoggedInCustomer() {
@@ -102,8 +99,6 @@ public class OrderService {
         return customerOrders;
     }
 
-//    public List<Order> getOrdersByCustomerEmail(String email) {
-//        return orderRepository.getOrdersByCustomerEmail(email);
-//    }
+
 }
 

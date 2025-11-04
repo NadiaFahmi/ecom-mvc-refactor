@@ -137,7 +137,7 @@ public class CustomerDashboard {
                 case "11" -> customerUpdateView.launchUpdateMenu(customer, scanner);
                 case "12" ->  {  System.out.print("📅 Enter Your email: ");
                     String emailInput = scanner.nextLine().trim();
-                    customerController.handleDeleteCustomer(emailInput);
+                    customerController.deleteCustomer(emailInput);
                 }
                 case "13" -> {
 

@@ -50,13 +50,7 @@ public class Order {
         return cartItems;
     }
 
-    public void setOrder_total(double order_total) {
-        this.order_total = order_total;
-    }
 
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
-    }
 
     public Customer getCustomer() {
         return customer;

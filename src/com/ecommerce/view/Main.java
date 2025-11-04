@@ -90,8 +90,7 @@ public class Main {
             if (user != null) break;
         }
 
-
-        if (user instanceof Admin admin) {
+            if (user instanceof Admin) {
             AdminService adminService = new AdminService(customerService, orderService);
             TransactionView transactionView = new TransactionView();
             AdminController adminController = new AdminController(adminService, transactionView, customerView);
