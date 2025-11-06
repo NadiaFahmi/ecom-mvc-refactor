@@ -110,7 +110,7 @@ public class CustomerDashboard {
                             System.out.println("❌ Quantity cannot be negative.");
                         } else {
                             cartController.updateQuantity(customer,productId, newQty);
-                            System.out.println("✅ Cart item updated.");
+//                            System.out.println("✅ Cart item updated.");
                         }
 
                     } catch (NumberFormatException e) {

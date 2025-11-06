@@ -32,20 +32,16 @@ public class Cart {
 
     public CartItem findItem(int productId) {
 
-        System.out.println("🔎 Looking for product ID: " + productId);
-
         for (CartItem item : cartItems) {
             if (item.getProduct() == null) {
                 System.out.println("⚠️ CartItem has null product.");
                 continue;
             }
-            System.out.println("🔍 Checking item with product ID: " + item.getProduct().getId());
             if (item.getProduct().getId() == productId) {
                 System.out.println("✅ Match found for product ID: " + productId);
                 return item;
             }
 
-            System.out.println("❌ No matching product ID found in cart.");
         }
         return null;
 

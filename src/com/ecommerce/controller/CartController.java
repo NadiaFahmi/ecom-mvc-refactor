@@ -20,6 +20,7 @@ public class CartController {
         boolean success = cartService.addProductToCart(customer,productId, quantity);
         if (success) {
             System.out.println("✅ Product added to cart.");
+            cartService.saveCart(customer);
         } else {
             System.out.println("❌ Product not found.");
         }

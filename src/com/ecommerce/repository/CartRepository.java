@@ -43,7 +43,7 @@ public class CartRepository {
                 writer.write(productId + DELIMITER + quantity);
                 writer.newLine();
             }
-            System.out.println("💾 Cart saved for " + customer.getName());
+//            System.out.println("💾 Cart saved for " + customer.getName());
         } catch (IOException e) {
             System.out.println("❌ Error saving cart: " + e.getMessage());
         }

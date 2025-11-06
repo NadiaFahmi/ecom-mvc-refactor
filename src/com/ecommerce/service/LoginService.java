@@ -36,7 +36,7 @@ public class LoginService {
         }
 
         if (customer.getPassword().equals(password)) {
-            System.out.println("✅ Welcome back, " + customer.getName() + "!");
+//            System.out.println("✅ Welcome back, " + customer.getName() + "!");
             SessionContext.setLoggedInEmail(email);
             return customer;
         }
