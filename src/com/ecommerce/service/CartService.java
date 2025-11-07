@@ -1,5 +1,7 @@
 package com.ecommerce.service;
 
+import com.ecommerce.exception.CartItemNotFoundException;
+import com.ecommerce.exception.InvalidProductQuantityException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
@@ -15,31 +17,42 @@ public class CartService {
         this.cartRepository = cartRepository;
     }
 
-    public boolean addProductToCart(Customer customer, int productId, int quantity) {
+    public void addProductToCart(Customer customer, int productId, int quantity) {
         Product product = productService.getProductById(productId);
-        if (product == null) return false;
+        if (product == null || quantity <= 0) {
+            throw new InvalidProductQuantityException("Invalid product or quantity.");
+        }
+        Cart cart = customer.getCart();
+        CartItem item = findItem(cart, productId);
+        if (item != null) {
 
-        customer.getCart().addItem(product, quantity);
-        return true;
+            increaseItemQuantity(item, quantity);
+
+        } else {
+            cart.getCartItems().add(new CartItem(product, quantity));
+        }
+        saveCart(customer);
+
     }
 
-    public void removeFromCart(Customer customer, int productId) {
-        customer.getCart().removeItem(productId);
-    }
+    public void removeItemFromCart(Cart cart, int productId) {
 
-    public double getTotalPrice(Customer customer) {
-
-        return customer.getCart().getTotalPrice();
+        CartItem item = findItem(cart, productId);
+        if (item == null) {
+            throw new CartItemNotFoundException("Product not found in cart.");
+        }
+        cart.getCartItems().remove(item);
     }
 
     public void updateCartItemQuantity(Customer customer, int productId, int newQuantity) {
-        CartItem item = customer.getCart().findItem(productId);
+        Cart cart = customer.getCart();
+        CartItem item = findItem(cart, productId);
         if (item != null) {
             if (newQuantity > 0) {
                 item.setQuantity(newQuantity);
                 System.out.println("🔄 Quantity updated for product ID: " + productId);
             } else {
-                customer.getCart().removeItem(productId);
+                removeItemFromCart(cart, productId);
                 System.out.println("🗑️ Product removed from cart (quantity set to 0).");
             }
         } else {
@@ -61,6 +74,33 @@ public class CartService {
         cartRepository.clearCartFileContents(customer.getId());
     }
 
+    public double calculateTotalPrice(Customer customer) {
+
+        Cart cart = customer.getCart();
+
+        double total = 0.0;
+        for (CartItem item : cart.getCartItems()) {
+            total += item.getProduct().getPrice() * item.getQuantity();
+        }
+        return total;
+    }
+
+    public CartItem findItem(Cart cart, int productId) {
+        for (CartItem item : cart.getCartItems()) {
+            if (item.getProduct() != null && item.getProduct().getId() == productId) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public void increaseItemQuantity(CartItem item, int amount) {
+
+        if (amount > 0) {
+            item.setQuantity(item.getQuantity() + amount);
+
+        }
+    }
 }
 
 

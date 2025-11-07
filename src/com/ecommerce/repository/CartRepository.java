@@ -7,6 +7,8 @@ import com.ecommerce.model.entities.Product;
 import com.ecommerce.service.ProductService;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CartRepository {
     private static final String DELIMITER = ",";
@@ -49,16 +51,59 @@ public class CartRepository {
         }
     }
 
-    public Cart loadCart(Customer customer) {
-        Cart cart = customer.getCart();
-        cart.clearCart();
-        String filePath = getCartFilePath(customer.getId());
+//    public Cart loadCart(Customer customer) {
+//        Cart cart = customer.getCart();
+//        cart.clearCart();
+//        String filePath = getCartFilePath(customer.getId());
+//        File file = new File(filePath);
+//
+//        if (!file.exists()) {
+//            System.out.println("📁 No saved cart found for " + customer.getName());
+//            return cart;
+//        }
+//
+//        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                String[] parts = line.trim().split(DELIMITER);
+//                if (parts.length == 2) {
+//                    int productId = Integer.parseInt(parts[0]);
+//                    int quantity = Integer.parseInt(parts[1]);
+//
+//                    Product product = productService.getProductById(productId);
+//                    if (product != null) {
+//                        cart.addItem(product, quantity);
+//                    }
+//                }
+//            }
+//            System.out.println("🛒 Cart loaded for " + customer.getName());
+//        } catch (IOException | NumberFormatException e) {
+//            System.out.println("❌ Error loading cart: " + e.getMessage());
+//        }
+//
+//        return cart;
+//    }
+public Cart loadCart(Customer customer) {
+    Cart cart = customer.getCart();
+    List<CartItem> fileItems = loadCartItemsFromFile(customer.getId());
+
+    List<CartItem> resolvedItems = new ArrayList<>();
+    for (CartItem item : fileItems) {
+        Product product = productService.getProductById(item.getProduct().getId());
+        if (product != null) {
+            resolvedItems.add(new CartItem(product, item.getQuantity()));
+        }
+    }
+
+    cart.setCartItems(resolvedItems);
+    return cart;
+}
+    public List<CartItem> loadCartItemsFromFile(int customerId) {
+        List<CartItem> items = new ArrayList<>();
+        String filePath = getCartFilePath(customerId);
         File file = new File(filePath);
 
-        if (!file.exists()) {
-            System.out.println("📁 No saved cart found for " + customer.getName());
-            return cart;
-        }
+        if (!file.exists()) return items;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -70,15 +115,15 @@ public class CartRepository {
 
                     Product product = productService.getProductById(productId);
                     if (product != null) {
-                        cart.addItem(product, quantity);
+                        CartItem item = new CartItem(product, quantity);
+                        items.add(item);
                     }
                 }
             }
-            System.out.println("🛒 Cart loaded for " + customer.getName());
         } catch (IOException | NumberFormatException e) {
             System.out.println("❌ Error loading cart: " + e.getMessage());
         }
 
-        return cart;
+        return items;
     }
 }

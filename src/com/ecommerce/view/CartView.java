@@ -19,4 +19,10 @@ public class CartView {
             System.out.printf("- %s x%d = $%.2f%n", p.getName(), item.getQuantity(), total);
         }
     }
+    public void showSuccessMessage(String message) {
+        System.out.println(message);
+    }
+    public void showErrorMessage(String message){
+        System.out.println(message);
+    }
 }

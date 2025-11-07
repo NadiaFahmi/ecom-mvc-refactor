@@ -1,5 +1,7 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.exception.CartItemNotFoundException;
+import com.ecommerce.exception.InvalidProductQuantityException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.service.CartService;
@@ -17,12 +19,11 @@ public class CartController {
     }
 
     public void addToCart(Customer customer, int productId, int quantity) {
-        boolean success = cartService.addProductToCart(customer,productId, quantity);
-        if (success) {
-            System.out.println("✅ Product added to cart.");
-            cartService.saveCart(customer);
-        } else {
-            System.out.println("❌ Product not found.");
+        try {
+            cartService.addProductToCart(customer, productId, quantity);
+            cartView.showSuccessMessage("Product added successfully!");
+        } catch (InvalidProductQuantityException e) {
+            cartView.showErrorMessage(e.getMessage());
         }
     }
     public void listCartItems(Customer customer) {
@@ -30,9 +31,15 @@ public class CartController {
         cartView.display(cart);
     }
 
-    public void removeFromCart(Customer customer, int productId) {
-        cartService.removeFromCart(customer,productId);
-        System.out.println("🗑️ Product removed from cart.");
+    public void removeItemFromCart(Customer customer, int productId){
+
+        try{
+            cartService.removeItemFromCart(customer.getCart(), productId);
+            System.out.println("Product removed from cart.");
+            saveCart(customer);
+        }catch (CartItemNotFoundException e){
+            cartView.showErrorMessage("No such Product in cart");
+        }
     }
 
     public void updateQuantity(Customer customer, int productId, int newQuantity) {
@@ -40,7 +47,7 @@ public class CartController {
     }
 
     public void totalPrice(Customer customer) {
-        System.out.println("💰 Total: " + cartService.getTotalPrice(customer));
+        System.out.println("💰 Total: " + cartService.calculateTotalPrice(customer));
     }
 
 

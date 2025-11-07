@@ -88,7 +88,7 @@ public class CustomerDashboard {
                     System.out.print("Enter Product ID to remove from cart: ");
                     try {
                         int productId = Integer.parseInt(scanner.nextLine().trim());
-                        cartController.removeFromCart(customer,productId);
+                        cartController.removeItemFromCart(customer,productId);
                         cartController.saveCart(customer);
                     } catch (NumberFormatException e) {
                         System.out.println("⚠️ Invalid product ID. Please enter a number.");

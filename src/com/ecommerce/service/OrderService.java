@@ -43,7 +43,7 @@ public class OrderService {
         Order newOrder = new Order(cartItems, customer);
         newOrder.markAsPaid();
         customer.setBalance(customer.getBalance() - total);
-        customer.getCart().clearCart();
+//        customer.getCart().clearCart();
 
         orderRepository.saveOrder(newOrder);
         customer.addOrder(newOrder);
