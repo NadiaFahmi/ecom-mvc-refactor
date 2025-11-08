@@ -16,7 +16,7 @@ public class LoginController {
         this.loginView = loginView;
     }
 
-    public User handleLogin() {
+    public User loginAuth() {
         String email = loginView.promptEmail();
         String password = loginView.promptPassword();
 

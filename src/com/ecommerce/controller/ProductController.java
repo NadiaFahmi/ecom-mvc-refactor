@@ -17,13 +17,13 @@ public class ProductController {
         this.productView = productView;
     }
 
-    public void listProducts() {
+    public void getProducts() {
         List<Product> products = productService.getAllProducts();
         productView.displayAllProducts(products);
     }
 
 
-    public void addProduct(String name, double price, String category) {
+    public void createProduct(String name, double price, String category) {
         productService.addProduct(name, price, category);
     }
 
@@ -36,7 +36,7 @@ public List<Product> filterProductsByCategory(String category) {
     return productService.getProductsByCategory(category);
 }
 
-    public boolean removeProduct(int id) {
+    public boolean deleteProduct(int id) {
         return productService.removeProduct(id);
     }
 }

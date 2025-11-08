@@ -18,7 +18,7 @@ public class CartController {
         this.cartView = cartView;
     }
 
-    public void addToCart(Customer customer, int productId, int quantity) {
+    public void addProductToCart(Customer customer, int productId, int quantity) {
         try {
             cartService.addProductToCart(customer, productId, quantity);
             cartView.showSuccessMessage("Product added successfully!");
@@ -31,10 +31,10 @@ public class CartController {
         cartView.display(cart);
     }
 
-    public void removeItemFromCart(Customer customer, int productId){
+    public void removeProductFromCart(Customer customer, int productId){
 
         try{
-            cartService.removeItemFromCart(customer.getCart(), productId);
+            cartService.removeProductFromCart(customer.getCart(), productId);
             System.out.println("Product removed from cart.");
             saveCart(customer);
         }catch (CartItemNotFoundException e){
@@ -46,7 +46,7 @@ public class CartController {
         cartService.updateCartItemQuantity(customer,productId, newQuantity);
     }
 
-    public void totalPrice(Customer customer) {
+    public void calculatePrice(Customer customer) {
         System.out.println("💰 Total: " + cartService.calculateTotalPrice(customer));
     }
 

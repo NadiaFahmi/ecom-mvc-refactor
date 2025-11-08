@@ -35,7 +35,7 @@ public class CartService {
 
     }
 
-    public void removeItemFromCart(Cart cart, int productId) {
+    public void removeProductFromCart(Cart cart, int productId) {
 
         CartItem item = findItem(cart, productId);
         if (item == null) {
@@ -52,7 +52,7 @@ public class CartService {
                 item.setQuantity(newQuantity);
                 System.out.println("🔄 Quantity updated for product ID: " + productId);
             } else {
-                removeItemFromCart(cart, productId);
+                removeProductFromCart(cart, productId);
                 System.out.println("🗑️ Product removed from cart (quantity set to 0).");
             }
         } else {

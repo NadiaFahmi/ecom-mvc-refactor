@@ -8,7 +8,7 @@ public class Order {
     private String orderId;
     private List<CartItem> cartItems;
     private Customer customer;
-    private double order_total;
+    private double orderTotal;
     private String status;
     private LocalDateTime orderDate;
 
@@ -17,7 +17,7 @@ public class Order {
         this.orderId = UUID.randomUUID().toString();
         this.cartItems = new ArrayList<>(cartItems);
         this.customer = customer;
-        this.order_total = calculateTotal();
+        this.orderTotal = calculateTotal();
         this.status = "pending";
         this.orderDate = LocalDateTime.now();
     }
@@ -60,8 +60,8 @@ public class Order {
         this.customer = customer;
     }
 
-    public double getOrder_total() {
-        return order_total;
+    public double getOrderTotal() {
+        return orderTotal;
     }
 
 
@@ -85,7 +85,7 @@ public class Order {
         StringBuilder sb = new StringBuilder();
         sb.append("🆔 Order ID: ").append(orderId)
                 .append(" | 📅 Date: ").append(orderDate)
-                .append(" | 💵 Total: ").append(order_total)
+                .append(" | 💵 Total: ").append(orderTotal)
                 .append(" | 📦 Status: ").append(status);
         return sb.toString();
     }

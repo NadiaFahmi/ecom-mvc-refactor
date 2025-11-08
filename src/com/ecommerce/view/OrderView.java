@@ -66,7 +66,7 @@ public class OrderView {
                     double price = item.getProduct().getPrice() * item.getQuantity();
                     System.out.printf(" - %s x%d = $%.2f%n", name, item.getQuantity(), price);
                 }
-                System.out.printf("💰 Total: $%.2f%n", order.getOrder_total());
+                System.out.printf("💰 Total: $%.2f%n", order.getOrderTotal());
                 System.out.println("📌 Status: " + order.getStatus());
                 System.out.println("------");
             }

@@ -41,7 +41,7 @@ public class Main {
         CustomerView customerView = new CustomerView();
         CustomerController customerController = new CustomerController(customerService, customerView);
         CustomerUpdateView customerUpdateView = new CustomerUpdateView(customerController);
-        customerController.load();
+        customerController.loadCustomers();
 
 
         LoginService loginService = new LoginService(customerService);
@@ -59,7 +59,7 @@ public class Main {
             if (choice.equals("1")) {
                 LoginView loginView = new LoginView(scanner);
                 LoginController loginController = new LoginController(loginService,loginView);
-                user = loginController.handleLogin();
+                user = loginController.loginAuth();
 
             } else if (choice.equals("2")) {
                 SignUpService signUpService = new SignUpService(customerService);

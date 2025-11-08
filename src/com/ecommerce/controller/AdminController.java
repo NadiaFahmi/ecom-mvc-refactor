@@ -34,22 +34,22 @@ public class AdminController {
     }
 
 
-    public void ordersByBalanceRange(double min, double max) {
+    public void getOrdersByBalanceRange(double min, double max) {
         List<Customer> users = adminService.getUsersByBalanceRange(min, max);
         transactionView.showUsersByBalanceRange(min, max,users);
     }
 
-    public void ordersByDateRange(LocalDate from, LocalDate to) {
+    public void getOrdersByDateRange(LocalDate from, LocalDate to) {
         List<Order> orders = adminService.getOrdersByDateRange(from, to);
         transactionView.displayOrdersByDateRange(orders, from, to);
     }
 
-    public void viewAllTransactions() {
+    public void getAllTransactions() {
         List<Order> orders = adminService.getAllTransactions();
         transactionView.viewAllTransactions(orders);
     }
 
-    public void viewOrdersByUser(String email) {
+    public void getOrdersByUser(String email) {
         List<Order> orders = adminService.getOrdersByUser(email);
         transactionView.viewTransactionsByUser(email, orders);
     }

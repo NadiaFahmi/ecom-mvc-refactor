@@ -70,13 +70,13 @@ public class AdminDashboard {
                         System.out.print("💰 Max balance: ");
                         double max = Double.parseDouble(scanner.nextLine());
 
-                        adminController.ordersByBalanceRange(min, max);
+                        adminController.getOrdersByBalanceRange(min, max);
 
                     } catch (NumberFormatException e) {
                         System.out.println("⚠️ Please enter valid numbers for balance.");
                     }
                 }
-                case "4" -> adminController.viewAllTransactions();
+                case "4" -> adminController.getAllTransactions();
 
                 case "5" -> {
                     try {
@@ -86,7 +86,7 @@ public class AdminDashboard {
                         System.out.print("To date (yyyy-MM-dd): ");
                         LocalDate to = LocalDate.parse(scanner.nextLine());
 
-                        adminController.ordersByDateRange(from, to);
+                        adminController.getOrdersByDateRange(from, to);
 
                     } catch (DateTimeException e) {
                         System.out.println("⚠️ Invalid date format. Please use yyyy-MM-dd (e.g., 2025-10-10).");
@@ -95,7 +95,7 @@ public class AdminDashboard {
                 case "6" -> {
                     System.out.print("📧 Enter user email: ");
                     String email = scanner.nextLine();
-                    adminController.viewOrdersByUser(email);
+                    adminController.getOrdersByUser(email);
                 }
                 case "7" -> {
                     System.out.print("📦 Enter category: ");
@@ -124,7 +124,7 @@ public class AdminDashboard {
                             System.out.println("⚠️ Product name and category cannot be empty.");
                             break;
                         }
-                        productController.addProduct(name, price, category);
+                        productController.createProduct(name, price, category);
                         System.out.println("✅ Product '" + name + "' added successfully");
                     } catch (NumberFormatException e) {
                         System.out.println("⚠️ Invalid price format. Please enter a valid number.");
@@ -159,7 +159,7 @@ public class AdminDashboard {
                     System.out.print("❌ Product ID to remove: ");
                     int id = Integer.parseInt(scanner.nextLine());
 
-                    boolean success = productController.removeProduct(id);
+                    boolean success = productController.deleteProduct(id);
                     if (success) {
                         System.out.println("✅ Product with ID " + id + " successfully removed.");
                     } else {
@@ -167,7 +167,7 @@ public class AdminDashboard {
                     }
                 }
                 case "11" ->
-                productController.listProducts();
+                productController.getProducts();
                 default -> System.out.println("⚠️ Invalid choice. Please try again.");
             }
         }

@@ -68,7 +68,7 @@ public class CustomerDashboard {
             String input = scanner.nextLine().trim();
 
             switch (input) {
-                case "1" -> productController.listProducts();
+                case "1" -> productController.getProducts();
                 case "2" -> {
                     System.out.print("🆔 Enter Product ID: ");
                     String productIdInput = scanner.nextLine().trim();
@@ -78,7 +78,7 @@ public class CustomerDashboard {
                         System.out.print("Enter quantity: ");
                         int quantity = Integer.parseInt(scanner.nextLine().trim());
 
-                        cartController.addToCart(customer,productId, quantity);
+                        cartController.addProductToCart(customer,productId, quantity);
                     } catch (NumberFormatException e) {
                         System.out.println("❌ Invalid input. Please enter numeric values.");
                     }
@@ -88,14 +88,14 @@ public class CustomerDashboard {
                     System.out.print("Enter Product ID to remove from cart: ");
                     try {
                         int productId = Integer.parseInt(scanner.nextLine().trim());
-                        cartController.removeItemFromCart(customer,productId);
+                        cartController.removeProductFromCart(customer,productId);
                         cartController.saveCart(customer);
                     } catch (NumberFormatException e) {
                         System.out.println("⚠️ Invalid product ID. Please enter a number.");
                     }
                 }
 
-                case "5" -> cartController.totalPrice(customer);
+                case "5" -> cartController.calculatePrice(customer);
                 case "6" -> {
                     try {
                         System.out.print("Enter Product ID: ");
@@ -137,10 +137,9 @@ public class CustomerDashboard {
                 case "11" -> customerUpdateView.launchUpdateMenu(customer, scanner);
                 case "12" ->  {  System.out.print("📅 Enter Your email: ");
                     String emailInput = scanner.nextLine().trim();
-                    customerController.deleteCustomer(emailInput);
+                    customerController.deleteCustomerByEmail(emailInput);
                 }
                 case "13" -> {
-
                     customerController.showLoggedInCustomerOrders();
                 }
                 case "exit" -> {

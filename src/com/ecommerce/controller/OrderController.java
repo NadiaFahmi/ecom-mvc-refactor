@@ -34,7 +34,7 @@ public class OrderController {
 
             if (orderView.confirmAddFunds(total, customer.getBalance())) {
                 double additional = orderView.promptAmountToAdd();
-                if (additional <= 0 || !orderService.tryAddFunds(customer, additional, total)) {
+                if (additional <= 0 || !orderService.increaseBalance(customer, additional, total)) {
                     orderView.showInsufficientAfterAdd();
                     return;
                 }
@@ -45,7 +45,7 @@ public class OrderController {
             }
         }
 
-        Order order = orderService.placeOrder();
+        Order order = orderService.createOrder();
         if (order != null) {
             orderView.showOrderSuccess();
         } else {
@@ -54,8 +54,7 @@ public class OrderController {
     }
 
     public List<Order> getAllOrders() {
-        List<Order> orders = orderService.getOrders();
-        return orders;
+        return orderService.getOrders();
     }
 
     public void loadOrdersFromFile() {
@@ -82,7 +81,7 @@ public class OrderController {
     }
 
     public void filterCustomerOrdersByDate(Customer customer, LocalDate date) {
-        List<Order> filteredOrders = new ArrayList<Order>();
+        List<Order> filteredOrders = new ArrayList<>();
 
         for (Order order : customer.getOrders()) {
             if (order.getOrderDate().toLocalDate().equals(date)) {

@@ -22,7 +22,7 @@ public class CustomerController {
         this.customerView = customerView;
     }
 
-    public void load() {
+    public void loadCustomers() {
         customerService.loadCustomers();
     }
 
@@ -57,7 +57,7 @@ public class CustomerController {
         customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
     }
 
-    public boolean deleteCustomer(String email) {
+    public boolean deleteCustomerByEmail(String email) {
         return customerService.deleteCustomer(email);
     }
     public void showLoggedInCustomerOrders() {

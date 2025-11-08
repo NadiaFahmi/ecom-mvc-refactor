@@ -29,7 +29,7 @@ public class TransactionView {
     private void printOrderSummary(Order order) {
         System.out.println("🆔 Order ID: " + order.getOrderId() +
                 ", Customer: " + order.getCustomer().getName() +
-                ", Total: $" + order.getOrder_total() +
+                ", Total: $" + order.getOrderTotal() +
                 ", Status: " + order.getStatus());
     }
     public void showUsersByBalanceRange(double min, double max, List<Customer> users) {
@@ -55,7 +55,7 @@ public class TransactionView {
         for (Order order : orders) {
             System.out.println("🆔 Order ID: " + order.getOrderId() +
                     ", Customer: " + order.getCustomer().getName() +
-                    ", Total: $" + order.getOrder_total() +
+                    ", Total: $" + order.getOrderTotal() +
                     ", Status: " + order.getStatus());
         }
     }
