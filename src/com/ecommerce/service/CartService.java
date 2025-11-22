@@ -1,7 +1,7 @@
 package com.ecommerce.service;
 
 import com.ecommerce.exception.CartItemNotFoundException;
-import com.ecommerce.exception.InvalidProductQuantityException;
+import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
@@ -20,7 +20,7 @@ public class CartService {
     public void addProductToCart(Customer customer, int productId, int quantity) {
         Product product = productService.getProductById(productId);
         if (product == null || quantity <= 0) {
-            throw new InvalidProductQuantityException("Invalid product or quantity.");
+            throw new InvalidProductException("Invalid product or quantity.");
         }
         Cart cart = customer.getCart();
         CartItem item = findItem(cart, productId);
@@ -47,19 +47,18 @@ public class CartService {
     public void updateCartItemQuantity(Customer customer, int productId, int newQuantity) {
         Cart cart = customer.getCart();
         CartItem item = findItem(cart, productId);
-        if (item != null) {
+
+        if (item == null) {
+            throw new CartItemNotFoundException("Product ID " + productId + " not found in cart.");
+        }
             if (newQuantity > 0) {
                 item.setQuantity(newQuantity);
-                System.out.println("🔄 Quantity updated for product ID: " + productId);
+                saveCart(customer);
             } else {
                 removeProductFromCart(cart, productId);
-                System.out.println("🗑️ Product removed from cart (quantity set to 0).");
             }
-        } else {
-            System.out.println("❌ Product not found in cart.");
         }
-        saveCart(customer);
-    }
+
 
     public void saveCart(Customer customer) {
         cartRepository.saveCart(customer);

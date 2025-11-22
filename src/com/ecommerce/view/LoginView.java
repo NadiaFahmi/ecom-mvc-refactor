@@ -80,4 +80,7 @@ public class LoginView {
             System.out.println("⚠️ Password reset failed. Please try again.");
         }
     }
+    public void showError(String message){
+        System.out.println(message);
+    }
 }

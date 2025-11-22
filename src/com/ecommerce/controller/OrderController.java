@@ -1,5 +1,7 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.exception.InsufficientBalanceException;
+import com.ecommerce.exception.NoOrdersFoundException;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
@@ -29,9 +31,7 @@ public class OrderController {
         }
 
         double total = orderService.calculateTotal(cartItems);
-        if (customer.getBalance() < total) {
-
-
+            if(!orderService.hasSufficientBalance(customer)){
             if (orderView.confirmAddFunds(total, customer.getBalance())) {
                 double additional = orderView.promptAmountToAdd();
                 if (additional <= 0 || !orderService.increaseBalance(customer, additional, total)) {
@@ -44,13 +44,14 @@ public class OrderController {
                 return;
             }
         }
-
-        Order order = orderService.createOrder();
-        if (order != null) {
-            orderView.showOrderSuccess();
-        } else {
-            orderView.showOrderFailure();
+        try {
+            Order order = orderService.createOrder();
+            if (order != null) {
+            orderView.showOrderSuccess();}
+        }catch (InsufficientBalanceException e){
+            orderView.showErrorMessage(e.getMessage());
         }
+
     }
 
     public List<Order> getAllOrders() {
@@ -61,7 +62,7 @@ public class OrderController {
         orderService.getOrders();
     }
 
-    public void printCustomerOrders(Customer customer) {
+    public void getCustomerOrders(Customer customer) {
 
         List<Order> allOrders = orderService.getOrders();
         List<Order> customerOrders = new ArrayList<>();
@@ -75,28 +76,24 @@ public class OrderController {
     }
 
 
-    public void printOrderDetails(Order order, Customer customer) {
+    public void getOrderDetails(Order order, Customer customer) {
 
         orderView.renderOrderDetails(order, customer);
     }
 
     public void filterCustomerOrdersByDate(Customer customer, LocalDate date) {
-        List<Order> filteredOrders = new ArrayList<>();
 
-        for (Order order : customer.getOrders()) {
-            if (order.getOrderDate().toLocalDate().equals(date)) {
-                filteredOrders.add(order);
+
+        try {
+            List<Order> orders = orderService.filterCustomerOrdersByDate(customer, date);
+            for (Order order : orders) {
+                getOrderDetails(order, customer);
+            }
+        }catch (NoOrdersFoundException e){
+            orderView.showErrorMessage(e.getMessage());
+        }
             }
         }
 
-        if (filteredOrders.isEmpty()) {
-            System.out.println("📭 No orders found for " + date);
-            return;
-        }
 
-        for (Order order : filteredOrders) {
-            printOrderDetails(order, customer);
-            System.out.println("–––––––––––––––––––––––");
-        }
-    }
-}
+

@@ -69,5 +69,24 @@ public class CustomerView {
             }
         }
     }
+    public void showEmailUpdated() {
 
+        System.out.println("Email updated successfully.");    }
+
+    public void showPasswordUpdated() {
+        System.out.println("Password updated successfully.");
+    }
+    public void showNameUpdated(){
+        System.out.println("✅ Name updated.");
+    }
+    public void showDeleteCustomer(){
+        System.out.println("Customer deleted");
+    }
+
+    public void showError(String message) {
+        System.out.println(message);
+    }
+    public void showInvalidBalance(String message) {
+        System.out.println(message);
+    }
 }

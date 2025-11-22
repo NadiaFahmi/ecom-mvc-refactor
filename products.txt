@@ -6,6 +6,6 @@
 6,product_6,666.5,kids
 7,product_7,2340.5,kids
 8,Product_high,768.5,women
-10,product_10,100.5,men
+10,product_super,200.0,men
 11,Product_NadiaFahmi,40000.0,women
 12,product_self,390.0,kids

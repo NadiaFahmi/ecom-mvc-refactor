@@ -122,7 +122,7 @@ public class CustomerDashboard {
 
                 case "7" -> cartController.saveCart(customer);
                 case "8" -> orderController.handlePlaceOrder(customer);
-                case "9" -> orderController.printCustomerOrders(customer);
+                case "9" -> orderController.getCustomerOrders(customer);
                 case "10" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();

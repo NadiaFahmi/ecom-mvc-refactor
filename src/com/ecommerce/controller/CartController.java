@@ -1,7 +1,7 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.exception.CartItemNotFoundException;
-import com.ecommerce.exception.InvalidProductQuantityException;
+import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.service.CartService;
@@ -21,8 +21,8 @@ public class CartController {
     public void addProductToCart(Customer customer, int productId, int quantity) {
         try {
             cartService.addProductToCart(customer, productId, quantity);
-            cartView.showSuccessMessage("Product added successfully!");
-        } catch (InvalidProductQuantityException e) {
+            cartView.showSuccessMessage();
+        } catch (InvalidProductException e) {
             cartView.showErrorMessage(e.getMessage());
         }
     }
@@ -35,10 +35,10 @@ public class CartController {
 
         try{
             cartService.removeProductFromCart(customer.getCart(), productId);
-            System.out.println("Product removed from cart.");
+            cartView.showRemovedMessage();
             saveCart(customer);
         }catch (CartItemNotFoundException e){
-            cartView.showErrorMessage("No such Product in cart");
+            cartView.showErrorMessage(e.getMessage());
         }
     }
 
@@ -47,7 +47,8 @@ public class CartController {
     }
 
     public void calculatePrice(Customer customer) {
-        System.out.println("💰 Total: " + cartService.calculateTotalPrice(customer));
+        double totalPrice = cartService.calculateTotalPrice(customer);
+        cartView.showTotalCartPrice(totalPrice);
     }
 
 

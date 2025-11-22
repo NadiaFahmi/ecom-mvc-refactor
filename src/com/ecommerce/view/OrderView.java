@@ -17,7 +17,7 @@ public class OrderView {
 
     public boolean  confirmAddFunds(double total, double balance) {
 
-        System.out.printf("❌ Insufficient balance. Cart total: %.2f%n", total, balance);
+        System.out.printf("❌ Insufficient balance. Cart total: %.2f, Your balance: %.2f%n", total, balance);
         System.out.print("Would you like to add funds to complete the purchase? (Y/N): ");
         String response = scanner.nextLine().trim();
         return response.equalsIgnoreCase("Y");
@@ -78,6 +78,7 @@ public class OrderView {
         System.out.println("📅 Date: " + order.getOrderDate());
         System.out.println("📦 Status: " + order.getStatus());
         System.out.println("🛒 Items:");
+        System.out.println("–––––––––––––––––––––––");
 
         double total = 0.0;
         for (CartItem item : order.getCartItems()) {
@@ -91,5 +92,9 @@ public class OrderView {
         System.out.printf("💰 TOTAL: $%.2f%n", total);
         System.out.printf("💳 Remaining Balance: $%.2f%n", customer.getBalance());
         System.out.println("✨ Your order is confirmed and being processed!\n");
+    }
+
+    public void showErrorMessage(String message){
+        System.out.println(message);
     }
 }

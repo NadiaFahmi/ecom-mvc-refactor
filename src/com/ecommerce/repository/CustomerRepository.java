@@ -33,6 +33,10 @@ public class CustomerRepository {
             System.out.println("❌ Error saving: " + e.getMessage());
         }
     }
+    public void saveCustomer(Customer customer){
+        customerMap.put(customer.getId(),customer);
+        saveAll();
+    }
 
     public void addCustomer(Customer customer) {
         customerMap.put(customer.getId(), customer);

@@ -19,10 +19,16 @@ public class CartView {
             System.out.printf("- %s x%d = $%.2f%n", p.getName(), item.getQuantity(), total);
         }
     }
-    public void showSuccessMessage(String message) {
-        System.out.println(message);
+    public void showSuccessMessage() {
+        System.out.println("Product Added");
     }
     public void showErrorMessage(String message){
         System.out.println(message);
+    }
+    public void showTotalCartPrice(double total){
+        System.out.println("Total cart price = "+"$"+total);
+    }
+    public void showRemovedMessage(){
+        System.out.println("Product removed successfully");
     }
 }

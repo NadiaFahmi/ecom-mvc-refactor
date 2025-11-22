@@ -47,4 +47,10 @@ public class ProductView {
                     ", Category: " + product.getCategory());
         }
     }
+    public void showError(String message){
+        System.out.println(message);
+    }
+    public void showUpdatedProduct(){
+        System.out.println("✅ Product updated: ");
+    }
 }

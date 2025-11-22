@@ -1,5 +1,6 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.exception.*;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.service.SignUpService;
 import com.ecommerce.view.SignUpView;
@@ -21,10 +22,16 @@ public class SignUpController {
         double balance = signUpView.promptBalance();
         String address = signUpView.promptAddress();
 
-        Customer customer = signUpService.registerNewCustomer(name, email, password, balance, address);
-        if (customer != null) {
+        try {
+            Customer customer = signUpService.registerNewCustomer(name, email, password, balance, address);
             signUpView.showSuccess(customer.getName());
+            return customer;
         }
-        return customer;
+        catch (InvalidNameException|InvalidEmailFormatException | InvalidEmailException |
+               InvalidPasswordException | InvalidBalanceException | InvalidAddressException e) {
+            signUpView.showError(e.getMessage());
+    }
+
+        return null;
     }
 }

@@ -1,11 +1,11 @@
 package com.ecommerce.service;
 
+import com.ecommerce.exception.*;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 import com.ecommerce.repository.CustomerRepository;
 
 import java.util.*;
-import java.util.NoSuchElementException;
 
 public class CustomerService {
 
@@ -25,7 +25,8 @@ public class CustomerService {
 
     public Customer getCustomerByEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email must not be empty");
+//            throw new IllegalArgumentException("Email must not be empty");
+            throw new InvalidEmailException("Email must not be empty");
         }
         return repository.getCustomerByEmail(email);
     }
@@ -46,26 +47,18 @@ public class CustomerService {
 
     //
     public boolean updateCustomerEmail(Customer customer, String newEmail) {
-        if (customer == null) {
-            System.out.println("❌ Customer not found.");
-            return false;
-        }
 
         if (newEmail == null || newEmail.trim().isEmpty()) {
-            System.out.println("⚠️ Email cannot be empty.");
-            return false;
+            throw new InvalidEmailException("Email cannot be empty.");
         }
-
         newEmail = newEmail.trim();
         if (!isValidEmail(newEmail)) {
-            System.out.println("⚠️ Invalid email format.");
-            return false;
+            throw new InvalidEmailException("Invalid email format.");
         }
 
         customer.setEmail(newEmail);
         repository.updateCustomer(customer);
         repository.saveAll();
-        System.out.println("✅ Email updated successfully.");
         return true;
     }
 
@@ -78,58 +71,48 @@ public class CustomerService {
 
     public boolean updatePassword(Customer customer, String currentPassword, String newPassword, String confirmPassword) {
         if (customer == null) {
-            System.out.println("❌ Customer not found.");
-            return false;
+            throw new CustomerNotFoundException("❌ Customer not found.");
         }
 
         if (currentPassword == null || !isCurrentPasswordCorrect(customer, currentPassword.trim())) {
-            System.out.println("❌ Current password is incorrect.");
-            return false;
+            throw new InvalidPasswordException("❌ Current password is incorrect.");
         }
 
         if (newPassword == null || !isValidLength(newPassword.trim())) {
-            System.out.println("⚠️ New password must be at least 6 characters.");
-            return false;
+            throw new InvalidPasswordException("⚠️ New password must be at least 6 characters.");
         }
 
         if (!newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim())) {
-            System.out.println("⚠️ Password confirmation does not match.");
-            return false;
+            throw new InvalidPasswordException("⚠️ Password confirmation does not match.");
         }
 
         customer.setPassword(newPassword.trim());
         repository.updateCustomer(customer);
         repository.saveAll();
-        System.out.println("✅ Password updated successfully.");
         return true;
     }
 
 
     public boolean resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
         if (customer == null) {
-            System.out.println("❌ Customer not found.");
-            return false;
+            throw new CustomerNotFoundException("❌ Customer not found.");
         }
 
         if (!isEmailMatching(customer, inputEmail)) {
-            System.out.println("❌ Email does not match our records.");
-            return false;
+            throw new InvalidEmailException("❌ Email does not match our records.");
         }
 
         if (newPassword == null || !isValidLength(newPassword.trim())) {
-            System.out.println("⚠️ New password must be at least 6 characters.");
-            return false;
+            throw new InvalidPasswordException("⚠️ New password must be at least 6 characters.");
         }
 
         if (!isPasswordConfirmed(newPassword, confirmPassword)) {
-            System.out.println("⚠️ Password confirmation does not match.");
-            return false;
+            throw new InvalidPasswordException("⚠️ Password confirmation does not match.");
         }
 
         customer.setPassword(newPassword.trim());
         repository.updateCustomer(customer);
         repository.saveAll();
-        System.out.println("✅ Password reset successfully.");
         return true;
     }
 
@@ -142,7 +125,6 @@ public class CustomerService {
     }
 
     private boolean isCurrentPasswordCorrect(Customer customer, String inputPassword) {
-//        return customer.getPassword().equals(inputPassword);
         return inputPassword != null && inputPassword.equals(customer.getPassword());
 
     }
@@ -153,82 +135,65 @@ public class CustomerService {
 
     public boolean updateCustomerName(Customer customer, String newName) {
         if (customer == null) {
-            System.out.println("❌ Customer not found.");
-            return false;
+            throw new  CustomerNotFoundException("❌ Customer not found.");
         }
 
         if (newName == null || newName.trim().isBlank()) {
-            System.out.println("⚠️ Name can't be empty.");
-            return false;
+            throw new InvalidNameException("⚠️ Name can't be empty.");
         }
 
         newName = newName.trim();
         customer.setName(newName);
         repository.updateCustomer(customer);
         repository.saveAll();
-        System.out.println("✅ Name updated.");
         return true;
     }
 
 
     public boolean updateCustomerAddress(Customer customer, String newAddress) {
         if (customer == null) {
-            System.out.println("❌ Customer not found.");
-            return false;
+            throw new CustomerNotFoundException("❌ Customer not found.");
         }
 
         if (newAddress == null || newAddress.trim().isEmpty()) {
-            System.out.println("⚠️ Address cannot be empty.");
-            return false;
+            throw new InvalidAddressException("⚠️ Address cannot be empty.");
         }
 
         newAddress = newAddress.trim();
         customer.setAddress(newAddress);
         repository.updateCustomer(customer);
         repository.saveAll();
-        System.out.println("✅ Address updated successfully.");
         return true;
     }
 
     public boolean updateCustomerBalance(Customer customer, double amount) {
-        if (customer == null) {
-            System.out.println("❌ Customer not found.");
-            return false;
-        }
 
         double currentBalance = customer.getBalance();
         double newBalance = currentBalance + amount;
 
         if (newBalance < 0) {
-            System.out.println("⚠️ Insufficient funds. Cannot set negative balance.");
-            return false;
+            throw new InsufficientBalanceException("⚠️ Insufficient funds. Cannot set negative balance.");
+
         }
 
         customer.setBalance(newBalance);
         repository.updateCustomer(customer);
         repository.saveAll();
-        System.out.println("✅ Balance updated successfully. New balance: " + newBalance);
         return true;
     }
 
 
     public boolean deleteCustomer(String email) {
         if (email == null || email.trim().isEmpty()) {
-            System.out.println("⚠️ email cannot be empty.");
-            return false;
+            throw new InvalidEmailException("⚠️ email cannot be empty.");
+
         }
-        try {
-            repository.deleteByEmail(email);
-            repository.saveAll();
-            return true;
-        } catch (NoSuchElementException e) {
-            System.out.println("❌ " + e.getMessage());
-            return false;
-        } catch (Exception e) {
-            System.out.println("⚠️ Unexpected error: " + e.getMessage());
-            return false;
+        repository.deleteByEmail(email);
+        repository.saveAll();
+        return true;
+
         }
-    }
+
     public Customer getLoggedInCustomerWithOrders(List<Order> outputOrders) {
         Customer customer = orderService.getLoggedInCustomer();
         if (customer == null) return null;

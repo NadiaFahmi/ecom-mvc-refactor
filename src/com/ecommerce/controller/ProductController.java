@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 
+import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Product;
 import com.ecommerce.service.ProductService;
 import com.ecommerce.view.ProductView;
@@ -29,7 +30,12 @@ public class ProductController {
 
 
     public void updateProduct(int id, String newName, double newPrice, String newCategory) {
-        productService.updateProduct(id, newName, newPrice, newCategory);
+        try {
+            productService.updateProduct(id, newName, newPrice, newCategory);
+            productView.showUpdatedProduct();
+        }catch (InvalidProductException e){
+            productView.showError(e.getMessage());
+        }
     }
 
 public List<Product> filterProductsByCategory(String category) {

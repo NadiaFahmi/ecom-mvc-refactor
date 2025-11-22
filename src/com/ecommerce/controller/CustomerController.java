@@ -1,5 +1,6 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.exception.*;
 import com.ecommerce.model.entities.Customer;
 
 import com.ecommerce.model.entities.Order;
@@ -27,47 +28,73 @@ public class CustomerController {
     }
 
 
-    public void updateEmail(int customerId, String newEmail) {
-        Customer customer = customerService.findCustomerById(customerId);
-        customerService.updateCustomerEmail(customer, newEmail);
+    public boolean updateCustomerEmail(Customer customer, String email)  {
+
+        try {
+            boolean success = customerService.updateCustomerEmail(customer, email);
+            if (success) {
+                customerView.showEmailUpdated();
+            }
+            return success;
+        } catch (InvalidEmailException e) {
+            customerView.showError(e.getMessage());
+            return false;
+        }
     }
 
     public void updateName(int customerId, String newName) {
-        Customer customer = customerService.findCustomerById(customerId);
-        customerService.updateCustomerName(customer, newName);
+        try {
+            Customer customer = customerService.findCustomerById(customerId);
+            customerService.updateCustomerName(customer, newName);
+        }catch (InvalidNameException e){
+            customerView.showError(e.getMessage());
+        }
     }
 
     public void updateAddress(int customerId, String newAddress) {
-        Customer customer = customerService.findCustomerById(customerId);
-        customerService.updateCustomerAddress(customer, newAddress);
+        try {
+            Customer customer = customerService.findCustomerById(customerId);
+            customerService.updateCustomerAddress(customer, newAddress);
+        }catch (InvalidAddressException e){
+            customerView.showError(e.getMessage());
+        }
     }
 
     public void updateBalance(int customerId, double amount) {
         Customer customer = customerService.findCustomerById(customerId);
-        customerService.updateCustomerBalance(customer, amount);
+        try {
+            customerService.updateCustomerBalance(customer, amount);
+        }catch (InsufficientBalanceException e){
+            customerView.showInvalidBalance(e.getMessage());
+        }
     }
 
     public void changePassword(int customerId, String currentPassword, String newPassword, String confirmPassword) {
-        Customer customer = customerService.findCustomerById(customerId);
-        customerService.updatePassword(customer, currentPassword, newPassword, confirmPassword);
+        try {
+            Customer customer = customerService.findCustomerById(customerId);
+            customerService.updatePassword(customer, currentPassword, newPassword, confirmPassword);
+            customerView.showPasswordUpdated();
+        }catch (InvalidPasswordException e){
+            customerView.showError(e.getMessage());
+        }
     }
 
-    public void resetPassword(int customerId, String inputEmail, String newPassword, String confirmPassword) {
-        Customer customer = customerService.findCustomerById(customerId);
-        customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
-    }
 
     public boolean deleteCustomerByEmail(String email) {
-        return customerService.deleteCustomer(email);
+        try {
+
+             customerService.deleteCustomer(email);
+             customerView.showDeleteCustomer();
+             return true;
+        }catch (InvalidEmailException e){
+            customerView.showError(e.getMessage());
+        }
+        return false;
     }
+
     public void showLoggedInCustomerOrders() {
         List<Order> orders = new ArrayList<>();
         Customer customer = customerService.getLoggedInCustomerWithOrders(orders);
-
-        if (customer == null) {
-            System.out.println("⚠️ No customer is currently logged in.");
-            return;
-        }
 
         customerView.displayCustomerWithOrders(customer, orders);
     }

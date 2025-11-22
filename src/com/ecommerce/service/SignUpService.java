@@ -1,8 +1,8 @@
 package com.ecommerce.service;
 
+import com.ecommerce.exception.*;
 import com.ecommerce.model.entities.Customer;
 
-import java.util.Scanner;
 public class SignUpService {
 
 private final CustomerService customerService;
@@ -39,40 +39,35 @@ private final CustomerService customerService;
     public Customer registerNewCustomer(String name, String email, String password, double balance, String address) {
 
         if (!isNameValid(name)) {
-            System.out.println("❌ Invalid name. Please enter a non-empty name.");
-            return null;
+            throw new InvalidNameException("❌ Invalid name. Please enter a non-empty name.");
+
         }
 
         if (!isEmailValid(email)) {
-            System.out.println("❌ Invalid email format. Please enter a valid email address.");
-            return null;
+            throw new InvalidEmailFormatException("❌ Invalid email format. Please enter a valid email address.");
         }
 
-
         if (isEmailTaken(email)) {
-            System.out.println("⚠ Email already registered. Try logging in or use a different email.");
-            return null;
+            throw new InvalidEmailException("⚠ Email already registered. Try logging in or use a different email.");
         }
 
         if (!isPasswordValid(password)) {
-            System.out.println("❌ Password must be at least 6 characters long.");
-            return null;
+            throw new InvalidPasswordException("❌ Password must be at least 6 characters long.");
         }
 
         if (!isBalanceValid(balance)) {
-            System.out.println("❌ Invalid balance. Must be zero or positive.");
-            return null;
+            throw  new InvalidBalanceException("❌ Invalid balance. Must be zero or positive.");
+
         }
 
-
         if (!isAddressValid(address)) {
-            System.out.println("❌ Invalid address. Please enter a non-empty address.");
-            return null;
+            throw new InvalidAddressException("❌ Invalid address. Please enter a non-empty address.");
+
         }
 
         Customer customer = new Customer(name, email.toLowerCase(), password, balance, address);
         customerService.registerCustomer(customer);
-        System.out.println("✅ Registration complete! Welcome, " + name + ".");
+        SessionContext.setLoggedInEmail(customer.getEmail());
         return customer;
     }
 

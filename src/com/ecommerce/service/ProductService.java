@@ -1,5 +1,6 @@
 package com.ecommerce.service;
 
+import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Product;
 import com.ecommerce.repository.ProductRepository;
 
@@ -74,13 +75,11 @@ public class ProductService {
         }
         if (updated) {
             repository.save(products);
-            System.out.println("✅ Product updated: " + updatedProduct.getName());
         } else {
-            System.out.println("❌ Product ID " + id + " not found.");
+            throw new InvalidProductException("❌ Product ID " + id + " not found.");
         }
     }
 
-    // === Private Helpers ===
 
     private List<Product> loadProductList() {
         return new ArrayList<>(repository.load());

@@ -1,5 +1,7 @@
 package com.ecommerce.service;
 
+import com.ecommerce.exception.InvalidEmailException;
+import com.ecommerce.exception.InvalidPasswordException;
 import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.User;
@@ -18,31 +20,27 @@ public class LoginService {
         email = email.trim().toLowerCase();
         password = password.trim();
 
+
+
         if (email.equals("admin@gmail.com")) {
             if (password.equals("adminPass")) {
-                System.out.println("✅ Welcome back, Admin!");
                 SessionContext.setLoggedInEmail(email);
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
-                System.out.println("❌ Invalid admin password.");
-                return null;
+                throw new InvalidPasswordException("❌ Invalid admin password.");
             }
         }
 
         Customer customer = customerService.getCustomerByEmail(email);
         if (customer == null) {
-            System.out.println("❌ Email not found. Please sign up first.");
-            return null;
-        }
+            throw new InvalidEmailException("❌ Email not found. Please sign up first.");}
 
         if (customer.getPassword().equals(password)) {
-//            System.out.println("✅ Welcome back, " + customer.getName() + "!");
             SessionContext.setLoggedInEmail(email);
             return customer;
         }
+        throw new InvalidPasswordException("Incorrect password.");
 
-        System.out.println("⚠️ Incorrect password.");
-        return null;
     }
 
 
