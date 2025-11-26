@@ -1,16 +1,15 @@
 package com.ecommerce.repository;
 
+import com.ecommerce.exception.NoOrdersFoundException;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 import com.ecommerce.model.entities.Product;
-import com.ecommerce.service.CustomerService;
 import com.ecommerce.service.ProductService;
 
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -66,11 +65,11 @@ public class OrderRepository {
                     order.setStatus(status);
                     orders.add(order);
 
-                    customer.addOrder(order); // optional, depends on your flow
+                    customer.addOrder(order);
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            System.out.println("⚠️ Failed to load orders: " + e.getMessage());
+            throw new NoOrdersFoundException("Failed to load orders: " +e);
         }
 
         return orders;
@@ -92,75 +91,10 @@ public class OrderRepository {
             writer.write(orderLineBuilder.toString());
             writer.newLine();
         } catch (IOException e) {
-            System.out.println("⚠️ Failed to save order: " + e.getMessage());
+            throw new NoOrdersFoundException("Failed to save orders: " +e);
+
         }
     }
-//    public List<Order> getOrdersByCustomerEmail(String email) {
-//        List<Order> orders = new ArrayList<>();
-//
-//        if (!file.exists()) return orders;
-//
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                String[] parts = line.split("\\|");
-//                if (parts.length < 11) continue;
-//
-//                // Match customer email
-//                String customerEmail = parts[3];
-//                if (!customerEmail.equalsIgnoreCase(email)) continue;
-//
-//                // Reconstruct Customer
-//                int customerId = Integer.parseInt(parts[1]);
-//                String name = parts[2];
-//                String password = parts[4];
-//                double balance = Double.parseDouble(parts[5]);
-//                String address = parts[6];
-//                Customer customer = new Customer(customerId, name, customerEmail, password, balance, address);
-//
-//                // Reconstruct Order
-//                String orderId = parts[0];
-//                LocalDateTime orderDate = LocalDateTime.parse(parts[7], formatter);
-//                String status = parts[8];
-//                String itemsRaw = parts[9];
-//                double total = Double.parseDouble(parts[10]);
-//
-//                List<CartItem> cartItems = new ArrayList<>();
-//                if (!itemsRaw.isBlank()) {
-//                    String[] itemParts = itemsRaw.split(ITEM_DELIMITER);
-//                    for (String item : itemParts) {
-//                        String[] itemFields = item.split(ITEM_PART_DELIMITER);
-//                        if (itemFields.length < 2) continue;
-//
-//                        int productId = Integer.parseInt(itemFields[0]);
-//                        try {
-//
-//                            int quantity = Integer.parseInt(itemFields[1]);
-//                            Product product = productService.getProductById(productId);
-//                            if (product != null) {
-//                                cartItems.add(new CartItem(product, quantity));
-//                            } else {
-//                                System.out.println("⚠️ Product not found: " + productId);
-//                            }
-//                        } catch (NumberFormatException e) {
-//                            System.out.println("⚠️ Invalid quantity for product " + productId);
-//                        }
-//                    }
-//                }
-//
-//                Order order = new Order(cartItems, customer);
-//                order.setOrderId(orderId);
-//                order.setOrderDate(orderDate);
-//                order.setStatus(status);
-//                order.setOrder_total(total);
-//
-//                orders.add(order);
-//            }
-//        } catch (IOException | NumberFormatException | DateTimeParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return orders;
-//    }
+
 
 }

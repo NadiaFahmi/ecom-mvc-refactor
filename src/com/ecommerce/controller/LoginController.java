@@ -57,7 +57,7 @@ public class LoginController {
                 }
 
                 case "no" -> {
-                    loginAuth(); // retry login flow
+                    loginAuth();
                     break;
                 }
 

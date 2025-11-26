@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.exception.InsufficientBalanceException;
+import com.ecommerce.exception.NoOrdersForDateException;
 import com.ecommerce.exception.NoOrdersFoundException;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
@@ -54,8 +55,19 @@ public class OrderController {
 
     }
 
+//    public List<Order> getAllOrders() {
+//        return orderService.getOrders();
+//    }
     public List<Order> getAllOrders() {
-        return orderService.getOrders();
+
+        List<Order> orders = new ArrayList<>();
+        try {
+            orders = orderService.getOrders();
+
+        }catch (NoOrdersFoundException e){
+            orderView.showErrorMessage(e.getMessage());
+        }
+       return orders;
     }
 
     public void loadOrdersFromFile() {
@@ -89,7 +101,7 @@ public class OrderController {
             for (Order order : orders) {
                 getOrderDetails(order, customer);
             }
-        }catch (NoOrdersFoundException e){
+        }catch (NoOrdersForDateException e){
             orderView.showErrorMessage(e.getMessage());
         }
             }

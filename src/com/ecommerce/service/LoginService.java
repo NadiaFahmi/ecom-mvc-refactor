@@ -6,8 +6,12 @@ import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.User;
 
+import java.util.logging.Logger;
+
 
 public class LoginService {
+
+    private static Logger logger = Logger.getLogger(LoginService.class.getName());
 
     private final CustomerService customerService;
 
@@ -24,21 +28,26 @@ public class LoginService {
 
         if (email.equals("admin@gmail.com")) {
             if (password.equals("adminPass")) {
+                logger.info("Login attempt for : " + email);
                 SessionContext.setLoggedInEmail(email);
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
+                logger.warning("Invalid admin password.");
                 throw new InvalidPasswordException("❌ Invalid admin password.");
             }
         }
 
         Customer customer = customerService.getCustomerByEmail(email);
         if (customer == null) {
+            logger.warning("Email not found " + customer);
             throw new InvalidEmailException("❌ Email not found. Please sign up first.");}
 
         if (customer.getPassword().equals(password)) {
+            logger.info("Customer login successfully");
             SessionContext.setLoggedInEmail(email);
             return customer;
         }
+        logger.warning("Incorrect password." + password);
         throw new InvalidPasswordException("Incorrect password.");
 
     }

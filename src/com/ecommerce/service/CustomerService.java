@@ -25,7 +25,6 @@ public class CustomerService {
 
     public Customer getCustomerByEmail(String email) {
         if (email == null || email.isBlank()) {
-//            throw new IllegalArgumentException("Email must not be empty");
             throw new InvalidEmailException("Email must not be empty");
         }
         return repository.getCustomerByEmail(email);

@@ -1,5 +1,6 @@
 package com.ecommerce.repository;
 
+import com.ecommerce.exception.CustomerNotFoundException;
 import com.ecommerce.model.entities.Customer;
 
 import java.io.*;
@@ -28,9 +29,8 @@ public class CustomerRepository {
                         c.getAddress()));
                 writer.newLine();
             }
-            System.out.println("✅ Processed successfully.");
         } catch (IOException e) {
-            System.out.println("❌ Error saving: " + e.getMessage());
+            throw new RuntimeException("Failed to save customers to file", e);
         }
     }
     public void saveCustomer(Customer customer){
@@ -103,14 +103,13 @@ public class CustomerRepository {
                 String address = parts[5].trim();
 
                 Customer customer = new Customer(customerId, name, email, password, balance, address);
-                customerMap.put(customerId, customer); // inject directly
+                customerMap.put(customerId, customer);
 
                 if (customerId > maxId) maxId = customerId;
             }
             Customer.setIdCounter(maxId + 1);
-            System.out.println("📂 Customers loaded into map.");
         } catch (IOException | NumberFormatException e) {
-            System.out.println("⚠️ Failed to load customers: " + e.getMessage());
+            throw new RuntimeException("Failed to load customers to file", e);
         }
     }
 }

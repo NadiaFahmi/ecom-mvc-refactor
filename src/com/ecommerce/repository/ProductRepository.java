@@ -1,5 +1,6 @@
 package com.ecommerce.repository;
 
+import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Product;
 
 import java.io.*;
@@ -25,7 +26,7 @@ public class ProductRepository {
                 }
             }
         } catch (IOException e) {
-            System.out.println("⚠️ Failed to load products: " + e.getMessage());
+            throw new InvalidProductException("Failed to load products: ");
         }
 
         return products;
@@ -38,7 +39,7 @@ public class ProductRepository {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("⚠️ Failed to save products: " + e.getMessage());
+            throw new InvalidProductException("Failed to save products: ");
         }
     }
 

@@ -1,6 +1,7 @@
 package com.ecommerce.service;
 
 import com.ecommerce.exception.InsufficientBalanceException;
+import com.ecommerce.exception.NoOrdersForDateException;
 import com.ecommerce.exception.NoOrdersFoundException;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
@@ -71,9 +72,12 @@ public class OrderService {
         if (!ordersLoaded) {
             List<Order> loadedOrders = orderRepository.loadOrders(id -> customerRepository.getCustomerById(id));
 
+            if(loadedOrders.isEmpty()){
+                throw new NoOrdersFoundException("No orders found in repository");
+            }
+
             orders.addAll(loadedOrders);
             ordersLoaded = true;
-//        }
 
         }
         return orders;
@@ -111,7 +115,7 @@ public List<Order> filterCustomerOrdersByDate(Customer customer, LocalDate date)
     }
 
     if (filteredOrders.isEmpty()) {
-        throw new NoOrdersFoundException(date);
+        throw new NoOrdersForDateException(date);
 
     }
 
