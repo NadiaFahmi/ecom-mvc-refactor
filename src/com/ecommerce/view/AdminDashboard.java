@@ -60,7 +60,7 @@ public class AdminDashboard {
                 case "2" -> {
                     System.out.print("🔍 Enter keyword: ");
                     String keyword = scanner.nextLine();
-                    adminController.filterUsersByNameKeyword(keyword);
+                    adminController.filterUsersByName(keyword);
                 }
                 case "3" -> {
                     try {
@@ -95,7 +95,7 @@ public class AdminDashboard {
                 case "6" -> {
                     System.out.print("📧 Enter user email: ");
                     String email = scanner.nextLine();
-                    adminController.getOrdersByUser(email);
+                    adminController.getOrdersByEmail(email);
                 }
                 case "7" -> {
                     System.out.print("📦 Enter category: ");

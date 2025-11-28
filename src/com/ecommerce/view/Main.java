@@ -98,7 +98,7 @@ public class Main {
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
             CartController cartController = new CartController(cartService, new CartView());
-            cartController.loadCart(customer);
+                cartController.listCartItems(customer);
 
             OrderController orderController = new OrderController(orderService, new OrderView(scanner));
             orderController.loadOrdersFromFile();

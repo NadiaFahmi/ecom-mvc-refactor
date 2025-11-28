@@ -8,7 +8,7 @@ public class Customer extends User{
 
     private  List<Order> orders;
 //
-    private static int  idCounter = 1;
+//    private static int  idCounter = 1;
     private double balance;
     private String address;
     private Cart cart;
@@ -18,26 +18,27 @@ public class Customer extends User{
         super(id, name, email, password, UserRole.CUSTOMER);
         this.balance = balance;
         this.address = address;
-        this.cart = new Cart();
         this.orders  = new ArrayList<>();
 
-        if (id >= idCounter) {
-            idCounter = id + 1;
-        }
-    }
-
-    public Customer(String name, String email, String password,
-                    double balance, String address) {
-        super(idCounter++, name, email, password, UserRole.CUSTOMER);
-        this.balance = balance;
-        this.address = address;
         this.cart = new Cart();
-        this.orders  = new ArrayList<>();
+        this.cart.setCustomerId(id);
+
+
     }
 
-    public static void setIdCounter(int nextId) {
-        idCounter = nextId;
-    }
+//    public Customer(String name, String email, String password,
+//                    double balance, String address) {
+//        super(idCounter++, name, email, password, UserRole.CUSTOMER);
+//        this.balance = balance;
+//        this.address = address;
+//        this.cart = new Cart();
+//        this.cart.setCustomerId(id);
+//        this.orders  = new ArrayList<>();
+//    }
+//
+//    public static void setIdCounter(int nextId) {
+//        idCounter = nextId;
+//    }
 
     public String getAddress() {
         return address;

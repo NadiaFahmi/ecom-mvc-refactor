@@ -3,9 +3,12 @@ package com.ecommerce.controller;
 import com.ecommerce.exception.CartItemNotFoundException;
 import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Cart;
+import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.service.CartService;
 import com.ecommerce.view.CartView;
+
+import java.util.List;
 
 public class CartController {
 
@@ -27,16 +30,16 @@ public class CartController {
         }
     }
     public void listCartItems(Customer customer) {
-        Cart cart = cartService.loadCart(customer);
-        cartView.display(cart);
+        List<CartItem> items = cartService.getLoadedItems(customer);
+        cartView.display(items);
     }
 
     public void removeProductFromCart(Customer customer, int productId){
 
         try{
-            cartService.removeProductFromCart(customer.getCart(), productId);
+            cartService.removeItemFromCart(customer, productId);
             cartView.showRemovedMessage();
-            saveCart(customer);
+
         }catch (CartItemNotFoundException e){
             cartView.showErrorMessage(e.getMessage());
         }
@@ -51,14 +54,6 @@ public class CartController {
         cartView.showTotalCartPrice(totalPrice);
     }
 
-
-    public void saveCart(Customer customer) {
-        cartService.saveCart(customer);
-    }
-
-    public void loadCart(Customer customer) {
-        cartService.loadCart(customer);
-    }
 
 
 }

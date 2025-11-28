@@ -29,7 +29,7 @@ public class LoginService {
         if (email.equals("admin@gmail.com")) {
             if (password.equals("adminPass")) {
                 logger.info("Login attempt for : " + email);
-                SessionContext.setLoggedInEmail(email);
+                LoggedInUser.setLoggedInEmail(email);
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
                 logger.warning("Invalid admin password.");
@@ -44,7 +44,7 @@ public class LoginService {
 
         if (customer.getPassword().equals(password)) {
             logger.info("Customer login successfully");
-            SessionContext.setLoggedInEmail(email);
+            LoggedInUser.setLoggedInEmail(email);
             return customer;
         }
         logger.warning("Incorrect password." + password);

@@ -1,6 +1,6 @@
 package com.ecommerce.service;
 
-public class SessionContext {
+public class LoggedInUser {
 
     private static String currentEmail;
 

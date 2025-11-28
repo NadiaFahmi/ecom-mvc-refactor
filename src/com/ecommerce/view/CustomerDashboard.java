@@ -38,9 +38,7 @@ public class CustomerDashboard {
     }
 
     public void launch() {
-        System.out.printf("👋 Hello, %s! You have %d item(s) in your cart.%n",
-                customer.getName(),
-                customer.getCart().getCartItems().size());
+        System.out.printf("👋 Hello, %s!%n", customer.getName());
 
         boolean running = true;
 
@@ -53,15 +51,14 @@ public class CustomerDashboard {
             System.out.println("4 - Remove Item from Cart");
             System.out.println("5 - Check Total Price");
             System.out.println("6 - Update Cart Item");
-            System.out.println("7 - Save Cart");
             System.out.println("📦 --- Order Processing ---");
-            System.out.println("8 - Place Order");
-            System.out.println("9 - View My Orders");
-            System.out.println("10 - Filter My Orders By Date");
+            System.out.println("7 - Place Order");
+            System.out.println("8 - View My Orders");
+            System.out.println("9 - Filter My Orders By Date");
             System.out.println("👤 --- Account ---");
-            System.out.println("11 - Update My Account Info");
-            System.out.println("12 - Delete My Account");
-            System.out.println("13 - Customer info");
+            System.out.println("10 - Update My Account Info");
+            System.out.println("11 - Delete My Account");
+            System.out.println("12 - Customer info");
             System.out.println("exit - Logout and Exit Dashboard");
 
             System.out.print("Your choice: ");
@@ -89,7 +86,6 @@ public class CustomerDashboard {
                     try {
                         int productId = Integer.parseInt(scanner.nextLine().trim());
                         cartController.removeProductFromCart(customer,productId);
-                        cartController.saveCart(customer);
                     } catch (NumberFormatException e) {
                         System.out.println("⚠️ Invalid product ID. Please enter a number.");
                     }
@@ -110,7 +106,6 @@ public class CustomerDashboard {
                             System.out.println("❌ Quantity cannot be negative.");
                         } else {
                             cartController.updateQuantity(customer,productId, newQty);
-//                            System.out.println("✅ Cart item updated.");
                         }
 
                     } catch (NumberFormatException e) {
@@ -120,10 +115,9 @@ public class CustomerDashboard {
                     }
                 }
 
-                case "7" -> cartController.saveCart(customer);
-                case "8" -> orderController.handlePlaceOrder(customer);
-                case "9" -> orderController.getCustomerOrders(customer);
-                case "10" -> {
+                case "7" -> orderController.handlePlaceOrder(customer);
+                case "8" -> orderController.getCustomerOrders(customer);
+                case "9" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();
                     try {
@@ -134,12 +128,12 @@ public class CustomerDashboard {
                     }
                 }
 
-                case "11" -> customerUpdateView.launchUpdateMenu(customer, scanner);
-                case "12" ->  {  System.out.print("📅 Enter Your email: ");
+                case "10" -> customerUpdateView.launchUpdateMenu(customer, scanner);
+                case "11" ->  {  System.out.print("📅 Enter Your email: ");
                     String emailInput = scanner.nextLine().trim();
                     customerController.deleteCustomerByEmail(emailInput);
                 }
-                case "13" -> {
+                case "12" -> {
                     customerController.showLoggedInCustomerOrders();
                 }
                 case "exit" -> {

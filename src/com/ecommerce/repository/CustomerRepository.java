@@ -5,9 +5,10 @@ import com.ecommerce.model.entities.Customer;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class CustomerRepository {
-
+    private int idCounter =1;
     private static final String DELIMITER = ",";
     private final String filePath;
     private Map<Integer, Customer> customerMap = new HashMap<>();
@@ -16,6 +17,15 @@ public class CustomerRepository {
         this.filePath = filePath;
     }
 
+
+    public Customer createCustomer(String name, String email, String password,
+                                   double balance, String address){
+        int id = idCounter++;
+        Customer customer = new Customer(id,name,email,password,balance,address);
+        customerMap.put(id,customer);
+        saveAll();
+        return customer;
+    }
     public void saveAll() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Customer c : customerMap.values()) {
@@ -30,7 +40,8 @@ public class CustomerRepository {
                 writer.newLine();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to save customers to file", e);
+            throw new IllegalArgumentException("Failed to save customers to file");
+
         }
     }
     public void saveCustomer(Customer customer){
@@ -107,9 +118,11 @@ public class CustomerRepository {
 
                 if (customerId > maxId) maxId = customerId;
             }
-            Customer.setIdCounter(maxId + 1);
+            idCounter = maxId+1;
+//            Customer.setIdCounter(maxId + 1);
         } catch (IOException | NumberFormatException e) {
-            throw new RuntimeException("Failed to load customers to file", e);
+            throw new IllegalArgumentException("Failed to load customers to file");
+
         }
     }
 }

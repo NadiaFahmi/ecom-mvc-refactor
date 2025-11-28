@@ -69,7 +69,7 @@ public class OrderRepository {
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            throw new NoOrdersFoundException("Failed to load orders: " +e);
+//            throw new NoOrdersFoundException("Failed to load orders: " +e);
         }
 
         return orders;
@@ -91,7 +91,7 @@ public class OrderRepository {
             writer.write(orderLineBuilder.toString());
             writer.newLine();
         } catch (IOException e) {
-            throw new NoOrdersFoundException("Failed to save orders: " +e);
+//            throw new NoOrdersFoundException("Failed to save orders: " +e);
 
         }
     }

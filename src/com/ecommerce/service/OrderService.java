@@ -30,7 +30,8 @@ public class OrderService {
     }
 
     public boolean hasSufficientBalance(Customer customer){
-        List<CartItem> cartItems = customer.getCart().getCartItems();
+//        List<CartItem> cartItems = customer.getCart().getCartItems();
+        List<CartItem> cartItems = cartService.getLoadedItems(customer);
         double total = calculateTotal(cartItems);
         return customer.getBalance() >= total;
     }
@@ -38,14 +39,15 @@ public class OrderService {
     public Order createOrder() {
         Customer customer = getLoggedInCustomer();
         if (customer == null) return null;
-        List<CartItem> cartItems = customer.getCart().getCartItems();
+//        List<CartItem> cartItems = customer.getCart().getCartItems();
+        List<CartItem> cartItems = cartService.getLoadedItems(customer);
         if (cartItems.isEmpty()) return null;
 
         double total = calculateTotal(cartItems);
         if (customer.getBalance() < total) {
             throw new InsufficientBalanceException(" Insufficient Balance");
 
-        };
+        }
 
         Order newOrder = new Order(cartItems, customer);
         newOrder.markAsPaid();
@@ -64,7 +66,7 @@ public class OrderService {
     }
 
     public Customer getLoggedInCustomer() {
-        String email = SessionContext.getLoggedInEmail(); // ✅ static access
+        String email = LoggedInUser.getLoggedInEmail(); // ✅ static access
         return customerRepository.getCustomerByEmail(email);
     }
 
@@ -122,5 +124,7 @@ public List<Order> filterCustomerOrdersByDate(Customer customer, LocalDate date)
 
 return filteredOrders;
 }
+    public List<CartItem> getCartItems(Customer customer){
+        return cartService.getLoadedItems(customer);}
 }
 

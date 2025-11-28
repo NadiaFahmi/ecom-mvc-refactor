@@ -28,7 +28,7 @@ public class AdminController {
         customerView.showAllCustomers(customers);
     }
 
-    public void filterUsersByNameKeyword(String keyword) {
+    public void filterUsersByName(String keyword) {
         List<Customer> customers = adminService.filterUsersByNameKeyword(keyword);
         customerView.displayFilteredUsers(customers,keyword);
     }
@@ -49,7 +49,7 @@ public class AdminController {
         transactionView.viewAllTransactions(orders);
     }
 
-    public void getOrdersByUser(String email) {
+    public void getOrdersByEmail(String email) {
         List<Order> orders = adminService.getOrdersByUser(email);
         transactionView.viewTransactionsByUser(email, orders);
     }

@@ -1,22 +1,19 @@
 package com.ecommerce.model.entities;
 
 
-import java.util.*;
-
 
 public class Cart {
-    private List<CartItem> cartItems = new ArrayList<>();
 
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
+    private int customerId;
+
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public List<CartItem> getCartItems() {
-        return cartItems;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
-    public boolean isEmpty() {
-        return cartItems.isEmpty();
-    }
+
 }
 

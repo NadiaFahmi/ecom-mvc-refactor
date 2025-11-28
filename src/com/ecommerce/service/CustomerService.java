@@ -18,9 +18,14 @@ public class CustomerService {
         this.orderService = orderService;
 
     }
-    public void registerCustomer(Customer customer) {
-        repository.addCustomer(customer);
-        repository.saveAll();
+//    public void registerCustomer(Customer customer) {
+//        repository.addCustomer(customer);
+//        repository.saveAll();
+//    }
+
+    public Customer registerCustomer(String name, String email, String password,
+                                     double balance, String address) {
+        return repository.createCustomer(name, email, password, balance, address);
     }
 
     public Customer getCustomerByEmail(String email) {

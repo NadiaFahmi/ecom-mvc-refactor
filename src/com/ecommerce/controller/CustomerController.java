@@ -28,17 +28,15 @@ public class CustomerController {
     }
 
 
-    public boolean updateCustomerEmail(Customer customer, String email)  {
+        public void updateCustomerEmail(Customer customer, String email)  {
 
         try {
             boolean success = customerService.updateCustomerEmail(customer, email);
             if (success) {
                 customerView.showEmailUpdated();
             }
-            return success;
         } catch (InvalidEmailException e) {
             customerView.showError(e.getMessage());
-            return false;
         }
     }
 
@@ -80,16 +78,14 @@ public class CustomerController {
     }
 
 
-    public boolean deleteCustomerByEmail(String email) {
+    public void deleteCustomerByEmail(String email) {
         try {
-
              customerService.deleteCustomer(email);
              customerView.showDeleteCustomer();
-             return true;
+
         }catch (InvalidEmailException e){
             customerView.showError(e.getMessage());
         }
-        return false;
     }
 
     public void showLoggedInCustomerOrders() {

@@ -25,7 +25,7 @@ public class OrderController {
     }
 
     public void handlePlaceOrder(Customer customer) {
-        List<CartItem> cartItems = customer.getCart().getCartItems();
+        List<CartItem> cartItems =orderService.getCartItems(customer);
         if (cartItems.isEmpty()) {
             orderView.showCartEmpty();
             return;
@@ -55,9 +55,6 @@ public class OrderController {
 
     }
 
-//    public List<Order> getAllOrders() {
-//        return orderService.getOrders();
-//    }
     public List<Order> getAllOrders() {
 
         List<Order> orders = new ArrayList<>();

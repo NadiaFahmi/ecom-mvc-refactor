@@ -35,7 +35,8 @@ public class LoginController {
         return null;
     }
 
-    public User handleRetry(Customer customer, String email) {
+    public void handleRetry(Customer customer, String email) {
+//        public User handleRetry(Customer customer, String email) {
 
         while (true) {
             String choice = loginView.promptRetryChoice();
@@ -52,19 +53,12 @@ public class LoginController {
                         loginView.showError(e.getMessage());
                         loginView.showPasswordResetResult(false);
                     }
-                    return null;
 
                 }
 
-                case "no" -> {
-                    loginAuth();
-                    break;
-                }
+                case "no" -> loginAuth();
 
-                case "exit" -> {
-                    loginView.showExitMessage();
-                    return null;
-                }
+                case "exit" -> loginView.showExitMessage();
 
                 default -> loginView.showInvalidChoice();
             }
