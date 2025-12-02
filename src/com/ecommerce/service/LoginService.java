@@ -24,8 +24,6 @@ public class LoginService {
         email = email.trim().toLowerCase();
         password = password.trim();
 
-
-
         if (email.equals("admin@gmail.com")) {
             if (password.equals("adminPass")) {
                 logger.info("Login attempt for : " + email);

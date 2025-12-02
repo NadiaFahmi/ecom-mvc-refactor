@@ -6,7 +6,6 @@ import com.ecommerce.model.entities.Admin;
 
 
 import com.ecommerce.model.entities.Customer;
-import com.ecommerce.model.entities.Order;
 import com.ecommerce.model.entities.User;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.CustomerRepository;
@@ -14,7 +13,6 @@ import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.service.*;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -28,10 +26,10 @@ public class Main {
 
         // Services
         ProductService productService = new ProductService(productRepo);
-        CartRepository cartRepository = new CartRepository(productService);
+        CartRepository cartRepository = new CartRepository();
         CartService cartService = new CartService(productService, cartRepository);
         OrderRepository orderRepository = new OrderRepository(productService);
-        OrderService orderService = new OrderService(cartService, orderRepository, customerRepository);
+        OrderService orderService = new OrderService(cartService, orderRepository, customerRepository,productService);
         CustomerService customerService = new CustomerService(customerRepository, orderService);
 
         // Views and Controllers
@@ -91,24 +89,18 @@ public class Main {
         }
 
             if (user instanceof Admin) {
-            AdminService adminService = new AdminService(customerService, orderService);
+            AdminService adminService = new AdminService(customerService,customerRepository, orderService);
             TransactionView transactionView = new TransactionView();
             AdminController adminController = new AdminController(adminService, transactionView, customerView);
             AdminDashboard adminDashboard = new AdminDashboard(adminController, productController, productView, scanner);
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
             CartController cartController = new CartController(cartService, new CartView());
-                cartController.listCartItems(customer);
+                cartController.getCartItems(customer);
 
             OrderController orderController = new OrderController(orderService, new OrderView(scanner));
             orderController.loadOrdersFromFile();
 
-            List<Order> allOrders = orderController.getAllOrders();
-            for (Order order : allOrders) {
-                if (order.getCustomer().getId() == customer.getId()) {
-                    customer.addOrder(order);
-                }
-            }
 
             CustomerDashboard customerDashboard = new CustomerDashboard(
                     customer,

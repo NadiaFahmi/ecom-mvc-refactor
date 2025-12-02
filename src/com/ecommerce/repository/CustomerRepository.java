@@ -49,10 +49,6 @@ public class CustomerRepository {
         saveAll();
     }
 
-    public void addCustomer(Customer customer) {
-        customerMap.put(customer.getId(), customer);
-    }
-
     public Customer getCustomerByEmail(String email) {
         String normalized = email.trim().toLowerCase();
         for (Customer customer : customerMap.values()) {
@@ -119,7 +115,6 @@ public class CustomerRepository {
                 if (customerId > maxId) maxId = customerId;
             }
             idCounter = maxId+1;
-//            Customer.setIdCounter(maxId + 1);
         } catch (IOException | NumberFormatException e) {
             throw new IllegalArgumentException("Failed to load customers to file");
 

@@ -80,7 +80,7 @@ public class CustomerDashboard {
                         System.out.println("❌ Invalid input. Please enter numeric values.");
                     }
                 }
-                case "3" -> cartController.listCartItems(customer);
+                case "3" -> cartController.getCartItems(customer);
                 case "4" -> {
                     System.out.print("Enter Product ID to remove from cart: ");
                     try {

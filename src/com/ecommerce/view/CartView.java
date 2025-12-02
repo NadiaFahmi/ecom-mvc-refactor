@@ -8,14 +8,14 @@ import java.util.List;
 
 public class CartView {
 
-    public List<CartItem> display(List<CartItem> items) {
+    public void display(List<CartItem> items) {
         System.out.println("🛍️ Cart Contents:");
         for (CartItem item : items) {
-            Product p = item.getProduct();
-            double total = p.getPrice() * item.getQuantity();
-            System.out.printf("- %s x%d = $%.2f%n", p.getName(), item.getQuantity(), total);
+            System.out.printf("- %s x%d = $%.2f%n",
+                    item.getName(),
+                    item.getQuantity(),
+                    item.getTotalPrice());
         }
-        return items;
     }
     public void showSuccessMessage() {
         System.out.println("Product Added");

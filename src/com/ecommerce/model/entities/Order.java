@@ -5,89 +5,46 @@ import java.util.*;
 
 public class Order {
 
-    private String orderId;
-    private List<CartItem> cartItems;
-    private Customer customer;
+
+private int orderId;
+    private int customerId;
     private double orderTotal;
     private String status;
     private LocalDateTime orderDate;
 
-    public Order(List<CartItem> cartItems, Customer customer) {
-
-        this.orderId = UUID.randomUUID().toString();
-        this.cartItems = new ArrayList<>(cartItems);
-        this.customer = customer;
-        this.orderTotal = calculateTotal();
-        this.status = "pending";
-        this.orderDate = LocalDateTime.now();
-    }
-
-    private double calculateTotal() {
-        double total = 0.0;
-        for (CartItem item : cartItems) {
-            total += item.getProduct().getPrice() * item.getQuantity();
-        }
-        return total;
-    }
-
-    public void setOrderDate(LocalDateTime orderDate) {
+    public Order(int orderId, int customerId, double orderTotal, String status, LocalDateTime orderDate) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.orderTotal = orderTotal;
+        this.status = status;
         this.orderDate = orderDate;
     }
 
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
-
-    public String getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public List<CartItem> getCartItems() {
-        return cartItems;
-    }
-
-
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
     public double getOrderTotal() {
         return orderTotal;
     }
 
+    public void setOrderTotal(double orderTotal) {
+        this.orderTotal = orderTotal;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-
-        this.status = status;
+    public LocalDateTime getOrderDate() {
+        return orderDate;
     }
-
-    public void markAsPaid() {
-        if (this.status.equalsIgnoreCase("pending")) {
-            this.status = "paid";
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("🆔 Order ID: ").append(orderId)
-                .append(" | 📅 Date: ").append(orderDate)
-                .append(" | 💵 Total: ").append(orderTotal)
-                .append(" | 📦 Status: ").append(status);
-        return sb.toString();
-    }
-
 }

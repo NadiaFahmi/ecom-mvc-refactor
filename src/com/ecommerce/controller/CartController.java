@@ -29,10 +29,12 @@ public class CartController {
             cartView.showErrorMessage(e.getMessage());
         }
     }
-    public void listCartItems(Customer customer) {
-        List<CartItem> items = cartService.getLoadedItems(customer);
+    public void getCartItems(Customer customer) {
+        Cart cart = new Cart(customer.getId());
+        List<CartItem> items = cartService.getLoadedItems(cart);
         cartView.display(items);
     }
+
 
     public void removeProductFromCart(Customer customer, int productId){
 

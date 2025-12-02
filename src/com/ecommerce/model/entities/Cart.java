@@ -4,14 +4,15 @@ package com.ecommerce.model.entities;
 
 public class Cart {
 
-    private int customerId;
+    private int id;
 
-    public int getCustomerId() {
-        return customerId;
+
+    public Cart(int customerId){
+        this.id = customerId;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public int getId() {
+        return id;
     }
 
 

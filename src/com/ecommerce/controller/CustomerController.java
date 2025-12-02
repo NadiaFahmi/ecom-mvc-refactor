@@ -28,7 +28,7 @@ public class CustomerController {
     }
 
 
-        public void updateCustomerEmail(Customer customer, String email)  {
+    public void updateCustomerEmail(Customer customer, String email) {
 
         try {
             boolean success = customerService.updateCustomerEmail(customer, email);
@@ -44,7 +44,8 @@ public class CustomerController {
         try {
             Customer customer = customerService.findCustomerById(customerId);
             customerService.updateCustomerName(customer, newName);
-        }catch (InvalidNameException e){
+            customerView.showNameUpdated();
+        } catch (InvalidNameException e) {
             customerView.showError(e.getMessage());
         }
     }
@@ -53,7 +54,7 @@ public class CustomerController {
         try {
             Customer customer = customerService.findCustomerById(customerId);
             customerService.updateCustomerAddress(customer, newAddress);
-        }catch (InvalidAddressException e){
+        } catch (InvalidAddressException e) {
             customerView.showError(e.getMessage());
         }
     }
@@ -62,7 +63,7 @@ public class CustomerController {
         Customer customer = customerService.findCustomerById(customerId);
         try {
             customerService.updateCustomerBalance(customer, amount);
-        }catch (InsufficientBalanceException e){
+        } catch (InsufficientBalanceException e) {
             customerView.showInvalidBalance(e.getMessage());
         }
     }
@@ -72,7 +73,7 @@ public class CustomerController {
             Customer customer = customerService.findCustomerById(customerId);
             customerService.updatePassword(customer, currentPassword, newPassword, confirmPassword);
             customerView.showPasswordUpdated();
-        }catch (InvalidPasswordException e){
+        } catch (InvalidPasswordException e) {
             customerView.showError(e.getMessage());
         }
     }
@@ -80,10 +81,10 @@ public class CustomerController {
 
     public void deleteCustomerByEmail(String email) {
         try {
-             customerService.deleteCustomer(email);
-             customerView.showDeleteCustomer();
+            customerService.deleteCustomer(email);
+            customerView.showDeleteCustomer();
 
-        }catch (InvalidEmailException e){
+        } catch (InvalidEmailException e) {
             customerView.showError(e.getMessage());
         }
     }
@@ -91,7 +92,7 @@ public class CustomerController {
     public void showLoggedInCustomerOrders() {
         List<Order> orders = new ArrayList<>();
         Customer customer = customerService.getLoggedInCustomerWithOrders(orders);
+        customerView.showCustomerSummary(customer);
 
-        customerView.displayCustomerWithOrders(customer, orders);
     }
 }

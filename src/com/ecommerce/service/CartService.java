@@ -8,6 +8,7 @@ import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Product;
 import com.ecommerce.repository.CartRepository;
 
+import java.util.Collections;
 import java.util.List;
 
 public class CartService {
@@ -20,72 +21,90 @@ public class CartService {
     }
 
     public void addProductToCart(Customer customer, int productId, int quantity) {
+
         Product product = productService.getProductById(productId);
         if (product == null || quantity <= 0) {
             throw new InvalidProductException("Invalid product or quantity.");
         }
-        List<CartItem> items = getLoadedItems(customer);
+
+        Cart cart =cartRepository.findByCustomerId(customer.getId());
+        if (cart == null) {
+            cart = cartRepository.createCartForCustomer(customer.getId());
+        }
+        List<CartItem> items = getLoadedItems(cart);
+
         CartItem item = findItem(items, productId);
         if (item != null) {
-
             increaseItemQuantity(item, quantity);
-
         } else {
-            items.add(new CartItem(product,quantity));
+            CartItem newItem = new CartItem(
+                    cart.getId(),
+                    product.getId(),
+                    product.getName(),
+                    quantity,
+                    product.getPrice()
+            );
+            items.add(newItem);
         }
-        saveCartItems(customer,items);
 
+        cartRepository.saveCartItems(cart, items);
     }
 
     public void removeItemFromCart(Customer customer, int productId) {
-        List<CartItem> items = getLoadedItems(customer);
+        Cart cart =cartRepository.findByCustomerId(customer.getId());
+        List<CartItem> items = getLoadedItems(cart);
         CartItem item = findItem(items, productId);
         if (item == null) {
             throw new CartItemNotFoundException("Product not found in cart.");
         }
         items.remove(item);
-        saveCartItems(customer,items);
+        saveCartItems(cart, items);
     }
 
     public void updateCartItemQuantity(Customer customer, int productId, int newQuantity) {
-        List<CartItem> items= getLoadedItems(customer);
+        Cart cart =cartRepository.findByCustomerId(customer.getId());
+        List<CartItem> items = getLoadedItems(cart);
         CartItem item = findItem(items, productId);
 
         if (item == null) {
             throw new CartItemNotFoundException("Product ID " + productId + " not found in cart.");
         }
-            if (newQuantity > 0) {
-                item.setQuantity(newQuantity);
-                saveCartItems(customer, items);
-            } else {
-                removeItemFromCart(customer, productId);
-            }
+        if (newQuantity > 0) {
+            item.setQuantity(newQuantity);
+            saveCartItems(cart, items);
+        } else {
+            removeItemFromCart(customer, productId);
+        }
         }
 
 
-public void saveCartItems(Customer customer, List<CartItem> items) {
-    cartRepository.saveCartItems(customer,items);
+public void saveCartItems(Cart cart, List<CartItem> items) {
+    cartRepository.saveCartItems(cart, items);
 
 }
+    public void clearCartFileContents(Cart cart) {
+        cartRepository.clearCartFileContents(cart);
 
-    public void clearCartFileContents(Customer customer) {
-        cartRepository.clearCartFileContents(customer.getId());
     }
 
     public double calculateTotalPrice(Customer customer) {
 
-        List<CartItem> items = getLoadedItems(customer);
+        Cart cart= cartRepository.findByCustomerId(customer.getId());
+        List<CartItem> items = cartRepository.loadCartItemsFromFile(cart);
 
         double total = 0.0;
         for (CartItem item : items) {
-            total += item.getProduct().getPrice() * item.getQuantity();
+            Product product = productService.getProductById(item.getProductId());
+            if (product != null) {
+                total += product.getPrice() * item.getQuantity();
+            }
         }
         return total;
     }
 
     public CartItem findItem(List<CartItem> items, int productId) {
         for (CartItem item :items) {
-            if (item.getProduct() != null && item.getProduct().getId() == productId) {
+            if (item.getProductId() == productId) {
                 return item;
             }
         }
@@ -99,9 +118,19 @@ public void saveCartItems(Customer customer, List<CartItem> items) {
 
         }
     }
-    public List<CartItem> getLoadedItems(Customer customer) {
-        return cartRepository.loadCartItems(customer);
+public List<CartItem> getLoadedItems(Cart cart) {
+    return cartRepository.loadCartItemsFromFile(cart);
+}
+    public Cart getCartForCustomer(Customer customer) {
+
+        Cart  cart = cartRepository.findByCustomerId(customer.getId());
+        if (cart == null) {
+            cart = new Cart(customer.getId());
+            cartRepository.saveCart(cart);
+        }
+        return cart;
     }
+
 }
 
 

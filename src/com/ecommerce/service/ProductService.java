@@ -80,7 +80,6 @@ public class ProductService {
         }
     }
 
-
     private List<Product> loadProductList() {
         return new ArrayList<>(repository.load());
     }

@@ -36,7 +36,6 @@ public class LoginController {
     }
 
     public void handleRetry(Customer customer, String email) {
-//        public User handleRetry(Customer customer, String email) {
 
         while (true) {
             String choice = loginView.promptRetryChoice();

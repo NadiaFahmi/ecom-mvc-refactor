@@ -1,47 +1,44 @@
 package com.ecommerce.service;
 
+import com.ecommerce.exception.CartItemNotFoundException;
 import com.ecommerce.exception.InsufficientBalanceException;
-import com.ecommerce.exception.NoOrdersForDateException;
-import com.ecommerce.exception.NoOrdersFoundException;
-import com.ecommerce.model.entities.CartItem;
-import com.ecommerce.model.entities.Customer;
-import com.ecommerce.model.entities.Order;
+import com.ecommerce.model.entities.*;
 import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.repository.OrderRepository;
 
-import java.time.LocalDate;
 import java.util.*;
 
 public class OrderService {
-//
-
 
     private final List<Order> orders = new ArrayList<>();
     private final CartService cartService;
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
+    private final ProductService productService;
     private boolean ordersLoaded = false;
 
     public OrderService(CartService cartService, OrderRepository orderRepository, CustomerRepository customerRepository
-    ) {
+            , ProductService productService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.customerRepository = customerRepository;
+        this.productService = productService;
     }
 
-    public boolean hasSufficientBalance(Customer customer){
-//        List<CartItem> cartItems = customer.getCart().getCartItems();
-        List<CartItem> cartItems = cartService.getLoadedItems(customer);
-        double total = calculateTotal(cartItems);
-        return customer.getBalance() >= total;
+    public boolean hasSufficientBalance(Customer customer, double amount, double requiredTotal) {
+        customer.setBalance(customer.getBalance() + amount);
+        return customer.getBalance() >= requiredTotal;
     }
 
     public Order createOrder() {
         Customer customer = getLoggedInCustomer();
         if (customer == null) return null;
-//        List<CartItem> cartItems = customer.getCart().getCartItems();
-        List<CartItem> cartItems = cartService.getLoadedItems(customer);
-        if (cartItems.isEmpty()) return null;
+        Cart cart = cartService.getCartForCustomer(customer);
+
+        List<CartItem> cartItems = cartService.getLoadedItems(cart);
+        if (cartItems.isEmpty()) {
+            throw new CartItemNotFoundException("Cart is empty");
+        }
 
         double total = calculateTotal(cartItems);
         if (customer.getBalance() < total) {
@@ -49,35 +46,28 @@ public class OrderService {
 
         }
 
-        Order newOrder = new Order(cartItems, customer);
-        newOrder.markAsPaid();
+        Order newOrder = orderRepository.saveOrder(customer, cartItems, total);
         customer.setBalance(customer.getBalance() - total);
 
-        orderRepository.saveOrder(newOrder);
-        customer.addOrder(newOrder);
-        orders.add(newOrder);
-        cartService.clearCartFileContents(customer);
         customerRepository.saveCustomer(customer);
+        orders.add(newOrder);
+        cartService.clearCartFileContents(cart);
+
         return newOrder;
-    }
-    public boolean increaseBalance(Customer customer, double amount, double requiredTotal) {
-        customer.setBalance(customer.getBalance() + amount);
-        return customer.getBalance() >= requiredTotal;
     }
 
     public Customer getLoggedInCustomer() {
-        String email = LoggedInUser.getLoggedInEmail(); // ✅ static access
+        String email = LoggedInUser.getLoggedInEmail();
         return customerRepository.getCustomerByEmail(email);
     }
 
     public List<Order> getOrders() {
         if (!ordersLoaded) {
             List<Order> loadedOrders = orderRepository.loadOrders(id -> customerRepository.getCustomerById(id));
+            if (loadedOrders == null || loadedOrders.isEmpty()) {
 
-            if(loadedOrders.isEmpty()){
-                throw new NoOrdersFoundException("No orders found in repository");
+                return Collections.emptyList();
             }
-
             orders.addAll(loadedOrders);
             ordersLoaded = true;
 
@@ -88,43 +78,32 @@ public class OrderService {
     public double calculateTotal(List<CartItem> cartItems) {
         double total = 0.0;
         for (CartItem item : cartItems) {
-            double price = item.getProduct().getPrice();
-            int quantity = item.getQuantity();
-            total += price * quantity;
+            Product product = productService.getProductById(item.getProductId());
+            if (product != null) {
+                total += product.getPrice() * item.getQuantity();
+            }
         }
         return total;
     }
 
     public List<Order> getOrdersForCustomer(String email) {
         List<Order> customerOrders = new ArrayList<>();
+
         for (Order order : orders) {
-            if (order.getCustomer().getEmail().equals(email)) {
+            Customer customer = customerRepository.getCustomerById(order.getCustomerId());
+            if (customer != null && customer.getEmail().equals(email)) {
                 customerOrders.add(order);
             }
         }
         return customerOrders;
     }
 
-///////////
-//public void filterCustomerOrdersByDate(Customer customer, LocalDate date)
-public List<Order> filterCustomerOrdersByDate(Customer customer, LocalDate date) {
-    List<Order> filteredOrders = new ArrayList<>();
-
-    for (Order order : customer.getOrders()) {
-        if (order.getOrderDate().toLocalDate().equals(date)) {
-            filteredOrders.add(order);
-        }
+    public Cart getCartForCustomer(Customer customer) {
+        return cartService.getCartForCustomer(customer);
     }
 
-    if (filteredOrders.isEmpty()) {
-        throw new NoOrdersForDateException(date);
-
+    public List<CartItem> getCartItems(Cart cart) {
+        return cartService.getLoadedItems(cart);
     }
-
-
-return filteredOrders;
-}
-    public List<CartItem> getCartItems(Customer customer){
-        return cartService.getLoadedItems(customer);}
 }
 

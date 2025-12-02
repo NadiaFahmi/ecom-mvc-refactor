@@ -12,87 +12,83 @@ import java.util.List;
 
 public class CartRepository {
     private static final String DELIMITER = ",";
-    
-    private final ProductService productService;
 
-    public CartRepository(ProductService productService) {
-        this.productService = productService;
-    }
+public CartRepository(){
 
+
+}
     private String getCartFilePath(int customerId) {
         return "cart_customer_" + customerId + ".txt";
     }
 
-
-    public void clearCartFileContents(int customerId) {
-        String filePath = getCartFilePath(customerId);
-        try (PrintWriter writer = new PrintWriter(filePath)) {
-            writer.write("");
-            System.out.println("🧹 Cart file contents cleared for ");
-        } catch (IOException e) {
-            System.out.println("⚠️ Failed to clear cart file: " + e.getMessage());
-        }
-    }
-
-
-    public List<CartItem> loadCartItemsFromFile(int customerId) {
+    public List<CartItem> loadCartItemsFromFile(Cart cart) {
         List<CartItem> items = new ArrayList<>();
-        String filePath = getCartFilePath(customerId);
-        File file = new File(filePath);
+        File file = new File(getCartFilePath(cart.getId()));
 
         if (!file.exists()) return items;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.trim().split(DELIMITER);
-                if (parts.length == 2) {
+                if (parts.length == 4) { // productId,name,quantity,price
                     int productId = Integer.parseInt(parts[0]);
-                    int quantity = Integer.parseInt(parts[1]);
-
-                    Product product = productService.getProductById(productId);
-                    if (product != null) {
-                        CartItem item = new CartItem(product, quantity);
-                        items.add(item);
-                    }
+                    String name = parts[1];
+                    int quantity = Integer.parseInt(parts[2]);
+                    double price = Double.parseDouble(parts[3]);
+                    // cartId comes from the Cart object
+                    items.add(new CartItem(cart.getId(), productId, name, quantity, price));
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            System.out.println("❌ Error loading cart: " + e.getMessage());
+            System.err.println("Failed to load cart items: " + e.getMessage());
         }
-
         return items;
     }
 
-
-    public List<CartItem> loadCartItems(Customer customer) {
-        List<CartItem> fileItems = loadCartItemsFromFile(customer.getId());
-        List<CartItem> resolvedItems = new ArrayList<>();
-
-        for (CartItem item : fileItems) {
-            Product product = productService.getProductById(item.getProduct().getId());
-            if (product != null) {
-                resolvedItems.add(new CartItem(product, item.getQuantity()));
-            }
-        }
-        return resolvedItems;
-    }
-
-
-    public void saveCartItems(Customer customer, List<CartItem> items) {
-        String filePath = getCartFilePath(customer.getId());
-        File file = new File(filePath);
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+    // --- Save Items ---
+    public void saveCartItems(Cart cart, List<CartItem> items) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getCartFilePath(cart.getId())))) {
             for (CartItem item : items) {
-                int productId = item.getProduct().getId();
-                int quantity = item.getQuantity();
-                writer.write(productId + DELIMITER + quantity);
+                writer.write(item.getProductId() + DELIMITER
+                        + item.getName() + DELIMITER
+                        + item.getQuantity() + DELIMITER
+                        + item.getPrice());
                 writer.newLine();
             }
-            System.out.println("💾 Cart saved for " + customer.getName());
         } catch (IOException e) {
-            System.out.println("❌ Error saving cart: " + e.getMessage());
+            System.err.println("Failed to save cart items: " + e.getMessage());
         }
+    }
+
+    // --- Initialize Cart File ---
+    public void saveCart(Cart cart) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getCartFilePath(cart.getId())))) {
+        } catch (IOException e) {
+            System.err.println("Failed to initialize cart file: " + e.getMessage());
+        }
+    }
+
+    // --- Clear Cart ---
+    public void clearCartFileContents(Cart cart) {
+        try (PrintWriter writer = new PrintWriter(getCartFilePath(cart.getId()))) {
+            writer.write("");
+            System.out.println("Cart file cleared for cartId=" + cart.getId());
+        } catch (IOException e) {
+            System.err.println("Failed to clear cart file: " + e.getMessage());
+        }
+    }
+
+    public Cart findByCustomerId(int customerId) {
+        File file = new File(getCartFilePath(customerId));
+        if (file.exists()) {
+            return new Cart(customerId);
+        }
+        return null;
+    }
+    public Cart createCartForCustomer(int customerId) {
+        Cart cart = new Cart(customerId);   // cartId = customerId
+        saveCart(cart);                     // initialize empty cart file
+        return cart;
     }
 }

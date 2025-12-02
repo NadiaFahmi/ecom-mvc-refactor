@@ -24,7 +24,6 @@ public class LoginView {
         }
     }
 
-
     public String promptPassword() {
         String password = "";
         while (true) {
@@ -40,16 +39,6 @@ public class LoginView {
     public void showWelcome(User user) {
         System.out.println("✅ Welcome back, " + user.getName() + "!");
     }
-
-    public void showLoginFailed() {
-        System.out.println("⚠️ Login failed.");
-    }
-
-    public void showIncorrectPassword() {
-        System.out.println("❌ Still incorrect.");
-    }
-
-
 
     public void showExitMessage() {
         System.out.println("👋 Exiting login.");

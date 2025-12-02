@@ -33,10 +33,18 @@ public class OrderView {
         }
     }
 
-    public void showOrderSuccess() {
+    public void showOrderSuccess(Order order) {
         System.out.println("✅ Order placed successfully!");
+        System.out.println("-----------------------------");
+        System.out.println("🆔 Order ID: " + order.getOrderId());
+        System.out.println("👤 Customer ID: " + order.getCustomerId());
+        System.out.println("💰 Total: " + order.getOrderTotal());
+        System.out.println("📌 Status: " + order.getStatus());
+        System.out.println("🗓️ Date: " + order.getOrderDate());
+        System.out.println("-----------------------------");
     }
     public void showCartEmpty() {
+
         System.out.println("🛒 Your cart is empty. Add items before placing an order.");
     }
 
@@ -44,15 +52,14 @@ public class OrderView {
         System.out.println("🚫 Still insufficient. Please adjust your cart or add more funds.");
     }
     public void showOrderCancelled() {
+
         System.out.println("🕳 Order cancelled. Feel free to come back anytime.");
     }
 
     public void showNewBalance(double balance) {
         System.out.printf("💳 New balance: $%.2f%n", balance);
     }
-    public void showOrderFailure() {
-        System.out.println("❌ Order could not be placed.");
-    }
+
     public void displayOrders(List<Order> orders) {
         if (orders.isEmpty()) {
             System.out.println("📭 You haven’t placed any orders yet.");
@@ -60,38 +67,11 @@ public class OrderView {
             for (Order order : orders) {
                 System.out.println("🆔 Order ID: " + order.getOrderId());
                 System.out.println("🗓️ Date: " + order.getOrderDate());
-                System.out.println("🛒 Items:");
-                for (CartItem item : order.getCartItems()) {
-                    String name = item.getProduct().getName();
-                    double price = item.getProduct().getPrice() * item.getQuantity();
-                    System.out.printf(" - %s x%d = $%.2f%n", name, item.getQuantity(), price);
-                }
-                System.out.printf("💰 Total: $%.2f%n", order.getOrderTotal());
+                System.out.println(" Order Total: " + order.getOrderTotal());
                 System.out.println("📌 Status: " + order.getStatus());
                 System.out.println("------");
             }
         }
-    }
-    public void renderOrderDetails(Order order, Customer customer) {
-        System.out.println("\n🎉 THANK YOU FOR YOUR PURCHASE, " + customer.getName() + "!");
-        System.out.println("🆔 Order ID: " + order.getOrderId());
-        System.out.println("📅 Date: " + order.getOrderDate());
-        System.out.println("📦 Status: " + order.getStatus());
-        System.out.println("🛒 Items:");
-        System.out.println("–––––––––––––––––––––––");
-
-        double total = 0.0;
-        for (CartItem item : order.getCartItems()) {
-            String name = item.getProduct().getName();
-            int quantity = item.getQuantity();
-            double price = item.getProduct().getPrice() * quantity;
-            total += price;
-            System.out.printf(" - %s x%d = $%.2f%n", name, quantity, price);
-        }
-
-        System.out.printf("💰 TOTAL: $%.2f%n", total);
-        System.out.printf("💳 Remaining Balance: $%.2f%n", customer.getBalance());
-        System.out.println("✨ Your order is confirmed and being processed!\n");
     }
 
     public void showErrorMessage(String message){

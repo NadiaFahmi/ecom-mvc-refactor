@@ -42,7 +42,6 @@ public class CustomerUpdateView {
                 case "2" -> {
                     System.out.print("Enter new email: ");
                     String email = scanner.nextLine();
-//                    customerController.updateCustomerEmail(customer.getId(), email);
                     customerController.updateCustomerEmail(customer, email);
                 }
                 case "3" -> {
@@ -64,15 +63,7 @@ public class CustomerUpdateView {
                     String confirm = scanner.nextLine();
                     customerController.changePassword(customer.getId(), current, newPass, confirm);
                 }
-//                case "6" -> {
-//                    System.out.print("Enter your email: ");
-//                    String inputEmail = scanner.nextLine();
-//                    System.out.print("Enter new password: ");
-//                    String newPass = scanner.nextLine();
-//                    System.out.print("Confirm new password: ");
-//                    String confirm = scanner.nextLine();
-//                    customerController.resetPassword(customer.getId(), inputEmail, newPass, confirm);
-//                }
+
                 case "0" -> {
                     System.out.println("👋 Exiting update menu.");
                     return;

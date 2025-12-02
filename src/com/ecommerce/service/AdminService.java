@@ -2,6 +2,7 @@ package com.ecommerce.service;
 
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
+import com.ecommerce.repository.CustomerRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,14 +11,16 @@ import java.util.Collection;
 import java.util.List;
 
 //public class AdminService implements TransactionViewer{
-    public class AdminService {
+public class AdminService {
 
     private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
     private final OrderService orderService;
 
-    public AdminService(CustomerService customerService, OrderService orderService
-                        ) {
+    public AdminService(CustomerService customerService, CustomerRepository customerRepository, OrderService orderService
+    ) {
         this.customerService = customerService;
+        this.customerRepository = customerRepository;
         this.orderService = orderService;
     }
 
@@ -40,6 +43,7 @@ import java.util.List;
 
         return filtered;
     }
+
     public List<Customer> getUsersByBalanceRange(double min, double max) {
         List<Customer> matching = new ArrayList<>();
         Collection<Customer> customers = customerService.listAllCustomers();
@@ -75,17 +79,18 @@ import java.util.List;
     }
 
 
-public List<Order> getOrdersByUser(String email) {
-    List<Order> filteredOrders = new ArrayList<>();
+    public List<Order> getOrdersByUser(String email) {
+        List<Order> filteredOrders = new ArrayList<>();
 
-    for (Order order : orderService.getOrders()) {
-        if (order.getCustomer().getEmail().equalsIgnoreCase(email)) {
-            filteredOrders.add(order);
+        for (Order order : orderService.getOrders()) {
+            Customer customer = customerRepository.getCustomerById(order.getCustomerId());
+            if (customer != null && customer.getEmail().equalsIgnoreCase(email)) {
+                filteredOrders.add(order);
+            }
         }
-    }
 
-    return filteredOrders;
-}
+        return filteredOrders;
+    }
 
 
 }

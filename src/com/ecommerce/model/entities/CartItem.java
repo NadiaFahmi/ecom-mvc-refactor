@@ -1,26 +1,54 @@
 package com.ecommerce.model.entities;
 
 public class CartItem {
-    protected Product product;
-    protected int quantity;
 
-    public CartItem(Product product, int quantity) {
-        this.product = product;
+    private int cartId;
+    private int productId;
+    private String name;
+    private int quantity;
+    private double price;
+
+    public CartItem(int cartId, int productId, String name, int quantity, double price) {
+        this.cartId = cartId;
+        this.productId = productId;
+        this.name = name;
         this.quantity = quantity;
+        this.price = price;
     }
 
-    public Product getProduct() {
-        return product;
+    public int getCartId() {
+        return cartId;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
-
-        this.quantity = quantity;
+    public double getPrice() {
+        return price;
     }
 
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+    public double getTotalPrice() {
+        return this.quantity * this.price;
+    }
 }
