@@ -116,7 +116,8 @@ public class CustomerDashboard {
                 }
 
                 case "7" -> orderController.handlePlaceOrder(customer);
-                case "8" -> orderController.getCustomerOrders(customer);
+//                case "8" -> orderController.getCustomerOrders(customer);
+                case "8" -> customerController.showLoggedInCustomerOrders(customer);
                 case "9" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");
                     String dateInput = scanner.nextLine().trim();
@@ -134,7 +135,7 @@ public class CustomerDashboard {
                     customerController.deleteCustomerByEmail(emailInput);
                 }
                 case "12" -> {
-                    customerController.showLoggedInCustomerOrders();
+                    customerController.showLoggedInCustomerOrders(customer);
                 }
                 case "exit" -> {
                     System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");

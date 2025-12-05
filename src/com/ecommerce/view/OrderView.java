@@ -60,10 +60,8 @@ public class OrderView {
         System.out.printf("💳 New balance: $%.2f%n", balance);
     }
 
+
     public void displayOrders(List<Order> orders) {
-        if (orders.isEmpty()) {
-            System.out.println("📭 You haven’t placed any orders yet.");
-        } else {
             for (Order order : orders) {
                 System.out.println("🆔 Order ID: " + order.getOrderId());
                 System.out.println("🗓️ Date: " + order.getOrderDate());
@@ -71,8 +69,21 @@ public class OrderView {
                 System.out.println("📌 Status: " + order.getStatus());
                 System.out.println("------");
             }
-        }
+
     }
+//    public void displayOrders(List<Order> orders) {
+//        if (orders.isEmpty()) {
+//            System.out.println("📭 You haven’t placed any orders yet.");
+//        } else {
+//            for (Order order : orders) {
+//                System.out.println("🆔 Order ID: " + order.getOrderId());
+//                System.out.println("🗓️ Date: " + order.getOrderDate());
+//                System.out.println(" Order Total: " + order.getOrderTotal());
+//                System.out.println("📌 Status: " + order.getStatus());
+//                System.out.println("------");
+//            }
+//        }
+//    }
 
     public void showErrorMessage(String message){
         System.out.println(message);

@@ -48,13 +48,7 @@ public class CustomerService {
     //
     public boolean updateCustomerEmail(Customer customer, String newEmail) {
 
-        if (newEmail == null || newEmail.trim().isEmpty()) {
-            throw new InvalidEmailException("Email cannot be empty.");
-        }
-        newEmail = newEmail.trim();
-        if (!isValidEmail(newEmail)) {
-            throw new InvalidEmailException("Invalid email format.");
-        }
+        isValidEmail(newEmail);
 
         customer.setEmail(newEmail);
         repository.updateCustomer(customer);
@@ -63,9 +57,14 @@ public class CustomerService {
     }
 
 
-    private boolean isValidEmail(String email) {
-        if (email == null || email.isEmpty()) return false;
-        return email.matches(EMAIL_REGEX);
+    private void isValidEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new InvalidEmailException("Email cannot be empty.");
+        }
+        if(!email.matches(EMAIL_REGEX)) {
+            throw new InvalidEmailException("Invalid email format!");
+        }
+
     }
 
 
@@ -74,17 +73,9 @@ public class CustomerService {
             throw new CustomerNotFoundException("❌ Customer not found.");
         }
 
-        if (currentPassword == null || !isCurrentPasswordCorrect(customer, currentPassword.trim())) {
-            throw new InvalidPasswordException("❌ Current password is incorrect.");
-        }
-
-        if (newPassword == null || !isValidLength(newPassword.trim())) {
-            throw new InvalidPasswordException("⚠️ New password must be at least 6 characters.");
-        }
-
-        if (!newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim())) {
-            throw new InvalidPasswordException("⚠️ Password confirmation does not match.");
-        }
+        isCurrentPasswordCorrect(customer,currentPassword);
+        isValidLength(newPassword);
+        isPasswordConfirmed(newPassword,confirmPassword);
 
         customer.setPassword(newPassword.trim());
         repository.updateCustomer(customer);
@@ -98,17 +89,9 @@ public class CustomerService {
             throw new CustomerNotFoundException("❌ Customer not found.");
         }
 
-        if (!isEmailMatching(customer, inputEmail)) {
-            throw new InvalidEmailException("❌ Email does not match our records.");
-        }
-
-        if (newPassword == null || !isValidLength(newPassword.trim())) {
-            throw new InvalidPasswordException("⚠️ New password must be at least 6 characters.");
-        }
-
-        if (!isPasswordConfirmed(newPassword, confirmPassword)) {
-            throw new InvalidPasswordException("⚠️ Password confirmation does not match.");
-        }
+        isEmailMatching(customer, inputEmail);
+        isValidLength(newPassword);
+        isPasswordConfirmed(newPassword, confirmPassword);
 
         customer.setPassword(newPassword.trim());
         repository.updateCustomer(customer);
@@ -116,24 +99,42 @@ public class CustomerService {
         return true;
     }
 
-    private boolean isEmailMatching(Customer customer, String inputEmail) {
-        return inputEmail != null && customer.getEmail().equalsIgnoreCase(inputEmail.trim());
+    private void isEmailMatching(Customer customer, String inputEmail) {
+        if(customer == null ){
+            throw new CustomerNotFoundException("Customer not found");
+        }
+        if(inputEmail == null || inputEmail.trim().isEmpty()){
+            throw new InvalidEmailException("Email can not be null");
+
+        }if( !customer.getEmail().equalsIgnoreCase(inputEmail.trim())){
+            throw new InvalidEmailException("Email does not match our record");
+        }
     }
 
-    private boolean isPasswordConfirmed(String newPassword, String confirmPassword) {
-        return newPassword != null && newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim());
+    private void isPasswordConfirmed(String newPassword, String confirmPassword) {
+        if(newPassword == null){
+            throw new InvalidPasswordException("New newPassword can not be null");
+        }
+        if(!newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim())){
+            throw new InvalidPasswordException("⚠️ Password confirmation does not match.");
+        }
     }
 
-    private boolean isCurrentPasswordCorrect(Customer customer, String inputPassword) {
-        return inputPassword != null && inputPassword.equals(customer.getPassword());
+    private void isCurrentPasswordCorrect(Customer customer, String inputPassword) {
+        if( inputPassword == null || !inputPassword.equals(customer.getPassword())){
+            throw new InvalidPasswordException("Invalid Password");
+        }
+    }
+
+    private void isValidLength(String password) {
+
+        if(password == null || password.length() < 6){
+            throw new InvalidPasswordException("⚠️ New password must be at least 6 characters.");
+        }
 
     }
 
-    private boolean isValidLength(String password) {
-        return password != null && password.length() >= 6;
-    }
-
-    public boolean updateCustomerName(Customer customer, String newName) {
+    public void updateCustomerName(Customer customer, String newName) {
         if (customer == null) {
             throw new  CustomerNotFoundException("❌ Customer not found.");
         }
@@ -146,11 +147,10 @@ public class CustomerService {
         customer.setName(newName);
         repository.updateCustomer(customer);
         repository.saveAll();
-        return true;
+
     }
 
-
-    public boolean updateCustomerAddress(Customer customer, String newAddress) {
+    public void updateCustomerAddress(Customer customer, String newAddress) {
         if (customer == null) {
             throw new CustomerNotFoundException("❌ Customer not found.");
         }
@@ -163,10 +163,9 @@ public class CustomerService {
         customer.setAddress(newAddress);
         repository.updateCustomer(customer);
         repository.saveAll();
-        return true;
     }
 
-    public boolean updateCustomerBalance(Customer customer, double amount) {
+    public void updateCustomerBalance(Customer customer, double amount) {
 
         double currentBalance = customer.getBalance();
         double newBalance = currentBalance + amount;
@@ -179,26 +178,28 @@ public class CustomerService {
         customer.setBalance(newBalance);
         repository.updateCustomer(customer);
         repository.saveAll();
-        return true;
+
     }
 
 
-    public boolean deleteCustomer(String email) {
+    public void deleteCustomer(String email) {
         if (email == null || email.trim().isEmpty()) {
             throw new InvalidEmailException("⚠️ email cannot be empty.");
 
         }
         repository.deleteByEmail(email);
         repository.saveAll();
-        return true;
+
 
         }
 
-    public Customer getLoggedInCustomerWithOrders(List<Order> outputOrders) {
-        Customer customer = orderService.getLoggedInCustomer();
+    public Customer getLoggedInCustomerWithOrders(Customer customer,List<Order> outputOrders) {
+        customer = repository.getCustomerById(customer.getId());
+
         if (customer == null) return null;
 
         List<Order> orders = orderService.getOrdersForCustomer(customer.getEmail());
+
         outputOrders.clear();
         outputOrders.addAll(orders);
 

@@ -81,13 +81,14 @@ public class CustomerRepository {
         customerMap.put(id, updatedCustomer);
     }
 
-    public boolean deleteByEmail(String email) {
+    public void deleteByEmail(String email) {
 
         Customer customer = customerMap.values().stream()
                 .filter(c -> c.getEmail().equals(email))
                 .findFirst()
                 .orElse(null);
-        return customer != null && customerMap.remove(customer.getId()) != null;
+//        return customer != null && customerMap.remove(customer.getId()) != null;
+        customerMap.remove(customer.getId());
     }
 
     public void load() {

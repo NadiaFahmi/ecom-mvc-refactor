@@ -36,7 +36,6 @@ public CartRepository(){
                     String name = parts[1];
                     int quantity = Integer.parseInt(parts[2]);
                     double price = Double.parseDouble(parts[3]);
-                    // cartId comes from the Cart object
                     items.add(new CartItem(cart.getId(), productId, name, quantity, price));
                 }
             }

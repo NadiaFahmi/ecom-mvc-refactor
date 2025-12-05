@@ -23,6 +23,10 @@ public class CustomerView {
     public void showCustomerSummary(Customer customer) {
         System.out.println("🆔 " + customer.getId() + " | " + customer.getName() + " | 💰 $" + customer.getBalance());
     }
+
+//    public void showCustomerSummary(Customer customer) {
+//        System.out.println("🆔 " + customer.getId() + " | " + customer.getName() + " | 💰 $" + customer.getBalance());
+//    }
     public void displayFilteredUsers(List<Customer> customers, String keyword) {
         System.out.println("🔍 Searching for users with name containing: \"" + keyword + "\"");
 
@@ -57,5 +61,36 @@ public class CustomerView {
     public void showInvalidBalance(String message) {
         System.out.println(message);
     }
+
+
+    public void displayCustomerWithOrders(Customer customer, List<Order> orders) {
+        if (customer == null) {
+            System.out.println("❌ No customer found.");
+            return;
+        }
+
+        System.out.println("👤 Customer Info:");
+        System.out.println("Email: " + customer.getEmail());
+        System.out.println("Name: " + customer.getName());
+
+        System.out.println("Address: " + customer.getAddress());
+        System.out.println("Balance: " + customer.getBalance());
+        System.out.println("------");
+
+        if (orders == null || orders.isEmpty()) {
+            System.out.println("📭 You haven’t placed any orders yet.");
+        } else {
+            System.out.println("📦 Orders:");
+            for (Order order : orders) {
+                System.out.println("🆔 Order ID: " + order.getOrderId());
+                System.out.println("🗓️ Date: " + order.getOrderDate());
+                System.out.printf("💰 Total: $%.2f%n", order.getOrderTotal());
+                System.out.println("📌 Status: " + order.getStatus());
+                System.out.println("------");
+            }
+        }}
+public void showSuccess(){
+    System.out.println("✅ Password reset successfully.");
+}
 
 }

@@ -27,7 +27,7 @@ public class OrderController {
 
         List<CartItem> cartItems = orderService.getCartItems(orderService.getCartForCustomer(customer));
         try {
-            Order order = orderService.createOrder();
+            Order order = orderService.createOrder(customer);
             orderView.showOrderSuccess(order);
         } catch (CartItemNotFoundException e) {
             orderView.showCartEmpty();
@@ -42,7 +42,7 @@ public class OrderController {
                 }
                 orderView.showNewBalance(customer.getBalance());
                 try {
-                    Order order = orderService.createOrder();
+                    Order order = orderService.createOrder(customer);
                     orderView.showOrderSuccess(order);
                 } catch (InvalidBalanceException ex) {
                     orderView.showInsufficientAfterAdd();

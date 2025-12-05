@@ -67,6 +67,8 @@ public class LoginView {
         if (!success) {
 
             System.out.println("⚠️ Password reset failed. Please try again.");
+        }else{
+            System.out.println("Password reset successfully " );
         }
     }
     public void showError(String message){

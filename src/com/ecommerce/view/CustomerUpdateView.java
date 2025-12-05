@@ -55,13 +55,14 @@ public class CustomerUpdateView {
                     customerController.updateBalance(customer.getId(), amount);
                 }
                 case "5" -> {
-                    System.out.print("Enter current password: ");
+                    System.out.print("Enter current email: ");
                     String current = scanner.nextLine();
                     System.out.print("Enter new password: ");
                     String newPass = scanner.nextLine();
                     System.out.print("Confirm new password: ");
                     String confirm = scanner.nextLine();
-                    customerController.changePassword(customer.getId(), current, newPass, confirm);
+//                    customerController.changePassword(customer.getId(), current, newPass, confirm);
+                    customerController.resetPassword(customer.getId(), current, newPass, confirm);
                 }
 
                 case "0" -> {

@@ -48,6 +48,7 @@ public class LoginController {
                     try {
                         loginService.resetPassword(customer, email, newPassword, confirmPassword);
                         loginView.showPasswordResetResult(true);
+                        return;
                     } catch (InvalidPasswordException e) {
                         loginView.showError(e.getMessage());
                         loginView.showPasswordResetResult(false);

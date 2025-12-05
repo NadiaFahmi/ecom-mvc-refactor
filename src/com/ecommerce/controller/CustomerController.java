@@ -31,10 +31,8 @@ public class CustomerController {
     public void updateCustomerEmail(Customer customer, String email) {
 
         try {
-            boolean success = customerService.updateCustomerEmail(customer, email);
-            if (success) {
-                customerView.showEmailUpdated();
-            }
+            customerService.updateCustomerEmail(customer, email);
+            customerView.showEmailUpdated();
         } catch (InvalidEmailException e) {
             customerView.showError(e.getMessage());
         }
@@ -68,16 +66,6 @@ public class CustomerController {
         }
     }
 
-    public void changePassword(int customerId, String currentPassword, String newPassword, String confirmPassword) {
-        try {
-            Customer customer = customerService.findCustomerById(customerId);
-            customerService.updatePassword(customer, currentPassword, newPassword, confirmPassword);
-            customerView.showPasswordUpdated();
-        } catch (InvalidPasswordException e) {
-            customerView.showError(e.getMessage());
-        }
-    }
-
 
     public void deleteCustomerByEmail(String email) {
         try {
@@ -89,10 +77,31 @@ public class CustomerController {
         }
     }
 
-    public void showLoggedInCustomerOrders() {
+    public void showLoggedInCustomerOrders(Customer customer) {
         List<Order> orders = new ArrayList<>();
-        Customer customer = customerService.getLoggedInCustomerWithOrders(orders);
-        customerView.showCustomerSummary(customer);
+
+        customerService.getLoggedInCustomerWithOrders(customer,orders);
+        customerView.displayCustomerWithOrders(customer,orders);
 
     }
+    public void resetPassword(int customerId, String inputEmail, String newPassword, String confirmPassword) {
+        Customer customer = customerService.findCustomerById(customerId);
+
+        try {
+            customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
+            customerView.showSuccess();
+        } catch (CustomerNotFoundException e) {
+            customerView.showError("❌ " + e.getMessage());
+
+        } catch(InvalidEmailException e){
+            customerView.showError(e.getMessage());
+        }
+        catch (InvalidPasswordException e) {
+            customerView.showError("⚠️ " + e.getMessage());
+        } catch (Exception e) {
+            customerView.showError("⚠️ Unexpected error: " + e.getMessage());
+        }
+
+    }
+
 }

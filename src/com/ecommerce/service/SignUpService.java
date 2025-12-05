@@ -66,7 +66,7 @@ private final CustomerService customerService;
         }
 
         Customer customer = customerService.registerCustomer(name, email, password, balance, address);
-        LoggedInUser.setLoggedInEmail(customer.getEmail());
+//        LoggedInUser.setLoggedInEmail(customer.getEmail());
         return customer;
     }
 

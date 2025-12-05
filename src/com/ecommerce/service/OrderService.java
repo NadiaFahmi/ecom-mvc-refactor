@@ -30,8 +30,10 @@ public class OrderService {
         return customer.getBalance() >= requiredTotal;
     }
 
-    public Order createOrder() {
-        Customer customer = getLoggedInCustomer();
+//    public Order createOrder() {
+        public Order createOrder(Customer customer) {
+//        Customer customer = getLoggedInCustomer();
+        customer = customerRepository.getCustomerById(customer.getId());
         if (customer == null) return null;
         Cart cart = cartService.getCartForCustomer(customer);
 
@@ -56,10 +58,6 @@ public class OrderService {
         return newOrder;
     }
 
-    public Customer getLoggedInCustomer() {
-        String email = LoggedInUser.getLoggedInEmail();
-        return customerRepository.getCustomerByEmail(email);
-    }
 
     public List<Order> getOrders() {
         if (!ordersLoaded) {
