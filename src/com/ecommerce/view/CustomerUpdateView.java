@@ -61,7 +61,6 @@ public class CustomerUpdateView {
                     String newPass = scanner.nextLine();
                     System.out.print("Confirm new password: ");
                     String confirm = scanner.nextLine();
-//                    customerController.changePassword(customer.getId(), current, newPass, confirm);
                     customerController.resetPassword(customer.getId(), current, newPass, confirm);
                 }
 

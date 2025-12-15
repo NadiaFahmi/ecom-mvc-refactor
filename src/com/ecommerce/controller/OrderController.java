@@ -24,8 +24,9 @@ public class OrderController {
     }
 
     public void handlePlaceOrder(Customer customer) {
+        Cart cart = orderService.getCartForCustomer(customer);
+        List<CartItem> cartItems = orderService.getCartItems(cart);
 
-        List<CartItem> cartItems = orderService.getCartItems(orderService.getCartForCustomer(customer));
         try {
             Order order = orderService.createOrder(customer);
             orderView.showOrderSuccess(order);
@@ -55,22 +56,6 @@ public class OrderController {
 
     public void loadOrdersFromFile() {
         orderService.getOrders();
-    }
-
-    public void getCustomerOrders(Customer customer) {
-        try {
-            List<Order> allOrders = orderService.getOrders();
-            List<Order> customerOrders = new ArrayList<>();
-
-            for (Order order : allOrders) {
-                if (order.getCustomerId() == customer.getId()) {
-                    customerOrders.add(order);
-                }
-            }
-            orderView.displayOrders(customerOrders);
-        }catch (NoOrdersFoundException e){
-            orderView.showErrorMessage(e.getMessage());
-        }
     }
 
     public void filterCustomerOrdersByDate(Customer customer, LocalDate date) {

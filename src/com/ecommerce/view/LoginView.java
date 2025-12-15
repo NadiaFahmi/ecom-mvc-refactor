@@ -38,6 +38,7 @@ public class LoginView {
 
     public void showWelcome(User user) {
         System.out.println("✅ Welcome back, " + user.getName() + "!");
+        System.out.println("👤 Welcome to Nadia’s Shop!");
     }
 
     public void showExitMessage() {
@@ -52,6 +53,7 @@ public class LoginView {
         System.out.print("Forgot your password? Type 'yes' to reset, 'no' to retry, or 'exit' to cancel: ");
         return scanner.nextLine().trim().toLowerCase();
     }
+
     public String promptNewPassword() {
         System.out.print("🔒 Enter new password: ");
         return scanner.nextLine().trim();
@@ -67,11 +69,16 @@ public class LoginView {
         if (!success) {
 
             System.out.println("⚠️ Password reset failed. Please try again.");
-        }else{
-            System.out.println("Password reset successfully " );
+        } else {
+            System.out.println("Password reset successfully ");
         }
     }
-    public void showError(String message){
+
+    public void showError(String message) {
+        System.out.println(message);
+    }
+
+    public void showFailed(String message) {
         System.out.println(message);
     }
 }

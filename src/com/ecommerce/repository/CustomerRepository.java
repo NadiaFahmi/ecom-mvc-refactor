@@ -82,12 +82,13 @@ public class CustomerRepository {
     }
 
     public void deleteByEmail(String email) {
-
         Customer customer = customerMap.values().stream()
                 .filter(c -> c.getEmail().equals(email))
                 .findFirst()
                 .orElse(null);
-//        return customer != null && customerMap.remove(customer.getId()) != null;
+        if(customer == null){
+            throw new CustomerNotFoundException("Customer not found for email="+email);
+        }
         customerMap.remove(customer.getId());
     }
 

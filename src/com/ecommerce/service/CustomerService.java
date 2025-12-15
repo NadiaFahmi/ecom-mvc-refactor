@@ -6,8 +6,12 @@ import com.ecommerce.model.entities.Order;
 import com.ecommerce.repository.CustomerRepository;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CustomerService {
+
+    private Logger logger = Logger.getLogger(CustomerService.class.getName());
 
     private static final String EMAIL_REGEX = "^[\\w.-]+@[\\w.-]+\\.\\w{2,}$";
 
@@ -46,14 +50,14 @@ public class CustomerService {
     }
 
     //
-    public boolean updateCustomerEmail(Customer customer, String newEmail) {
+    public void updateCustomerEmail(Customer customer, String newEmail) {
 
         isValidEmail(newEmail);
 
         customer.setEmail(newEmail);
         repository.updateCustomer(customer);
         repository.saveAll();
-        return true;
+
     }
 
 
@@ -67,36 +71,20 @@ public class CustomerService {
 
     }
 
-
-    public boolean updatePassword(Customer customer, String currentPassword, String newPassword, String confirmPassword) {
+    public void resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
         if (customer == null) {
+            logger.warning("Reset failed: customer null");
             throw new CustomerNotFoundException("❌ Customer not found.");
         }
-
-        isCurrentPasswordCorrect(customer,currentPassword);
-        isValidLength(newPassword);
-        isPasswordConfirmed(newPassword,confirmPassword);
-
-        customer.setPassword(newPassword.trim());
-        repository.updateCustomer(customer);
-        repository.saveAll();
-        return true;
-    }
-
-
-    public boolean resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
-        if (customer == null) {
-            throw new CustomerNotFoundException("❌ Customer not found.");
-        }
-
+        logger.log(Level.INFO,"Attempting to reset password for customer id={0}",customer.getId());
         isEmailMatching(customer, inputEmail);
         isValidLength(newPassword);
         isPasswordConfirmed(newPassword, confirmPassword);
 
         customer.setPassword(newPassword.trim());
+        logger.log(Level.INFO,"Password reset for customer id={0}", customer.getId());
         repository.updateCustomer(customer);
         repository.saveAll();
-        return true;
     }
 
     private void isEmailMatching(Customer customer, String inputEmail) {
@@ -117,12 +105,6 @@ public class CustomerService {
         }
         if(!newPassword.trim().equals(confirmPassword == null ? "" : confirmPassword.trim())){
             throw new InvalidPasswordException("⚠️ Password confirmation does not match.");
-        }
-    }
-
-    private void isCurrentPasswordCorrect(Customer customer, String inputPassword) {
-        if( inputPassword == null || !inputPassword.equals(customer.getPassword())){
-            throw new InvalidPasswordException("Invalid Password");
         }
     }
 
@@ -168,11 +150,11 @@ public class CustomerService {
     public void updateCustomerBalance(Customer customer, double amount) {
 
         double currentBalance = customer.getBalance();
+        logger.log(Level.INFO,"Logging current balance={0} for customer email={1} ",new Object[]{currentBalance,customer.getEmail()});
         double newBalance = currentBalance + amount;
-
         if (newBalance < 0) {
-            throw new InsufficientBalanceException("⚠️ Insufficient funds. Cannot set negative balance.");
-
+            logger.log(Level.WARNING,"Adjustment of ={0} rejected. Would result balance={1} for customer email={2}",new Object[]{amount,newBalance,customer.getEmail()});
+            throw new InvalidBalanceException();
         }
 
         customer.setBalance(newBalance);
@@ -197,8 +179,9 @@ public class CustomerService {
         customer = repository.getCustomerById(customer.getId());
 
         if (customer == null) return null;
-
+        logger.log(Level.INFO,"Invoking getOrdersForCustomer() for customer email={0}",customer.getEmail());
         List<Order> orders = orderService.getOrdersForCustomer(customer.getEmail());
+        logger.log(Level.INFO,"getOrdersForCustomer returned {0} orders for customer email={1}", new Object[]{orders.size(), customer.getEmail()});
 
         outputOrders.clear();
         outputOrders.addAll(orders);

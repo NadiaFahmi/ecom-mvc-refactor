@@ -42,7 +42,7 @@ public class CartController {
             cartService.removeItemFromCart(customer, productId);
             cartView.showRemovedMessage();
 
-        }catch (CartItemNotFoundException e){
+        }catch ( CartItemNotFoundException e){
             cartView.showErrorMessage(e.getMessage());
         }
     }

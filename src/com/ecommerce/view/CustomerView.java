@@ -24,9 +24,6 @@ public class CustomerView {
         System.out.println("🆔 " + customer.getId() + " | " + customer.getName() + " | 💰 $" + customer.getBalance());
     }
 
-//    public void showCustomerSummary(Customer customer) {
-//        System.out.println("🆔 " + customer.getId() + " | " + customer.getName() + " | 💰 $" + customer.getBalance());
-//    }
     public void displayFilteredUsers(List<Customer> customers, String keyword) {
         System.out.println("🔍 Searching for users with name containing: \"" + keyword + "\"");
 
@@ -59,7 +56,7 @@ public class CustomerView {
         System.out.println(message);
     }
     public void showInvalidBalance(String message) {
-        System.out.println(message);
+        System.out.println("⚠️ Insufficient funds. Cannot set negative balance.");
     }
 
 

@@ -3,7 +3,12 @@ package com.ecommerce.service;
 import com.ecommerce.exception.*;
 import com.ecommerce.model.entities.Customer;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SignUpService {
+
+    private Logger logger = Logger.getLogger(SignUpService.class.getName());
 
 private final CustomerService customerService;
 
@@ -56,7 +61,7 @@ private final CustomerService customerService;
         }
 
         if (!isBalanceValid(balance)) {
-            throw  new InvalidBalanceException("❌ Invalid balance. Must be zero or positive.");
+            throw  new InvalidBalanceException();
 
         }
 
@@ -66,7 +71,7 @@ private final CustomerService customerService;
         }
 
         Customer customer = customerService.registerCustomer(name, email, password, balance, address);
-//        LoggedInUser.setLoggedInEmail(customer.getEmail());
+       logger.log(Level.INFO, "registerCustomer() invoked for name={0}", name);
         return customer;
     }
 

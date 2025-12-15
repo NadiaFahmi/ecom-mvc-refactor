@@ -7,8 +7,13 @@ import com.ecommerce.model.entities.User;
 import com.ecommerce.service.LoginService;
 import com.ecommerce.view.LoginView;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class LoginController {
+
+    private Logger logger = Logger.getLogger(LoginController.class.getName());
 
     private final LoginService loginService;
     private final LoginView loginView;
@@ -25,12 +30,20 @@ public class LoginController {
         try {
             User user = loginService.login(email, password);
             if (user != null) {
+                logger.log(Level.INFO,"login() invoked successfully for customer email={0}: " , email);
                 loginView.showWelcome(user);
                 return user;
             }
-        }catch (InvalidEmailException | InvalidPasswordException e){
-            loginView.showError(e.getMessage());
         }
+        catch (InvalidEmailException e){
+            logger.warning("Email not found");
+            loginView.showError(e.getMessage());
+
+        }catch (InvalidPasswordException e){
+            logger.warning("Incorrect password");
+            loginView.showFailed(e.getMessage());
+        }
+
 
         return null;
     }

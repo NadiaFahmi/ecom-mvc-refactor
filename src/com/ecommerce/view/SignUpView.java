@@ -40,7 +40,9 @@ public class SignUpView {
     }
 
     public void showSuccess(String name) {
+
         System.out.println("✅ Registration complete! Welcome, " + name + ".");
+        System.out.println("👤 Welcome to Nadia’s Shop!");
     }
     public void showError(String message){
         System.out.println(message);

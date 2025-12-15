@@ -45,7 +45,7 @@ public class Main {
         LoginService loginService = new LoginService(customerService);
         User user = null;
         while (true) {
-            System.out.println("👤 Welcome to Nadia’s Shop!");
+//            System.out.println("👤 Welcome to Nadia’s Shop!");
             System.out.println("1 - Log In");
             System.out.println("2 - Sign Up");
             System.out.println("3 - Forgot your password");
@@ -96,7 +96,6 @@ public class Main {
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
             CartController cartController = new CartController(cartService, new CartView());
-                cartController.getCartItems(customer);
 
             OrderController orderController = new OrderController(orderService, new OrderView(scanner));
             orderController.loadOrdersFromFile();

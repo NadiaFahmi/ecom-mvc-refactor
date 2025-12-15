@@ -2,6 +2,7 @@ package com.ecommerce.service;
 
 import com.ecommerce.exception.CartItemNotFoundException;
 import com.ecommerce.exception.InsufficientBalanceException;
+import com.ecommerce.exception.InvalidBalanceException;
 import com.ecommerce.model.entities.*;
 import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.repository.OrderRepository;
@@ -26,14 +27,15 @@ public class OrderService {
     }
 
     public boolean hasSufficientBalance(Customer customer, double amount, double requiredTotal) {
+
         customer.setBalance(customer.getBalance() + amount);
         return customer.getBalance() >= requiredTotal;
     }
 
-//    public Order createOrder() {
         public Order createOrder(Customer customer) {
-//        Customer customer = getLoggedInCustomer();
+
         customer = customerRepository.getCustomerById(customer.getId());
+//        customer = customerRepository.getCustomerById(customer.getId());
         if (customer == null) return null;
         Cart cart = cartService.getCartForCustomer(customer);
 
@@ -43,8 +45,9 @@ public class OrderService {
         }
 
         double total = calculateTotal(cartItems);
+
         if (customer.getBalance() < total) {
-            throw new InsufficientBalanceException(" Insufficient Balance");
+          throw new InvalidBalanceException();
 
         }
 

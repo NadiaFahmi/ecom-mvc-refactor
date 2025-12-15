@@ -1,5 +1,6 @@
 package com.ecommerce.repository;
 
+import com.ecommerce.exception.CartItemNotFoundException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
@@ -23,6 +24,10 @@ public CartRepository(){
 
     public List<CartItem> loadCartItemsFromFile(Cart cart) {
         List<CartItem> items = new ArrayList<>();
+
+        if(cart == null){
+            throw new CartItemNotFoundException("Product not found in cart.");
+        }
         File file = new File(getCartFilePath(cart.getId()));
 
         if (!file.exists()) return items;

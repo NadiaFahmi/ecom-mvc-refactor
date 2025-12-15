@@ -38,7 +38,6 @@ public class CustomerDashboard {
     }
 
     public void launch() {
-        System.out.printf("👋 Hello, %s!%n", customer.getName());
 
         boolean running = true;
 
@@ -116,7 +115,6 @@ public class CustomerDashboard {
                 }
 
                 case "7" -> orderController.handlePlaceOrder(customer);
-//                case "8" -> orderController.getCustomerOrders(customer);
                 case "8" -> customerController.showLoggedInCustomerOrders(customer);
                 case "9" -> {
                     System.out.print("📅 Enter date (YYYY-MM-DD): ");

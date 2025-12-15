@@ -6,6 +6,8 @@ import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.User;
 
+
+
 import java.util.logging.Logger;
 
 
@@ -25,11 +27,12 @@ public class LoginService {
         password = password.trim();
 
         if (email.equals("admin@gmail.com")) {
+        logger.info("Admin login attempt detected for email: " + email);
             if (password.equals("adminPass")) {
-                logger.info("Login attempt for : " + email);
+                logger.info("Admin password validated successfully for email: " + email);
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
-                logger.warning("Invalid admin password.");
+                logger.warning("Incorrect admin password.");
                 throw new InvalidPasswordException("❌ Invalid admin password.");
             }
         }
@@ -41,17 +44,17 @@ public class LoginService {
         }
 
         if (customer.getPassword().equals(password)) {
-            logger.info("Customer login successfully");
+            logger.info("Customer login successful");
             return customer;
         }
-        logger.warning("Incorrect password." + password);
+        logger.warning("Incorrect password " + password);
         throw new InvalidPasswordException("Incorrect password.");
 
     }
 
 
-    public boolean resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
-        return customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
+    public void resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
+        customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
 
     }
 
