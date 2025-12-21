@@ -41,7 +41,7 @@ public class SignUpController {
             return null;
 
         }catch (InvalidEmailException e){
-            logger.log(Level.WARNING,"Invalid  email: {0}",email);
+            logger.log(Level.WARNING,"Email={0} already registered.",email);
             signUpView.showError(e.getMessage());
 
         }catch (InvalidPasswordException e){

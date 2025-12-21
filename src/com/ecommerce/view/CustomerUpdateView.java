@@ -34,35 +34,15 @@ public class CustomerUpdateView {
             String choice = scanner.nextLine();
 
             switch (choice) {
-                case "1" -> {
-                    System.out.print("Enter new name: ");
-                    String name = scanner.nextLine();
-                    customerController.updateName(customer.getId(), name);
-                }
-                case "2" -> {
-                    System.out.print("Enter new email: ");
-                    String email = scanner.nextLine();
-                    customerController.updateCustomerEmail(customer, email);
-                }
-                case "3" -> {
-                    System.out.print("Enter new address: ");
-                    String address = scanner.nextLine();
-                    customerController.updateAddress(customer.getId(), address);
-                }
-                case "4" -> {
-                    System.out.print("Enter amount to adjust balance: ");
-                    double amount = Double.parseDouble(scanner.nextLine());
-                    customerController.updateBalance(customer.getId(), amount);
-                }
-                case "5" -> {
-                    System.out.print("Enter current email: ");
-                    String current = scanner.nextLine();
-                    System.out.print("Enter new password: ");
-                    String newPass = scanner.nextLine();
-                    System.out.print("Confirm new password: ");
-                    String confirm = scanner.nextLine();
-                    customerController.resetPassword(customer.getId(), current, newPass, confirm);
-                }
+                case "1" -> customerController.updateName(customer.getId());
+
+                case "2" -> customerController.updateCustomerEmail(customer);
+
+                case "3" -> customerController.updateAddress(customer.getId());
+
+                case "4" -> customerController.updateBalance(customer.getId());
+
+                case "5" -> customerController.updatePassword(customer.getId());
 
                 case "0" -> {
                     System.out.println("👋 Exiting update menu.");

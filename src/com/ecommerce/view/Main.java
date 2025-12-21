@@ -29,14 +29,14 @@ public class Main {
         CartRepository cartRepository = new CartRepository();
         CartService cartService = new CartService(productService, cartRepository);
         OrderRepository orderRepository = new OrderRepository(productService);
-        OrderService orderService = new OrderService(cartService, orderRepository, customerRepository,productService);
+        OrderService orderService = new OrderService(cartService, orderRepository, customerRepository);
         CustomerService customerService = new CustomerService(customerRepository, orderService);
 
         // Views and Controllers
         ProductView productView = new ProductView();
         ProductController productController = new ProductController(productService, productView);
 
-        CustomerView customerView = new CustomerView();
+        CustomerView customerView = new CustomerView(scanner);
         CustomerController customerController = new CustomerController(customerService, customerView);
         CustomerUpdateView customerUpdateView = new CustomerUpdateView(customerController);
         customerController.loadCustomers();
@@ -68,13 +68,7 @@ public class Main {
             } else if (choice.equals("3")) {
                 LoginView loginView = new LoginView(scanner);
                 LoginController loginController = new LoginController(loginService, loginView);
-
-                System.out.print("📧 Enter your email: ");
-                String email = scanner.nextLine().trim();
-
-                Customer customer = loginService.getCustomerByEmail(email);
-                loginController.handleRetry(customer,email);
-
+                loginController.handleRetry();
             }
             else if (choice.equalsIgnoreCase("exit")) {
                 System.out.println("👋 Thanks for visiting Nadia’s Shop. Goodbye!");
@@ -95,7 +89,8 @@ public class Main {
             AdminDashboard adminDashboard = new AdminDashboard(adminController, productController, productView, scanner);
             adminDashboard.launch();
         } else if (user instanceof Customer customer) {
-            CartController cartController = new CartController(cartService, new CartView());
+                CartView cartView = new CartView(scanner);
+            CartController cartController = new CartController(cartService, cartView);
 
             OrderController orderController = new OrderController(orderService, new OrderView(scanner));
             orderController.loadOrdersFromFile();

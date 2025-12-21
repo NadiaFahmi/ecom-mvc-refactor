@@ -26,7 +26,7 @@ public CartRepository(){
         List<CartItem> items = new ArrayList<>();
 
         if(cart == null){
-            throw new CartItemNotFoundException("Product not found in cart.");
+            throw new CartItemNotFoundException("No items in cart.");
         }
         File file = new File(getCartFilePath(cart.getId()));
 

@@ -9,7 +9,9 @@ import com.ecommerce.service.OrderService;
 import com.ecommerce.view.OrderView;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -32,7 +34,7 @@ public class OrderController {
             orderView.showOrderSuccess(order);
         } catch (CartItemNotFoundException e) {
             orderView.showCartEmpty();
-        } catch (InvalidBalanceException e) {
+        }catch (InvalidBalanceException e) {
             double total = orderService.calculateTotal(cartItems
             );
             if (orderView.confirmAddFunds(total, customer.getBalance())) {
@@ -48,9 +50,9 @@ public class OrderController {
                 } catch (InvalidBalanceException ex) {
                     orderView.showInsufficientAfterAdd();
                 }
-            } else {
-                orderView.showOrderCancelled();
             }
+        }catch (InvalidProductException e) {
+            orderView.showErrorMessage(e.getMessage());
         }
     }
 
@@ -58,11 +60,13 @@ public class OrderController {
         orderService.getOrders();
     }
 
-    public void filterCustomerOrdersByDate(Customer customer, LocalDate date) {
+    public void filterCustomerOrdersByDate(Customer customer) {
+
+        LocalDate date = orderView.showDatePrompt();
 
         List<Order> allOrders = orderService.getOrders();
 
-        List<Order> filteredOrders = new ArrayList<Order>();
+        List<Order> filteredOrders = new ArrayList<>();
 
         for (Order order : allOrders) {
             if (order.getCustomerId() == customer.getId() && order.getOrderDate().toLocalDate().equals(date)) {
@@ -78,6 +82,18 @@ public class OrderController {
         orderView.displayOrders(filteredOrders);
 
             }
+
+    public void getTotalOrderPrice(Customer customer) {
+        List<Order> orders = orderService.getOrdersForCustomer(customer.getEmail());
+        orderView.showOrdersPriceTotal(orders);
+
+    }
+    public void getOrdersForCustomer(Customer customer){
+
+        List<Order> orders = orderService.getOrdersForCustomer(customer.getEmail());
+        orderView.displayOrders(orders);
+
+    }
         }
 
 

@@ -1,7 +1,6 @@
 package com.ecommerce.service;
 
 import com.ecommerce.exception.CartItemNotFoundException;
-import com.ecommerce.exception.InsufficientBalanceException;
 import com.ecommerce.exception.InvalidBalanceException;
 import com.ecommerce.model.entities.*;
 import com.ecommerce.repository.CustomerRepository;
@@ -15,15 +14,12 @@ public class OrderService {
     private final CartService cartService;
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
-    private final ProductService productService;
     private boolean ordersLoaded = false;
 
-    public OrderService(CartService cartService, OrderRepository orderRepository, CustomerRepository customerRepository
-            , ProductService productService) {
+    public OrderService(CartService cartService, OrderRepository orderRepository, CustomerRepository customerRepository) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.customerRepository = customerRepository;
-        this.productService = productService;
     }
 
     public boolean hasSufficientBalance(Customer customer, double amount, double requiredTotal) {
@@ -35,7 +31,6 @@ public class OrderService {
         public Order createOrder(Customer customer) {
 
         customer = customerRepository.getCustomerById(customer.getId());
-//        customer = customerRepository.getCustomerById(customer.getId());
         if (customer == null) return null;
         Cart cart = cartService.getCartForCustomer(customer);
 
@@ -52,6 +47,7 @@ public class OrderService {
         }
 
         Order newOrder = orderRepository.saveOrder(customer, cartItems, total);
+        newOrder.setOrderTotal(total);
         customer.setBalance(customer.getBalance() - total);
 
         customerRepository.saveCustomer(customer);
@@ -78,12 +74,8 @@ public class OrderService {
 
     public double calculateTotal(List<CartItem> cartItems) {
         double total = 0.0;
-        for (CartItem item : cartItems) {
-            Product product = productService.getProductById(item.getProductId());
-            if (product != null) {
-                total += product.getPrice() * item.getQuantity();
-            }
-        }
+        total = cartService.calculateTotal(cartItems);
+
         return total;
     }
 

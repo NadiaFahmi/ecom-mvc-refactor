@@ -6,9 +6,6 @@ import com.ecommerce.controller.OrderController;
 import com.ecommerce.controller.ProductController;
 import com.ecommerce.model.entities.Customer;
 
-
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class CustomerDashboard {
@@ -48,16 +45,17 @@ public class CustomerDashboard {
             System.out.println("2 - Add Product to Cart");
             System.out.println("3 - View Cart");
             System.out.println("4 - Remove Item from Cart");
-            System.out.println("5 - Check Total Price");
+            System.out.println("5 - Check Total Cart Price");
             System.out.println("6 - Update Cart Item");
             System.out.println("📦 --- Order Processing ---");
             System.out.println("7 - Place Order");
             System.out.println("8 - View My Orders");
             System.out.println("9 - Filter My Orders By Date");
+            System.out.println("10 - Check Total Order Price");
             System.out.println("👤 --- Account ---");
-            System.out.println("10 - Update My Account Info");
-            System.out.println("11 - Delete My Account");
-            System.out.println("12 - Customer info");
+            System.out.println("11 - Update My Account Info");
+            System.out.println("12 - Delete My Account");
+            System.out.println("13 - Customer info");
             System.out.println("exit - Logout and Exit Dashboard");
 
             System.out.print("Your choice: ");
@@ -65,76 +63,31 @@ public class CustomerDashboard {
 
             switch (input) {
                 case "1" -> productController.getProducts();
-                case "2" -> {
-                    System.out.print("🆔 Enter Product ID: ");
-                    String productIdInput = scanner.nextLine().trim();
 
-                    try {
-                        int productId = Integer.parseInt(productIdInput);
-                        System.out.print("Enter quantity: ");
-                        int quantity = Integer.parseInt(scanner.nextLine().trim());
+                case "2" ->  cartController.addProductToCart(customer);
 
-                        cartController.addProductToCart(customer,productId, quantity);
-                    } catch (NumberFormatException e) {
-                        System.out.println("❌ Invalid input. Please enter numeric values.");
-                    }
-                }
                 case "3" -> cartController.getCartItems(customer);
-                case "4" -> {
-                    System.out.print("Enter Product ID to remove from cart: ");
-                    try {
-                        int productId = Integer.parseInt(scanner.nextLine().trim());
-                        cartController.removeProductFromCart(customer,productId);
-                    } catch (NumberFormatException e) {
-                        System.out.println("⚠️ Invalid product ID. Please enter a number.");
-                    }
-                }
+
+                case "4" ->  cartController.removeProductFromCart(customer);
 
                 case "5" -> cartController.calculatePrice(customer);
-                case "6" -> {
-                    try {
-                        System.out.print("Enter Product ID: ");
-                        String productIdInput = scanner.nextLine().trim();
-                        int productId = Integer.parseInt(productIdInput);
 
-                        System.out.print("Enter New Quantity: ");
-                        String quantityInput = scanner.nextLine().trim();
-                        int newQty = Integer.parseInt(quantityInput);
-
-                        if (newQty < 0) {
-                            System.out.println("❌ Quantity cannot be negative.");
-                        } else {
-                            cartController.updateQuantity(customer,productId, newQty);
-                        }
-
-                    } catch (NumberFormatException e) {
-                        System.out.println("❌ Invalid input. Please enter numeric values.");
-                    } catch (Exception e) {
-                        System.out.println("⚠️ An unexpected error occurred while updating the cart.");
-                    }
-                }
+                case "6" -> cartController.UpdateQuantity(customer);
 
                 case "7" -> orderController.handlePlaceOrder(customer);
-                case "8" -> customerController.showLoggedInCustomerOrders(customer);
-                case "9" -> {
-                    System.out.print("📅 Enter date (YYYY-MM-DD): ");
-                    String dateInput = scanner.nextLine().trim();
-                    try {
-                        LocalDate date = LocalDate.parse(dateInput);
-                        orderController.filterCustomerOrdersByDate(customer, date);
-                    } catch (DateTimeParseException e) {
-                        System.out.println("⚠️ Invalid date format.");
-                    }
-                }
 
-                case "10" -> customerUpdateView.launchUpdateMenu(customer, scanner);
-                case "11" ->  {  System.out.print("📅 Enter Your email: ");
-                    String emailInput = scanner.nextLine().trim();
-                    customerController.deleteCustomerByEmail(emailInput);
-                }
-                case "12" -> {
-                    customerController.showLoggedInCustomerOrders(customer);
-                }
+                case "8" -> orderController.getOrdersForCustomer(customer);
+
+                case "9" ->orderController.filterCustomerOrdersByDate(customer);
+
+                case "10" -> orderController.getTotalOrderPrice(customer);
+
+                case "11" -> customerUpdateView.launchUpdateMenu(customer, scanner);
+
+                case "12" -> customerController.deleteCustomerByEmail();
+
+                case "13" -> customerController.showLoggedInCustomerOrders(customer);
+
                 case "exit" -> {
                     System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");
                     running = false;

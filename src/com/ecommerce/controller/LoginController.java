@@ -48,18 +48,25 @@ public class LoginController {
         return null;
     }
 
-    public void handleRetry(Customer customer, String email) {
-
+    public void handleRetry(
+//            Customer customer
+//            , String email
+    ) {
+//        String email=loginView.promptEmail();
         while (true) {
             String choice = loginView.promptRetryChoice();
 
             switch (choice) {
                 case "yes" -> {
+                    String email = loginView.promptEmail();
                     String newPassword = loginView.promptNewPassword();
                     String confirmPassword = loginView.promptConfirmPassword();
 
                     try {
-                        loginService.resetPassword(customer, email, newPassword, confirmPassword);
+                        loginService.resetPassword(
+//                                customer,
+                                email,
+                                newPassword, confirmPassword);
                         loginView.showPasswordResetResult(true);
                         return;
                     } catch (InvalidPasswordException e) {
@@ -71,9 +78,22 @@ public class LoginController {
 
                 case "no" -> loginAuth();
 
-                case "exit" -> loginView.showExitMessage();
+                case "exit" ->{ loginView.showExitMessage();
+                System.exit(0);
+                }
+
+
 
                 default -> loginView.showInvalidChoice();
             }
-        }}
+        }
+
+    }
+//////
+public Customer getCustomerByEmail() {
+        String email = loginView.promptEmail();
+
+        return loginService.getCustomerByEmail(email);
+}
+    ////
 }

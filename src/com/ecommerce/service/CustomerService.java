@@ -49,7 +49,6 @@ public class CustomerService {
         return repository.getCustomerById(id);
     }
 
-    //
     public void updateCustomerEmail(Customer customer, String newEmail) {
 
         isValidEmail(newEmail);
@@ -71,7 +70,10 @@ public class CustomerService {
 
     }
 
-    public void resetPassword(Customer customer, String inputEmail, String newPassword, String confirmPassword) {
+    public void resetPassword(
+//            Customer customer,
+            String inputEmail, String newPassword, String confirmPassword) {
+        Customer customer = repository.getCustomerByEmail(inputEmail);
         if (customer == null) {
             logger.warning("Reset failed: customer null");
             throw new CustomerNotFoundException("❌ Customer not found.");
@@ -85,6 +87,26 @@ public class CustomerService {
         logger.log(Level.INFO,"Password reset for customer id={0}", customer.getId());
         repository.updateCustomer(customer);
         repository.saveAll();
+    }
+    public void updatePassword(Customer customer, String currentPassword, String newPassword, String confirmPassword) {
+
+
+        if (customer == null) {
+            throw new CustomerNotFoundException("❌ Customer not found.");
+        }
+
+        isCurrentPasswordCorrect(customer,currentPassword);
+        isValidLength(newPassword);
+        isPasswordConfirmed(newPassword,confirmPassword);
+
+        customer.setPassword(newPassword.trim());
+        repository.updateCustomer(customer);
+        repository.saveAll();
+    }
+    private void isCurrentPasswordCorrect(Customer customer, String inputPassword) {
+        if( inputPassword == null || !inputPassword.equals(customer.getPassword())){
+            throw new InvalidPasswordException("Invalid Password");
+        }
     }
 
     private void isEmailMatching(Customer customer, String inputEmail) {
@@ -165,29 +187,28 @@ public class CustomerService {
 
 
     public void deleteCustomer(String email) {
+
         if (email == null || email.trim().isEmpty()) {
             throw new InvalidEmailException("⚠️ email cannot be empty.");
 
         }
         repository.deleteByEmail(email);
         repository.saveAll();
+    }
 
+    public void getLoggedInCustomerWithOrders(Customer input,List<Order> outputOrders) {
+        logger.log(Level.INFO,"Fetching customer by Id={0}",input.getId());
+        input = repository.getCustomerById(input.getId());
 
-        }
-
-    public Customer getLoggedInCustomerWithOrders(Customer customer,List<Order> outputOrders) {
-        customer = repository.getCustomerById(customer.getId());
-
-        if (customer == null) return null;
-        logger.log(Level.INFO,"Invoking getOrdersForCustomer() for customer email={0}",customer.getEmail());
-        List<Order> orders = orderService.getOrdersForCustomer(customer.getEmail());
-        logger.log(Level.INFO,"getOrdersForCustomer returned {0} orders for customer email={1}", new Object[]{orders.size(), customer.getEmail()});
+        logger.log(Level.INFO,"Calling getOrdersForCustomer for customer email={0}",input.getEmail());
+        List<Order> orders = orderService.getOrdersForCustomer(input.getEmail());
+        logger.log(Level.INFO,"Fetched {0} orders for customer email={1}", new Object[]{orders.size(), input.getEmail()});
 
         outputOrders.clear();
         outputOrders.addAll(orders);
 
-        return customer;
     }
+
 
 }
 

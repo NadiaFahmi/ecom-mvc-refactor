@@ -6,8 +6,51 @@ import com.ecommerce.model.entities.Order;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Scanner;
 
 public class CustomerView {
+    private Scanner scanner;
+
+    public CustomerView(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public String promptNewName() {
+        System.out.print("📝 Enter your new name: ");
+        return scanner.nextLine().trim();
+    }
+    public String promptNewEmail() {
+        System.out.print("📧 Enter your email: ");
+        return scanner.nextLine().trim().toLowerCase();
+    }
+    public String promptNewAddress() {
+        System.out.print("🏠 Enter your address: ");
+        return scanner.nextLine().trim();
+    }
+    public String promptCurrentPassword() {
+        System.out.print("Enter current password: ");
+        return scanner.nextLine();
+    }
+
+    public String promptNewPassword(){
+        System.out.print("Enter new password: ");
+        return scanner.nextLine();
+    }
+
+    public String promptConfirmedPassword(){
+        System.out.print("Confirm new password: ");
+        return scanner.nextLine();
+    }
+    public double promptNewBalance() {
+        System.out.print("💰 Enter your balance: ");
+        try {
+            return Double.parseDouble(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid balance. Defaulting to 0.");
+            return 0;
+        }
+    }
+
     public void showAllCustomers(Collection<Customer> customers) {
         if (customers == null || customers.isEmpty()) {
             System.out.println("🚫 No customers found.");
@@ -42,9 +85,6 @@ public class CustomerView {
 
         System.out.println("Email updated successfully.");    }
 
-    public void showPasswordUpdated() {
-        System.out.println("Password updated successfully.");
-    }
     public void showNameUpdated(){
         System.out.println("✅ Name updated.");
     }
@@ -86,8 +126,21 @@ public class CustomerView {
                 System.out.println("------");
             }
         }}
+
 public void showSuccess(){
     System.out.println("✅ Password reset successfully.");
 }
+
+    public String promptEmail() {
+        String email = "";
+        while (true) {
+            System.out.print("Enter your registered email: ");
+            email = scanner.nextLine().trim().toLowerCase();
+            if (!email.isEmpty()) {
+                return email;
+            }
+            System.out.println("❌ Email must not be empty. Please try again.");
+        }
+    }
 
 }

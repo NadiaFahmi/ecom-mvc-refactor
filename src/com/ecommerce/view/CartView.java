@@ -1,12 +1,61 @@
 package com.ecommerce.view;
 
-import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
-import com.ecommerce.model.entities.Product;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class CartView {
+
+    private Scanner scanner;
+
+    public CartView(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public int productIdPrompt() {
+        int count = 2;
+        while (count > 0) {
+            System.out.print("Enter Product ID: ");
+            try {
+                return Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter valid number");
+                count--;
+            }
+        }
+        return -1;
+    }
+    public int productIdRemovePrompt() {
+
+        while (true) {
+            System.out.print("Enter Product ID to remove or q to cancel: ");
+            String input =scanner.nextLine();
+            if(input.equalsIgnoreCase("q")){
+                System.out.println("Removal cancelled");
+                return  -1;
+            }
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid Number");
+            }
+
+            return -1;
+        }
+    }
+    public int newQuantityPrompt(){
+        System.out.print("Enter New Quantity: ");
+        return  Integer.parseInt(scanner.nextLine().trim());
+    }
+    public int quantityPrompt(){
+        System.out.print("Enter New Quantity: ");
+        return  Integer.parseInt(scanner.nextLine().trim());
+    }
+    public void showQuantityUpdated() {
+        System.out.println("Quantity successfully updated");
+    }
+
 
     public void display(List<CartItem> items) {
         System.out.println("🛍️ Cart Contents:");
@@ -20,7 +69,8 @@ public class CartView {
     public void showSuccessMessage() {
         System.out.println("Product Added");
     }
-    public void showErrorMessage(String message){
+    public void showErrorMessage(String message)
+    {
         System.out.println(message);
     }
     public void showTotalCartPrice(double total){

@@ -3,8 +3,10 @@ package com.ecommerce.view;
 import com.ecommerce.model.entities.Product;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class ProductView {
+
 
 
     public void displayFilteredProducts(List<Product> products, String category) {
@@ -39,13 +41,6 @@ public class ProductView {
             return;
         }
 
-        System.out.println("\n🛍️ Available Products:");
-        for (Product product : products) {
-            System.out.println("🔹 ID: " + product.getId() +
-                    ", Name: " + product.getName() +
-                    ", Price: $" + product.getPrice() +
-                    ", Category: " + product.getCategory());
-        }
     }
     public void showError(String message){
         System.out.println(message);
@@ -53,4 +48,6 @@ public class ProductView {
     public void showUpdatedProduct(){
         System.out.println("✅ Product updated: ");
     }
+
+
 }

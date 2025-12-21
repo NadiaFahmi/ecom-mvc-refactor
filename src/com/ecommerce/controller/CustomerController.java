@@ -33,8 +33,10 @@ public class CustomerController {
     }
 
 
-    public void updateCustomerEmail(Customer customer, String email) {
+    public void updateCustomerEmail(Customer customer) {
+        String email =customerView.promptNewEmail();
         logger.log(Level.INFO,"Attempting update customer email={0}",email);
+
         try {
             customerService.updateCustomerEmail(customer, email);
             logger.log(Level.INFO,"Successfully updated for customer with email={0}",email);
@@ -45,7 +47,8 @@ public class CustomerController {
         }
     }
 
-    public void updateName(int customerId, String newName) {
+    public void updateName(int customerId) {
+        String newName = customerView.promptNewName();
         try {
             Customer customer = customerService.findCustomerById(customerId);
             customerService.updateCustomerName(customer, newName);
@@ -57,7 +60,8 @@ public class CustomerController {
         }
     }
 
-    public void updateAddress(int customerId, String newAddress) {
+    public void updateAddress(int customerId) {
+        String newAddress =customerView.promptNewAddress();
         try {
             Customer customer = customerService.findCustomerById(customerId);
             customerService.updateCustomerAddress(customer, newAddress);
@@ -68,7 +72,8 @@ public class CustomerController {
         }
     }
 
-    public void updateBalance(int customerId, double amount) {
+    public void updateBalance(int customerId) {
+        double amount =customerView.promptNewBalance();
         Customer customer = customerService.findCustomerById(customerId);
         logger.log(Level.INFO,"Attempting to update balance for customer email={0}",customer.getEmail());
         try {
@@ -80,8 +85,9 @@ public class CustomerController {
         }
     }
 
+    public void deleteCustomerByEmail() {
 
-    public void deleteCustomerByEmail(String email) {
+        String email= customerView.promptEmail();
         logger.log(Level.INFO,"Attempting to delete customer email={0}",email);
         try {
             customerService.deleteCustomer(email);
@@ -98,33 +104,20 @@ public class CustomerController {
         List<Order> orders = new ArrayList<>();
 
         customerService.getLoggedInCustomerWithOrders(customer,orders);
-        logger.log(Level.INFO,"getLoggedInCustomerWithOrders() invoked for customer email={0}",customer.getEmail());
         customerView.displayCustomerWithOrders(customer,orders);
+        logger.log(Level.INFO,"Show orders for customer email={0}",customer.getEmail());
 
     }
-    public void resetPassword(int customerId, String inputEmail, String newPassword, String confirmPassword) {
+
+    public void updatePassword(int customerId
+    ) {
+        String currentPassword = customerView.promptCurrentPassword();
+        String newPassword = customerView.promptNewPassword();
+        String confirmPassword = customerView.promptConfirmedPassword();
         Customer customer = customerService.findCustomerById(customerId);
-
-        try {
-            customerService.resetPassword(customer, inputEmail, newPassword, confirmPassword);
-            logger.log(Level.INFO,"resetPassword() invoked for customer id={0}",customerId);
-            customerView.showSuccess();
-        } catch (CustomerNotFoundException e) {
-            logger.warning("Reset failed: customer null");
-            customerView.showError("❌ " + e.getMessage());
-
-        } catch(InvalidEmailException e){
-            logger.warning("Invalid email");
-            customerView.showError(e.getMessage());
-        }
-        catch (InvalidPasswordException e) {
-            logger.warning("Invalid password");
-            customerView.showError("⚠️ " + e.getMessage());
-        } catch (Exception e) {
-            logger.warning("Error Unexpected");
-            customerView.showError("⚠️ Unexpected error: " + e.getMessage());
-        }
+        customerService.updatePassword(customer, currentPassword, newPassword, confirmPassword);
 
     }
+
 
 }

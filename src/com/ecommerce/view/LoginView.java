@@ -43,6 +43,7 @@ public class LoginView {
 
     public void showExitMessage() {
         System.out.println("👋 Exiting login.");
+        return ;
     }
 
     public void showInvalidChoice() {
