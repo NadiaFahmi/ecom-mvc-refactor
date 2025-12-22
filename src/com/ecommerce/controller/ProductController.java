@@ -23,13 +23,34 @@ public class ProductController {
         productView.displayAllProducts(products);
     }
 
-
-    public void createProduct(String name, double price, String category) {
+    public void createProduct() {
+        String name = productView.promptProductName();
+        if (name == null || name.equalsIgnoreCase("exit")) {
+            return;
+        }
+        double price= productView.promptPrice();
+        String category= productView.promptProductCategory();
+        try{
         productService.addProduct(name, price, category);
+    }catch(InvalidProductException e){
+            productView.showError(e.getMessage());
+        }
     }
 
 
-    public void updateProduct(int id, String newName, double newPrice, String newCategory) {
+    public void updateProduct() {
+
+        int id =productView.promptId();
+        if (id == -1 ) {
+            return;
+        }
+        String newName=productView.promptNewName();
+        if (newName == null || newName.equalsIgnoreCase("exit")) {
+            return;
+        }
+        double newPrice=productView.promptNewPrice();
+        String newCategory=productView.promptNewCategory();
+
         try {
             productService.updateProduct(id, newName, newPrice, newCategory);
             productView.showUpdatedProduct();
@@ -38,13 +59,29 @@ public class ProductController {
         }
     }
 
-public List<Product> filterProductsByCategory(String category) {
-    return productService.getProductsByCategory(category);
+public void filterProductsByCategory() {
+    String category = productView.promptCategory();
+    try {
+        List<Product> productsFiltered = productService.getProductsByCategory(category);
+        productView.displayFilteredProducts(productsFiltered);
+    }catch(IllegalArgumentException e){
+        productView.showError(e.getMessage());
+    }
 }
 
-    public boolean deleteProduct(int id) {
-        return productService.removeProduct(id);
-    }
+//    public boolean deleteProduct(int id) {
+        public void deleteProduct() {
+        int id = productView.promptId();
+        if(id == -1){
+            return;
+        }
+        try{
+        productService.removeProduct(id);
+        productView.successRemoved();
+    }catch (InvalidProductException e){
+            productView.showError(e.getMessage());
+        }
+        }
 }
 
 

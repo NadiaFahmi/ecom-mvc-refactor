@@ -142,5 +142,30 @@ public void showSuccess(){
             System.out.println("❌ Email must not be empty. Please try again.");
         }
     }
+    public double promptMinBalance() {
+
+        System.out.print("💰 Min balance: ");
+        try {
+            return Double.parseDouble(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    public double promptMaxBalance() {
+
+        System.out.print("💰 Max balance: ");
+        try {
+            return Double.parseDouble(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+    public String promptKeyword() {
+
+        System.out.print("🔍 Enter keyword: ");
+        return scanner.nextLine();
+    }
+
 
 }

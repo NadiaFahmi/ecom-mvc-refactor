@@ -33,7 +33,7 @@ public class Main {
         CustomerService customerService = new CustomerService(customerRepository, orderService);
 
         // Views and Controllers
-        ProductView productView = new ProductView();
+        ProductView productView = new ProductView(scanner);
         ProductController productController = new ProductController(productService, productView);
 
         CustomerView customerView = new CustomerView(scanner);
@@ -84,7 +84,8 @@ public class Main {
 
             if (user instanceof Admin) {
             AdminService adminService = new AdminService(customerService,customerRepository, orderService);
-            TransactionView transactionView = new TransactionView();
+            TransactionView transactionView = new TransactionView(scanner);
+
             AdminController adminController = new AdminController(adminService, transactionView, customerView);
             AdminDashboard adminDashboard = new AdminDashboard(adminController, productController, productView, scanner);
             adminDashboard.launch();
@@ -94,7 +95,6 @@ public class Main {
 
             OrderController orderController = new OrderController(orderService, new OrderView(scanner));
             orderController.loadOrdersFromFile();
-
 
             CustomerDashboard customerDashboard = new CustomerDashboard(
                     customer,

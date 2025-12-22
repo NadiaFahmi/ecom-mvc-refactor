@@ -1,5 +1,7 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.exception.EmptyDataException;
+import com.ecommerce.exception.InvalidBalanceException;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 import com.ecommerce.service.AdminService;
@@ -28,20 +30,38 @@ public class AdminController {
         customerView.showAllCustomers(customers);
     }
 
-    public void filterUsersByName(String keyword) {
-        List<Customer> customers = adminService.filterUsersByNameKeyword(keyword);
-        customerView.displayFilteredUsers(customers,keyword);
+    public void filterUsersByName() {
+        String keyword = customerView.promptKeyword();
+        try {
+            List<Customer> customers = adminService.filterUsersByNameKeyword(keyword);
+            customerView.displayFilteredUsers(customers, keyword);
+        } catch (IllegalArgumentException e) {
+            customerView.showError(e.getMessage());
+        }
+    }
+    public void getUsersByBalanceRange() {
+        double min = customerView.promptMinBalance();
+        double max = customerView.promptMaxBalance();
+        try {
+            List<Customer> users = adminService.getUsersByBalanceRange(min, max);
+            transactionView.showUsersByBalanceRange(min, max, users);
+        }catch (InvalidBalanceException e){
+            customerView.showError(e.getMessage());
+        }
     }
 
+    public void getOrdersByDateRange(
+//            LocalDate from, LocalDate to
+    ) {
 
-    public void getOrdersByBalanceRange(double min, double max) {
-        List<Customer> users = adminService.getUsersByBalanceRange(min, max);
-        transactionView.showUsersByBalanceRange(min, max,users);
-    }
-
-    public void getOrdersByDateRange(LocalDate from, LocalDate to) {
-        List<Order> orders = adminService.getOrdersByDateRange(from, to);
-        transactionView.displayOrdersByDateRange(orders, from, to);
+        LocalDate from = transactionView.showDateFromPrompt();
+        LocalDate to = transactionView.showDateToPrompt();
+        try {
+            List<Order> orders = adminService.getOrdersByDateRange(from, to);
+            transactionView.displayOrdersByDateRange(orders, from, to);
+        }catch (IllegalArgumentException e){
+            transactionView.showError(e.getMessage());
+        }
     }
 
     public void getAllTransactions() {
@@ -49,8 +69,14 @@ public class AdminController {
         transactionView.viewAllTransactions(orders);
     }
 
-    public void getOrdersByEmail(String email) {
-        List<Order> orders = adminService.getOrdersByUser(email);
-        transactionView.viewTransactionsByUser(email, orders);
+    public void getOrdersByEmail() {
+        String email = transactionView.promptEmail();
+
+        try {
+            List<Order> orders = adminService.getOrdersByUser(email);
+            transactionView.viewTransactionsByUser(email, orders);
+        }catch (IllegalArgumentException e){
+            transactionView.showError(e.getMessage());
+        }
     }
 }

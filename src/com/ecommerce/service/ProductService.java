@@ -16,6 +16,7 @@ public class ProductService {
     }
 
     public void addProduct(String name, double price, String category) {
+
         int id = calculateInitialCounter(loadProductList());
         Product product = new Product(id, name, price, category);
 
@@ -41,6 +42,9 @@ public class ProductService {
     public List<Product> getProductsByCategory(String category) {
         List<Product> products = loadProductList();
         List<Product> filtered = new ArrayList<>();
+        if(category.isEmpty()){
+            throw new IllegalArgumentException("Category must not be empty");
+        }
 
         for (Product product : products) {
             if (product.getCategory().equalsIgnoreCase(category)) {
@@ -57,6 +61,8 @@ public class ProductService {
 
         if (removed) {
             repository.save(products);
+        }else{
+            throw new InvalidProductException("productId not found");
         }
         return removed;
     }

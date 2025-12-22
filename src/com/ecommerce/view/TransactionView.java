@@ -1,12 +1,21 @@
 package com.ecommerce.view;
 
+import com.ecommerce.exception.EmptyDataException;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Scanner;
 
 public class TransactionView {
+    private Scanner scanner;
+
+    public TransactionView(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
     public void viewTransactionsByUser(String email, List<Order> orders) {
         if (orders.isEmpty()) {
             System.out.println("❌ No transactions found for user: " + email);
@@ -58,5 +67,49 @@ public class TransactionView {
                     ", Total: $" + order.getOrderTotal() +
                     ", Status: " + order.getStatus());
         }
+    }
+    public LocalDate showDateFromPrompt() {
+        LocalDate date = null;
+        while (date == null) {
+
+            System.out.print("From date (yyyy-MM-dd): ");
+            String dateInput = scanner.nextLine().trim();
+            try {
+                date = LocalDate.parse(dateInput);
+
+            }
+            catch (DateTimeParseException e) {
+                System.out.println("⚠️ Invalid date format.");
+                return null;
+            }
+        }
+        return date;
+    }
+    public LocalDate showDateToPrompt() {
+        LocalDate date = null;
+        while (date == null) {
+
+            System.out.print("To date (yyyy-MM-dd): ");
+            String dateInput = scanner.nextLine().trim();
+            try {
+                date = LocalDate.parse(dateInput);
+
+            }
+            catch (DateTimeParseException e) {
+                System.out.println("Invalid date format.");
+                return null;
+            }
+
+        }
+        return date;
+    }
+    public void showError(String message){
+        System.out.println(message);
+
+    }
+    public String promptEmail(){
+        System.out.print("📧 Enter user email: ");
+
+        return scanner.nextLine();
     }
 }
