@@ -1,6 +1,6 @@
 package com.ecommerce.controller;
 
-import com.ecommerce.exception.EmptyDataException;
+
 import com.ecommerce.exception.InvalidBalanceException;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;

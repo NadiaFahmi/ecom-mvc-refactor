@@ -20,7 +20,6 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-
         ProductRepository productRepo = new ProductRepository("products.txt");
         CustomerRepository customerRepository = new CustomerRepository("customers.txt");
 
@@ -45,7 +44,7 @@ public class Main {
         LoginService loginService = new LoginService(customerService);
         User user = null;
         while (true) {
-//            System.out.println("👤 Welcome to Nadia’s Shop!");
+
             System.out.println("1 - Log In");
             System.out.println("2 - Sign Up");
             System.out.println("3 - Forgot your password");
@@ -83,16 +82,17 @@ public class Main {
         }
 
             if (user instanceof Admin) {
+
             AdminService adminService = new AdminService(customerService,customerRepository, orderService);
             TransactionView transactionView = new TransactionView(scanner);
 
             AdminController adminController = new AdminController(adminService, transactionView, customerView);
-            AdminDashboard adminDashboard = new AdminDashboard(adminController, productController, productView, scanner);
+            AdminDashboard adminDashboard = new AdminDashboard(adminController, productController, scanner);
             adminDashboard.launch();
-        } else if (user instanceof Customer customer) {
-                CartView cartView = new CartView(scanner);
-            CartController cartController = new CartController(cartService, cartView);
 
+        } else if (user instanceof Customer customer) {
+
+            CartController cartController = new CartController(cartService, new CartView(scanner));
             OrderController orderController = new OrderController(orderService, new OrderView(scanner));
             orderController.loadOrdersFromFile();
 

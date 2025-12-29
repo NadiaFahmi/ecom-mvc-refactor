@@ -2,25 +2,21 @@ package com.ecommerce.view;
 
 import com.ecommerce.controller.AdminController;
 import com.ecommerce.controller.ProductController;
-import com.ecommerce.model.entities.Product;
 
-import java.time.DateTimeException;
-import java.time.LocalDate;
 import java.util.*;
 
 public class AdminDashboard {
 
     private final AdminController adminController;
     private final ProductController productController;
-    private final ProductView productView;
     private final Scanner scanner;
 
     public AdminDashboard(AdminController adminController,
-                          ProductController productController,ProductView productView,
+                          ProductController productController ,
                           Scanner scanner) {
+
         this.adminController = adminController;
         this.productController = productController;
-        this.productView = productView;
         this.scanner = scanner;
     }
 

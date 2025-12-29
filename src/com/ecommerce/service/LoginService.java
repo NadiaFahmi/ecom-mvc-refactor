@@ -5,7 +5,6 @@ import com.ecommerce.exception.InvalidPasswordException;
 import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
 
-import java.util.logging.Level;
 
 import com.ecommerce.model.entities.User;
 
@@ -29,27 +28,27 @@ public class LoginService {
         password = password.trim();
 
         if (email.equals("admin@gmail.com")) {
-            logger.info("Admin login attempt detected for email: " + email);
+            logger.info("Admin login attempt detected");
             if (password.equals("adminPass")) {
-                logger.log(Level.INFO, "Admin password validated for email:{0} ", email);
+                logger.info( "Admin logged in successful");
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
-                logger.warning("Incorrect admin password.");
-                throw new InvalidPasswordException("❌ Invalid admin password.");
+                logger.warning("Failed admin login attempt - incorrect password");
+                throw new InvalidPasswordException(" Invalid admin password.");
             }
         }
 
         Customer customer = customerService.getCustomerByEmail(email);
         if (customer == null) {
-            logger.log(Level.WARNING, "Email not found: {0} ", email);
-            throw new InvalidEmailException("❌ Email not found. Please sign up first.");
+            logger.warning("Login failed - email not found");
+            throw new InvalidEmailException(" Email not found. Please sign up first.");
         }
 
         if (customer.getPassword().equals(password)) {
-            logger.log(Level.INFO, "Login success - correct password for email={0} ", email);
+            logger.info("User login successful");
             return customer;
         }
-        logger.log(Level.WARNING, "Login failed - incorrect password for email={0} ", email);
+        logger.warning("Login failed - incorrect password");
         throw new InvalidPasswordException("Incorrect password.");
 
     }
@@ -58,8 +57,5 @@ public class LoginService {
         customerService.resetPassword(inputEmail, newPassword, confirmPassword);
     }
 
-    public Customer getCustomerByEmail(String email) {
 
-        return customerService.getCustomerByEmail(email);
-    }
 }

@@ -20,11 +20,13 @@ public class SignUpController {
     }
 
     public Customer handleSignUp() {
+
         String name = signUpView.promptName();
         String email = signUpView.promptEmail();
         String password = signUpView.promptPassword();
         double balance = signUpView.promptBalance();
         String address = signUpView.promptAddress();
+
 
         try {
             Customer customer = signUpService.registerNewCustomer(name, email, password, balance, address);
@@ -41,11 +43,11 @@ public class SignUpController {
             return null;
 
         }catch (InvalidEmailException e){
-            logger.log(Level.WARNING,"Email={0} already registered.",email);
+            logger.warning("Signup attempt with duplicate email address");
             signUpView.showError(e.getMessage());
 
         }catch (InvalidPasswordException e){
-            logger.log(Level.WARNING,"Invalid  password requirements for email: {0}",email);
+            logger.warning("Invalid  password requirements");
             signUpView.showError(e.getMessage());
 
         }catch (InvalidBalanceException e){

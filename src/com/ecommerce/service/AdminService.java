@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //public class AdminService implements TransactionViewer{
 public class AdminService {
-
+    private Logger logger=Logger.getLogger(AdminService.class.getName());
     private final CustomerService customerService;
     private final CustomerRepository customerRepository;
     private final OrderService orderService;
@@ -84,8 +86,9 @@ public class AdminService {
                 filteredOrders.add(order);
             }
         }
-
+        logger.log(Level.INFO,"Orders loaded successfully. from={0}  to={1}",new Object[]{from,to});
         return filteredOrders;
+
     }
 
 
@@ -104,7 +107,7 @@ public class AdminService {
                 filteredOrders.add(order);
             }
         }
-
+    logger.log(Level.INFO,"Orders loaded successfully. count={0}",filteredOrders.size());
         return filteredOrders;
     }
 

@@ -9,3 +9,8 @@
 10,product_super,200.0,men
 11,Product_NadiaFahmi,40000.0,women
 12,product_self,390.0,kids
+13,product_jailan,1000.0,women
+14,product_karim,1500.0,men
+15,product_soso,2000.0,women
+16,product_azza,2000.0,women
+17,product_nora,1900.0,women

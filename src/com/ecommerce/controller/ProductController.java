@@ -7,9 +7,12 @@ import com.ecommerce.service.ProductService;
 import com.ecommerce.view.ProductView;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class ProductController {
+    private Logger logger = Logger.getLogger(ProductController.class.getName());
     private ProductService productService;
     private final ProductView productView;
 
@@ -29,10 +32,18 @@ public class ProductController {
             return;
         }
         double price= productView.promptPrice();
+        if (price == -1 ) {
+            return;
+        }
         String category= productView.promptProductCategory();
+        if (category == null) {
+            return;
+        }
         try{
         productService.addProduct(name, price, category);
+//            logger.log(Level.INFO,"Added new product: name={0}, price={1}, category={2}", new Object[]{name,price,category});
     }catch(InvalidProductException e){
+            logger.warning("Failed not added");
             productView.showError(e.getMessage());
         }
     }
@@ -62,14 +73,17 @@ public class ProductController {
 public void filterProductsByCategory() {
     String category = productView.promptCategory();
     try {
+
         List<Product> productsFiltered = productService.getProductsByCategory(category);
+        logger.log(Level.INFO,"Attempt to find category={0}",category);
         productView.displayFilteredProducts(productsFiltered);
-    }catch(IllegalArgumentException e){
+        logger.log(Level.INFO,"Success to find category={0}",category);
+    }catch(InvalidProductException e){
+        logger.warning("Failed: Category not found");
         productView.showError(e.getMessage());
     }
 }
 
-//    public boolean deleteProduct(int id) {
         public void deleteProduct() {
         int id = productView.promptId();
         if(id == -1){

@@ -1,5 +1,6 @@
 package com.ecommerce.view;
 
+import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Product;
 
 import java.util.List;
@@ -15,9 +16,10 @@ private Scanner scanner;
 
     public void displayFilteredProducts(List<Product> products) {
         if (products.isEmpty()) {
-            System.out.println("🚫 No products found" );
+            throw new InvalidProductException(" No products with this category found ");
+
         } else {
-            System.out.println("📦 Products with category: ");
+
             for (Product p : products) {
                 System.out.println("🔹 ID: " + p.getId() +
                         ", Name: " + p.getName() +
@@ -73,9 +75,11 @@ private Scanner scanner;
 
     }
     public String promptCategory() {
-        System.out.print("📦 Enter category: ");
+        System.out.print("📦 Enter category (or 'exit' to cancel: ");
         String category = scanner.nextLine().trim();
-
+        if(category.equalsIgnoreCase("exit")){
+            return null;
+        }
         if (category.isEmpty()) {
             System.out.println("⚠️ Category cannot be empty. Please try again.");
 
@@ -115,8 +119,11 @@ private Scanner scanner;
     }
     public double promptPrice() {
         while (true) {
-            System.out.println("Enter product price:");
+            System.out.println("Enter product price (or 'exit' to cancel :");
             String input = scanner.nextLine();
+            if(input.equalsIgnoreCase("exit")){
+                return -1;
+            }
             try {
 
                 return Double.parseDouble(input);
@@ -124,7 +131,9 @@ private Scanner scanner;
 
                 System.out.println("Invalid input. Please enter a valid numerical price.");
             }
-        }}
+        }
+
+    }
     public int promptId() {
         System.out.println("Enter product Id or type 'exit' to cancel:");
         while (true) {

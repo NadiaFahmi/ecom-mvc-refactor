@@ -43,10 +43,10 @@ public class CartService {
 
         CartItem item = findItem(items, productId);
         if (item != null) {
-            logger.log(Level.INFO,"Updated item id={0} - Quantity={1} for CustomerEmail={2}",new Object[]{productId,quantity,customer.getEmail()});
+            logger.log(Level.INFO,"Updated item id={0} - Quantity={1} ",new Object[]{productId,quantity});
             increaseItemQuantity(item, quantity);
         } else {
-            logger.log(Level.INFO,"Added item id={0} - Quantity={1} for CustomerEmail={2}",new Object[]{productId,quantity,customer.getEmail()});
+            logger.log(Level.INFO,"Added item id={0} - Quantity={1}",new Object[]{productId,quantity});
             CartItem newItem = new CartItem(
                     cart.getId(),
                     product.getId(),

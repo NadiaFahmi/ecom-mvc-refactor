@@ -8,15 +8,18 @@ import com.ecommerce.model.entities.Order;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.view.OrderView;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class OrderController {
-
+    private Logger logger = Logger.getLogger(OrderController.class.getName());
     private final OrderService orderService;
     private final OrderView orderView;
 
@@ -26,36 +29,44 @@ public class OrderController {
     }
 
     public void handlePlaceOrder(Customer customer) {
-        Cart cart = orderService.getCartForCustomer(customer);
-        List<CartItem> cartItems = orderService.getCartItems(cart);
 
+        double requiredTotal =orderService.getCartTotal(customer);
+
+        if(!orderService.hasSufficientBalance(customer,requiredTotal)) {
+
+            boolean confirmed = orderView.confirmAddFunds(requiredTotal, customer.getBalance());
+            if (!confirmed) {
+                orderView.showOrderCancelled();
+                return;
+            }
+            double additional = orderView.promptAmountToAdd();
+            orderService.addFunds(customer, additional);
+            orderView.showNewBalance(customer.getBalance());
+            if (additional <= 0){
+                orderView.showOrderCancelled();
+            }
+            if (!orderService.hasSufficientBalance(customer, requiredTotal)) {
+                orderView.showInsufficientAfterAdd();
+                return;
+            }
+            attemptCreateOrder(customer);
+
+        }else {
+            attemptCreateOrder(customer);
+
+        }
+    }
+    public void attemptCreateOrder(Customer customer){
         try {
             Order order = orderService.createOrder(customer);
             orderView.showOrderSuccess(order);
-        } catch (CartItemNotFoundException e) {
+        } catch (InvalidBalanceException ex) {
+            orderView.showInsufficientAfterAdd();
+        }catch (CartItemNotFoundException e){
             orderView.showCartEmpty();
-        }catch (InvalidBalanceException e) {
-            double total = orderService.calculateTotal(cartItems
-            );
-            if (orderView.confirmAddFunds(total, customer.getBalance())) {
-                double additional = orderView.promptAmountToAdd();
-                if (additional <= 0 || !orderService.hasSufficientBalance(customer, additional, total)) {
-                    orderView.showInsufficientAfterAdd();
-                    return;
-                }
-                orderView.showNewBalance(customer.getBalance());
-                try {
-                    Order order = orderService.createOrder(customer);
-                    orderView.showOrderSuccess(order);
-                } catch (InvalidBalanceException ex) {
-                    orderView.showInsufficientAfterAdd();
-                }
-            }
-        }catch (InvalidProductException e) {
-            orderView.showErrorMessage(e.getMessage());
         }
-    }
 
+    }
     public void loadOrdersFromFile() {
         orderService.getOrders();
     }
@@ -64,22 +75,14 @@ public class OrderController {
 
         LocalDate date = orderView.showDatePrompt();
 
-        List<Order> allOrders = orderService.getOrders();
-
-        List<Order> filteredOrders = new ArrayList<>();
-
-        for (Order order : allOrders) {
-            if (order.getCustomerId() == customer.getId() && order.getOrderDate().toLocalDate().equals(date)) {
-                filteredOrders.add(order);
-            }
+        try {
+            List<Order> filteredOrders =  orderService.filterCustomerOrdersByDate(customer, date);
+            logger.log(Level.INFO,"user={0}, date={1}",new Object[]{customer.getName(),date.toString()});
+            orderView.displayFilterOrders(filteredOrders);
+        }catch (DateTimeException e){
+            logger.warning("Invalid date");
+            orderView.showErrorMessage(e.getMessage());
         }
-
-        if (filteredOrders.isEmpty()) {
-            System.out.println("📭 No orders found for " + date);
-            return;
-        }
-
-        orderView.displayOrders(filteredOrders);
 
             }
 

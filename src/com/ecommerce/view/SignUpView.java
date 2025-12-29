@@ -21,6 +21,7 @@ public class SignUpView {
 
     public String promptPassword() {
         System.out.print("🔒 Enter your password: ");
+
         return scanner.nextLine().trim();
     }
 
@@ -36,6 +37,7 @@ public class SignUpView {
 
     public String promptAddress() {
         System.out.print("🏠 Enter your address: ");
+
         return scanner.nextLine().trim();
     }
 

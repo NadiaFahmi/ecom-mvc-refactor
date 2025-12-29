@@ -72,6 +72,19 @@ public class OrderView {
             for (Order order : orders) {
                 System.out.println("🆔 Order ID: " + order.getOrderId());
                 System.out.println("🗓️ Date: " + order.getOrderDate());
+                System.out.println(" Order Total: $" + order.getOrderTotal());
+                System.out.println("📌 Status: " + order.getStatus());
+                System.out.println("------");
+            }
+
+    }
+    public void displayFilterOrders(List<Order> orders) {
+        if (orders.isEmpty()) {
+            System.out.println("📭 You haven’t placed any orders for this date");
+        } else
+            for (Order order : orders) {
+                System.out.println("🆔 Order ID: " + order.getOrderId());
+                System.out.println("🗓️ Date: " + order.getOrderDate());
                 System.out.println(" Order Total: " + order.getOrderTotal());
                 System.out.println("📌 Status: " + order.getStatus());
                 System.out.println("------");
@@ -100,10 +113,12 @@ public class OrderView {
                 date = LocalDate.parse(dateInput);
 
             } catch (DateTimeParseException e) {
-                System.out.println("⚠️ Invalid date format.");
                 return null;
             }
         }
         return date;
+    }
+    public void showOrderCancelled() {
+        System.out.println("🕳 Order cancelled. Feel free to come back anytime.");
     }
 }

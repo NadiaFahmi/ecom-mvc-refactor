@@ -15,8 +15,12 @@ public class LoginView {
     public String promptEmail() {
         String email = "";
         while (true) {
-            System.out.print("📧 Enter your registered email: ");
+            System.out.print("📧 Enter your registered email (or type 'back' to return: ");
             email = scanner.nextLine().trim().toLowerCase();
+
+            if("back".equalsIgnoreCase(email)){
+                return null;
+            }
             if (!email.isEmpty()) {
                 return email;
             }

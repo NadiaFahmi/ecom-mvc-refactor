@@ -67,7 +67,7 @@ public class CartView {
         }
     }
     public void showSuccessMessage() {
-        System.out.println("Product Added");
+        System.out.println("Product has been added to your cart");
     }
     public void showErrorMessage(String message)
     {

@@ -25,12 +25,15 @@ public class LoginController {
 
     public User loginAuth() {
         String email = loginView.promptEmail();
+        if(email == null){
+            return null;
+        }
         String password = loginView.promptPassword();
 
         try {
             User user = loginService.login(email, password);
             if (user != null) {
-                logger.log(Level.INFO,"login() invoked successfully for customer email={0}: " , email);
+                logger.info("User login successful");
                 loginView.showWelcome(user);
                 return user;
             }
@@ -48,11 +51,8 @@ public class LoginController {
         return null;
     }
 
-    public void handleRetry(
-//            Customer customer
-//            , String email
-    ) {
-//        String email=loginView.promptEmail();
+    public void handleRetry() {
+
         while (true) {
             String choice = loginView.promptRetryChoice();
 
@@ -64,7 +64,6 @@ public class LoginController {
 
                     try {
                         loginService.resetPassword(
-//                                customer,
                                 email,
                                 newPassword, confirmPassword);
                         loginView.showPasswordResetResult(true);
@@ -82,18 +81,10 @@ public class LoginController {
                 System.exit(0);
                 }
 
-
-
                 default -> loginView.showInvalidChoice();
             }
         }
 
     }
-//////
-public Customer getCustomerByEmail() {
-        String email = loginView.promptEmail();
 
-        return loginService.getCustomerByEmail(email);
-}
-    ////
 }

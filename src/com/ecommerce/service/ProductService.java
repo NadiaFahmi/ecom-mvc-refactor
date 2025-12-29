@@ -6,9 +6,13 @@ import com.ecommerce.repository.ProductRepository;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProductService {
 
+
+    private Logger logger = Logger.getLogger(ProductService.class.getName());
     private final ProductRepository repository;
 
     public ProductService(ProductRepository repository) {
@@ -18,11 +22,14 @@ public class ProductService {
     public void addProduct(String name, double price, String category) {
 
         int id = calculateInitialCounter(loadProductList());
+        logger.log(Level.INFO,"After increment: productIdCounter={0}",id);
         Product product = new Product(id, name, price, category);
 
         List<Product> products = loadProductList();
         products.add(product);
         repository.save(products);
+//        logger.log(Level.INFO,"ProductId={0} - name={1}",new Object[]{id,name});
+        logger.log(Level.INFO,"Added new product: name={0}, price={1}, category={2}", new Object[]{name,price,category});
     }
 
     public List<Product> getAllProducts() {
@@ -90,13 +97,17 @@ public class ProductService {
         return new ArrayList<>(repository.load());
     }
 
+
     private int calculateInitialCounter(Collection<Product> products) {
+
         int maxId = 0;
         for (Product product : products) {
             if (product.getId() > maxId) {
                 maxId = product.getId();
             }
+
         }
+        logger.log(Level.INFO,"Before increment: productIdCounter={0}",maxId);
         return maxId + 1;
     }
 }
