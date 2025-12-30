@@ -2,19 +2,15 @@ package com.ecommerce.controller;
 
 import com.ecommerce.exception.InvalidEmailException;
 import com.ecommerce.exception.InvalidPasswordException;
-import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.User;
 import com.ecommerce.service.LoginService;
 import com.ecommerce.view.LoginView;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class LoginController {
-
     private Logger logger = Logger.getLogger(LoginController.class.getName());
-
     private final LoginService loginService;
     private final LoginView loginView;
 
@@ -24,6 +20,8 @@ public class LoginController {
     }
 
     public User loginAuth() {
+        logger.info("Login attempt initiated.");
+
         String email = loginView.promptEmail();
         if(email == null){
             return null;
@@ -33,25 +31,26 @@ public class LoginController {
         try {
             User user = loginService.login(email, password);
             if (user != null) {
-                logger.info("User login successful");
+                logger.info("User logged in successfully.");
+
                 loginView.showWelcome(user);
                 return user;
             }
         }
+
         catch (InvalidEmailException e){
-            logger.warning("Email not found");
             loginView.showError(e.getMessage());
 
         }catch (InvalidPasswordException e){
-            logger.warning("Incorrect password");
             loginView.showFailed(e.getMessage());
         }
 
-
+        logger.warning("Authentication failed");
         return null;
     }
 
     public void handleRetry() {
+        logger.info("Login retry attempt initiated");
 
         while (true) {
             String choice = loginView.promptRetryChoice();
@@ -66,9 +65,11 @@ public class LoginController {
                         loginService.resetPassword(
                                 email,
                                 newPassword, confirmPassword);
+                        logger.info("Password reset successfully.");
                         loginView.showPasswordResetResult(true);
                         return;
                     } catch (InvalidPasswordException e) {
+                        logger.warning("Password reset failed during authentication retry");
                         loginView.showError(e.getMessage());
                         loginView.showPasswordResetResult(false);
                     }

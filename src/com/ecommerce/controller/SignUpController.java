@@ -26,39 +26,33 @@ public class SignUpController {
         String password = signUpView.promptPassword();
         double balance = signUpView.promptBalance();
         String address = signUpView.promptAddress();
+        logger.info("Attempting to register new user");
 
 
         try {
             Customer customer = signUpService.registerNewCustomer(name, email, password, balance, address);
-            logger.log(Level.INFO,"Customer registration successful for: {0} ",name);
+            logger.log(Level.INFO,"User registration successful for username: {0} ",name);
             signUpView.showSuccess(customer.getName());
             return customer;
         }catch (InvalidNameException e){
-
-            logger.log(Level.WARNING,"Invalid name: {0}",name);
             signUpView.showError(e.getMessage());
         }catch (InvalidEmailFormatException e){
-            logger.log(Level.WARNING,"Invalid email format: {0}",email);
             signUpView.showError(e.getMessage());
             return null;
 
         }catch (InvalidEmailException e){
-            logger.warning("Signup attempt with duplicate email address");
             signUpView.showError(e.getMessage());
 
         }catch (InvalidPasswordException e){
-            logger.warning("Invalid  password requirements");
             signUpView.showError(e.getMessage());
 
         }catch (InvalidBalanceException e){
-            logger.log(Level.WARNING,"Invalid  balance: {0}",balance);
             signUpView.showError(e.getMessage());
 
         }catch (InvalidAddressException e){
-            logger.log(Level.WARNING,"Invalid address: {0}",address);
             signUpView.showError(e.getMessage());
         }
-
+        logger.log(Level.WARNING,"Error during user registration for username: {0}",name);
         return null;
     }
 }
