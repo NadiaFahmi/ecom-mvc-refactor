@@ -20,11 +20,11 @@ public class CustomerView {
         return scanner.nextLine().trim();
     }
     public String promptNewEmail() {
-        System.out.print("📧 Enter your email: ");
+        System.out.print("📧 Enter your new email: ");
         return scanner.nextLine().trim().toLowerCase();
     }
     public String promptNewAddress() {
-        System.out.print("🏠 Enter your address: ");
+        System.out.print("🏠 Enter your new address: ");
         return scanner.nextLine().trim();
     }
     public String promptCurrentPassword() {
@@ -42,7 +42,7 @@ public class CustomerView {
         return scanner.nextLine();
     }
     public double promptNewBalance() {
-        System.out.print("💰 Enter your balance: ");
+        System.out.print("💰 Enter your new balance: ");
         try {
             return Double.parseDouble(scanner.nextLine().trim());
         } catch (NumberFormatException e) {

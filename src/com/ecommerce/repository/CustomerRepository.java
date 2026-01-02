@@ -5,7 +5,6 @@ import com.ecommerce.model.entities.Customer;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Logger;
 
 public class CustomerRepository {
     private int idCounter =1;
@@ -58,7 +57,14 @@ public class CustomerRepository {
         }
         return null;
     }
-
+    public boolean isEmailTakenByAnother(String newEmail, int currentCustomerId){
+        Customer existingEmail=getCustomerByEmail(newEmail);
+        if(existingEmail == null){
+            return false;
+        }
+        return existingEmail.getId() !=currentCustomerId;
+    }
+    ///
     public Customer getCustomerById(int id) {
         Customer customer = customerMap.get(id);
         if (customer == null) {

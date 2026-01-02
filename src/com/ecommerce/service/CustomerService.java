@@ -52,15 +52,19 @@ public class CustomerService {
     public void updateCustomerEmail(Customer customer, String newEmail) {
 
         isValidEmail(newEmail);
-
+        ensureEmailIsAvailable(customer.getId(),newEmail);
         customer.setEmail(newEmail);
-        logger.log(Level.INFO,"Email updated Successful. Customer name={0}",customer.getName());
         repository.updateCustomer(customer);
+        logger.log(Level.INFO,"Successfully updated email. CustomerId={0}",customer.getId());
         repository.saveAll();
 
     }
-
-
+    public void ensureEmailIsAvailable(int customerId, String email){
+        boolean existEmail=repository.isEmailTakenByAnother(email,customerId);
+        if (existEmail){
+            throw new IllegalArgumentException("Email already exist.");
+        }
+    }
     private void isValidEmail(String email) {
         if (email == null || email.isEmpty()) {
             throw new InvalidEmailException("Email cannot be empty.");
@@ -81,9 +85,9 @@ public class CustomerService {
         isPasswordConfirmed(newPassword, confirmPassword);
 
         customer.setPassword(newPassword.trim());
-        logger.log(Level.INFO,"Password reset for customer id={0}", customer.getId());
         repository.updateCustomer(customer);
         repository.saveAll();
+        logger.log(Level.INFO,"Password reset for customer id={0}", customer.getId());
     }
     public void updatePassword(Customer customer, String currentPassword, String newPassword, String confirmPassword) {
 
@@ -169,14 +173,13 @@ public class CustomerService {
     public void updateCustomerBalance(Customer customer, double amount) {
 
         double currentBalance = customer.getBalance();
-        logger.log(Level.INFO,"Logging current balance={0} for customer name={1} ",new Object[]{currentBalance,customer.getName()});
         double newBalance = currentBalance + amount;
         if (newBalance < 0) {
             throw new InvalidBalanceException();
         }
-
         customer.setBalance(newBalance);
         repository.updateCustomer(customer);
+        logger.log(Level.INFO,"Updated current balance={0} for customer name={1} ",new Object[]{currentBalance,customer.getName()});
         repository.saveAll();
 
     }

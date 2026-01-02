@@ -38,9 +38,13 @@ public class CustomerController {
 
         try {
             customerService.updateCustomerEmail(customer, email);
+            logger.info("Successfully updated email");
             customerView.showEmailUpdated();
         } catch (InvalidEmailException e) {
             logger.log(Level.WARNING,"Failed invalid email={0}",email);
+            customerView.showError(e.getMessage());
+        }catch (IllegalArgumentException e){
+            logger.warning("Email already in use.");
             customerView.showError(e.getMessage());
         }
     }

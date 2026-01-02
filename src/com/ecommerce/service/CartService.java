@@ -108,7 +108,6 @@ public void saveCartItems(Cart cart, List<CartItem> items) {
 
         double total = 0.0;
         total = calculateTotal(items);
-        logger.log(Level.INFO,"Total calculated={0} for cart id={1}",new Object[]{total,cart.getId()});
         return total;
     }
     public double calculateTotal(List<CartItem> items){
@@ -117,7 +116,7 @@ public void saveCartItems(Cart cart, List<CartItem> items) {
         for (CartItem item : items) {
             Product product = productService.getProductById(item.getProductId());
             if (product != null) {
-                logger.log(Level.INFO,"Product ID={0}, price={1}, quantity={2}",new Object[]{product.getId(),product.getPrice(),item.getQuantity()});
+                logger.log(Level.INFO,"Product ID={0}, price$={1}, quantity={2}",new Object[]{product.getId(),product.getPrice(),item.getQuantity()});
                 total += product.getPrice() * item.getQuantity();
             }else{
                 throw new InvalidProductException("Invalid product in cart");
