@@ -137,7 +137,6 @@ private Scanner scanner;
     public int promptId() {
         System.out.println("Enter product Id or type 'exit' to cancel:");
         while (true) {
-//            System.out.println("Enter product Id:");
             String input = scanner.nextLine();
             if(input.equalsIgnoreCase("exit")){
                 return -1;

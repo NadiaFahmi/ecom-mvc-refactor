@@ -39,16 +39,18 @@ public class AdminService {
     public List<Customer> filterUsersByNameKeyword(String keyword) {
         Collection<Customer> allCustomers = getAllCustomers();
         List<Customer> filtered = new ArrayList<>();
+        List<Integer> matchingIds = new ArrayList<>();
         if(keyword.isEmpty()){
             throw new IllegalArgumentException("Key must not be empty");
         }
         for (Customer customer : allCustomers) {
             String name = customer.getName();
             if (name != null && name.toLowerCase().contains(keyword.toLowerCase())) {
+                matchingIds.add(customer.getId());
                 filtered.add(customer);
             }
         }
-
+        logger.log(Level.INFO,"Matched customerIds={0}", matchingIds);
         return filtered;
     }
 
@@ -61,20 +63,26 @@ public class AdminService {
             throw new InvalidBalanceException();
         }
         List<Customer> matching = new ArrayList<>();
-        Collection<Customer> customers = customerService.listAllCustomers();
+        List<Integer> matchingIds = new ArrayList<>();
 
+        Collection<Customer> customers = customerService.listAllCustomers();
+        logger.log(Level.INFO,"All customers={0}",customers.size());
         for (Customer customer : customers) {
             if (customer.getBalance() >= min && customer.getBalance() <= max) {
+               matchingIds.add(customer.getId());
                 matching.add(customer);
             }
         }
-
+        logger.log(Level.INFO,"Matched customerIds={0}", matchingIds);
         return matching;
     }
 
 
     public List<Order> getOrdersByDateRange(LocalDate from, LocalDate to) {
+
         List<Order> allOrders = orderService.getOrders();
+        logger.log(Level.INFO,"All orders={0}",allOrders.size());
+        List<Integer> matchedIds=new ArrayList<>();
         List<Order> filteredOrders = new ArrayList<>();
        if(from == null || to ==null){
            throw new IllegalArgumentException();
@@ -83,10 +91,11 @@ public class AdminService {
             LocalDate orderDate = order.getOrderDate().toLocalDate();
             if ((orderDate.isEqual(from) || orderDate.isAfter(from)) &&
                     (orderDate.isEqual(to) || orderDate.isBefore(to))) {
+                matchedIds.add(order.getOrderId());
                 filteredOrders.add(order);
             }
         }
-        logger.log(Level.INFO,"Orders loaded successfully. from={0}  to={1}",new Object[]{from,to});
+        logger.log(Level.INFO,"Matched orderIds={0}", matchedIds);
         return filteredOrders;
 
     }
@@ -98,18 +107,26 @@ public class AdminService {
 
 
     public List<Order> getOrdersByUser(String email) {
-        List<Order> filteredOrders = new ArrayList<>();
-
-        for (Order order : orderService.getOrders()) {
-            Customer customer = customerRepository.getCustomerById(order.getCustomerId());
-
-            if (customer != null && customer.getEmail().equalsIgnoreCase(email)) {
-                filteredOrders.add(order);
-            }
+        if(email.isEmpty() || email == null){
+            throw new IllegalArgumentException("Email must not be empty.");
         }
-    logger.log(Level.INFO,"Orders loaded successfully. count={0}",filteredOrders.size());
+        Customer customer = customerRepository.getCustomerByEmail(email);
+
+        if(customer == null){
+            throw new CustomerNotFoundException("Customer not found");
+        }
+
+        List<Order> filteredOrders = new ArrayList<>();
+        List<Integer> matchedIds=new ArrayList<>();
+            for (Order order : orderService.getOrders()) {
+                if (order.getCustomerId() == customer.getId()) {
+                    matchedIds.add(order.getOrderId());
+                    filteredOrders.add(order);
+
+                }
+            }
+            logger.log(Level.INFO, "Matched orderIds={0}", matchedIds);
         return filteredOrders;
+
     }
-
-
 }

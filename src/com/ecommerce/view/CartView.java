@@ -26,14 +26,15 @@ public class CartView {
         }
         return -1;
     }
+
     public int productIdRemovePrompt() {
 
         while (true) {
             System.out.print("Enter Product ID to remove or q to cancel: ");
-            String input =scanner.nextLine();
-            if(input.equalsIgnoreCase("q")){
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("q")) {
                 System.out.println("Removal cancelled");
-                return  -1;
+                return -1;
             }
             try {
                 return Integer.parseInt(input);
@@ -44,13 +45,26 @@ public class CartView {
             return -1;
         }
     }
-    public int newQuantityPrompt(){
+
+    public int newQuantityPrompt() {
         System.out.print("Enter New Quantity: ");
-        return  Integer.parseInt(scanner.nextLine().trim());
+        return Integer.parseInt(scanner.nextLine().trim());
     }
-    public int quantityPrompt(){
-        System.out.print("Enter New Quantity: ");
-        return  Integer.parseInt(scanner.nextLine().trim());
+
+    public int quantityPrompt() {
+        int count = 2;
+        while (count > 0) {
+            System.out.print("Enter Quantity (or '-1' to cancel): ");
+            String input = scanner.nextLine().trim();
+
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter valid number.");
+                count--;
+            }
+        }
+        return -1;
     }
     public void showQuantityUpdated() {
         System.out.println("Quantity successfully updated");
@@ -72,6 +86,9 @@ public class CartView {
     public void showErrorMessage(String message)
     {
         System.out.println(message);
+    }
+    public void showProductError(){
+        System.out.println("Invalid product selected. Please try again");
     }
     public void showTotalCartPrice(double total){
         System.out.println("Total cart price = "+"$"+total);

@@ -35,11 +35,9 @@ public class CustomerController {
 
     public void updateCustomerEmail(Customer customer) {
         String email =customerView.promptNewEmail();
-        logger.log(Level.INFO,"Attempting update customer email={0}",email);
 
         try {
             customerService.updateCustomerEmail(customer, email);
-            logger.log(Level.INFO,"Successfully updated for customer with email={0}",email);
             customerView.showEmailUpdated();
         } catch (InvalidEmailException e) {
             logger.log(Level.WARNING,"Failed invalid email={0}",email);
@@ -75,10 +73,9 @@ public class CustomerController {
     public void updateBalance(int customerId) {
         double amount =customerView.promptNewBalance();
         Customer customer = customerService.findCustomerById(customerId);
-        logger.log(Level.INFO,"Attempting to update balance for customer email={0}",customer.getEmail());
         try {
             customerService.updateCustomerBalance(customer, amount);
-            logger.log(Level.INFO,"Successfully updated balance for customer email={0}",customer.getEmail());
+            logger.log(Level.INFO,"Successfully updated balance for customer name={0}",customer.getName());
         } catch (InvalidBalanceException e) {
             logger.warning("Cannot set negative balance");
             customerView.showInvalidBalance(e.getMessage());
@@ -88,10 +85,10 @@ public class CustomerController {
     public void deleteCustomerByEmail() {
 
         String email= customerView.promptEmail();
-        logger.log(Level.INFO,"Attempting to delete customer email={0}",email);
+
         try {
             customerService.deleteCustomer(email);
-            logger.log(Level.INFO,"Successfully deleted customer with email={0}",email);
+            logger.log(Level.INFO,"Deleted successful");
             customerView.showDeleteCustomer();
 
         } catch (InvalidEmailException |CustomerNotFoundException e) {
@@ -100,12 +97,11 @@ public class CustomerController {
         }
     }
 
-    public void showLoggedInCustomerOrders(Customer customer) {
+    public void getCustomerProfileWithOrders(Customer customer) {
         List<Order> orders = new ArrayList<>();
 
-        customerService.getLoggedInCustomerWithOrders(customer,orders);
+        customerService.getCustomerProfileWithOrders(customer,orders);
         customerView.displayCustomerWithOrders(customer,orders);
-        logger.log(Level.INFO,"Show orders for customer email={0}",customer.getEmail());
 
     }
 

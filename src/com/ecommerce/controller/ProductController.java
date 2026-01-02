@@ -43,7 +43,7 @@ public class ProductController {
         productService.addProduct(name, price, category);
 //            logger.log(Level.INFO,"Added new product: name={0}, price={1}, category={2}", new Object[]{name,price,category});
     }catch(InvalidProductException e){
-            logger.warning("Failed not added");
+            logger.warning("Invalid product");
             productView.showError(e.getMessage());
         }
     }
@@ -66,6 +66,7 @@ public class ProductController {
             productService.updateProduct(id, newName, newPrice, newCategory);
             productView.showUpdatedProduct();
         }catch (InvalidProductException e){
+            logger.warning("Invalid product");
             productView.showError(e.getMessage());
         }
     }
@@ -75,11 +76,13 @@ public void filterProductsByCategory() {
     try {
 
         List<Product> productsFiltered = productService.getProductsByCategory(category);
-        logger.log(Level.INFO,"Attempt to find category={0}",category);
         productView.displayFilteredProducts(productsFiltered);
         logger.log(Level.INFO,"Success to find category={0}",category);
     }catch(InvalidProductException e){
         logger.warning("Failed: Category not found");
+        productView.showError(e.getMessage());
+    }catch (IllegalArgumentException e){
+        logger.warning("Failed: Category is empty");
         productView.showError(e.getMessage());
     }
 }

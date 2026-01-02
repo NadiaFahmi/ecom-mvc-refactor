@@ -38,6 +38,7 @@ public class TransactionView {
     private void printOrderSummary(Order order) {
         System.out.println("🆔 Order ID: " + order.getOrderId());
         System.out.println("🗓️ Date: " + order.getOrderDate());
+        System.out.println("💰 total Price: $" + order.getOrderTotal());
         System.out.println("📌 Status: " + order.getStatus());
         System.out.println("------");
     }
@@ -54,7 +55,7 @@ public class TransactionView {
         }
     }
     public void displayOrdersByDateRange(List<Order> orders, LocalDate from, LocalDate to) {
-        System.out.println("📅 Admin Orders from " + from + " to " + to);
+        System.out.println("📅 Orders placed from " + from + " to " + to);
 
         if (orders.isEmpty()) {
             System.out.println("🚫 No orders found in the specified date range.");

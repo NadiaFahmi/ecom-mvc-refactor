@@ -1,7 +1,6 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.exception.CartItemNotFoundException;
-import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.exception.InvalidQuantityException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
@@ -10,6 +9,7 @@ import com.ecommerce.service.CartService;
 import com.ecommerce.view.CartView;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CartController {
@@ -31,10 +31,22 @@ public class CartController {
                 return;
             }
             int quantity = cartView.quantityPrompt();
+            if (quantity == -1){
+                return;
+            }
+            try {
+                cartService.addProductToCart(customer, productId, quantity);
+                logger.info("Product added successfully to cart");
+                cartView.showSuccessMessage();
+            } catch (InvalidQuantityException e) {
+                logger.log(Level.SEVERE, "Exception encountered {0} ", e.getMessage());
+                cartView.showErrorMessage(e.getMessage());
+            } catch (CartItemNotFoundException e) {
+                logger.log(Level.SEVERE, "Exception encountered {0} ", e.getMessage());
+                cartView.showProductError();
 
-            cartService.addProductToCart(customer, productId, quantity);
-            cartView.showSuccessMessage();
-        } catch (NumberFormatException |InvalidQuantityException | InvalidProductException | CartItemNotFoundException e) {
+            }
+        }catch (NumberFormatException e) {
             cartView.showErrorMessage(e.getMessage());
         }
     }
@@ -54,7 +66,6 @@ public class CartController {
                 return;
             }
             cartService.removeItemFromCart(customer, productId);
-            logger.info("Successfully removed");
             cartView.showRemovedMessage();
 
         } catch (CartItemNotFoundException e) {
@@ -88,7 +99,6 @@ public class CartController {
     public void calculatePrice(Customer customer) {
         try {
             double totalPrice = cartService.calculateTotalPrice(customer);
-            logger.info("Cart total calculated");
             cartView.showTotalCartPrice(totalPrice);
         } catch (CartItemNotFoundException e) {
             logger.warning(e.getMessage());

@@ -20,7 +20,6 @@ public class LoginController {
     }
 
     public User loginAuth() {
-        logger.info("Login attempt initiated.");
 
         String email = loginView.promptEmail();
         if(email == null){
@@ -31,21 +30,20 @@ public class LoginController {
         try {
             User user = loginService.login(email, password);
             if (user != null) {
-                logger.info("User logged in successfully.");
-
                 loginView.showWelcome(user);
                 return user;
             }
         }
 
         catch (InvalidEmailException e){
+            logger.warning("Authentication failed. Email not found.");
             loginView.showError(e.getMessage());
 
         }catch (InvalidPasswordException e){
+            logger.warning("Authentication failed. wrong password.");
             loginView.showFailed(e.getMessage());
         }
 
-        logger.warning("Authentication failed");
         return null;
     }
 

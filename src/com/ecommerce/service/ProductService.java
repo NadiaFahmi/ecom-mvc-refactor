@@ -28,12 +28,12 @@ public class ProductService {
         List<Product> products = loadProductList();
         products.add(product);
         repository.save(products);
-//        logger.log(Level.INFO,"ProductId={0} - name={1}",new Object[]{id,name});
         logger.log(Level.INFO,"Added new product: name={0}, price={1}, category={2}", new Object[]{name,price,category});
     }
 
     public List<Product> getAllProducts() {
         Collection<Product> loaded = loadProductList();
+        logger.log(Level.INFO,"Products count={0}",loaded.size());
         return new ArrayList<>(loaded);
     }
 
@@ -49,16 +49,18 @@ public class ProductService {
     public List<Product> getProductsByCategory(String category) {
         List<Product> products = loadProductList();
         List<Product> filtered = new ArrayList<>();
+        List<Integer> matchingIds = new ArrayList<>();
         if(category.isEmpty()){
             throw new IllegalArgumentException("Category must not be empty");
         }
 
         for (Product product : products) {
             if (product.getCategory().equalsIgnoreCase(category)) {
+                matchingIds.add(product.getId());
                 filtered.add(product);
             }
         }
-
+        logger.log(Level.INFO,"Matched category={0}",matchingIds);
         return filtered;
     }
 
@@ -69,6 +71,7 @@ public class ProductService {
         if (removed) {
             repository.save(products);
         }else{
+            logger.severe("Failed. ProductId not found");
             throw new InvalidProductException("productId not found");
         }
         return removed;
@@ -76,11 +79,13 @@ public class ProductService {
 
     public void updateProduct(int id, String newName, double newPrice, String newCategory) {
         List<Product> products = loadProductList();
+
         Product updatedProduct = new Product(id, newName, newPrice, newCategory);
         boolean updated = false;
 
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getId() == id) {
+                logger.log(Level.INFO,"Updated product with id={0}",id);
                 products.set(i, updatedProduct);
                 updated = true;
                 break;
@@ -89,6 +94,7 @@ public class ProductService {
         if (updated) {
             repository.save(products);
         } else {
+            logger.severe("Failed. ProductId not found");
             throw new InvalidProductException("❌ Product ID " + id + " not found.");
         }
     }

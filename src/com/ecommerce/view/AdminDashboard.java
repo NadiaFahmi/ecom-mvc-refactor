@@ -52,7 +52,7 @@ public class AdminDashboard {
                     System.out.println("\n👋 Logging out of Admin Dashboard. Have a productive day!");
                     return;
                 }
-                case "1" -> adminController.viewAllUsers();
+                case "1" -> adminController.getAllUsers();
 
                 case "2" -> adminController.filterUsersByName();
 

@@ -33,14 +33,12 @@ public class LoginService {
                 logger.info( "Admin logged in successful");
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
-                logger.warning("Failed admin login attempt - incorrect password");
                 throw new InvalidPasswordException(" Invalid admin password.");
             }
         }
 
         Customer customer = customerService.getCustomerByEmail(email);
         if (customer == null) {
-            logger.warning("Login failed - email not found");
             throw new InvalidEmailException(" Email not found. Please sign up first.");
         }
 
@@ -48,7 +46,6 @@ public class LoginService {
             logger.info("User login successful");
             return customer;
         }
-        logger.warning("Login failed - incorrect password");
         throw new InvalidPasswordException("Incorrect password.");
 
     }

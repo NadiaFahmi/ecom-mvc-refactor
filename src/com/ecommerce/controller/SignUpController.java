@@ -26,33 +26,45 @@ public class SignUpController {
         String password = signUpView.promptPassword();
         double balance = signUpView.promptBalance();
         String address = signUpView.promptAddress();
-        logger.info("Attempting to register new user");
-
-
         try {
             Customer customer = signUpService.registerNewCustomer(name, email, password, balance, address);
-            logger.log(Level.INFO,"User registration successful for username: {0} ",name);
+            logger.log(Level.INFO, "User registration successful for username: {0} ", name);
             signUpView.showSuccess(customer.getName());
             return customer;
-        }catch (InvalidNameException e){
+        }
+        catch (InvalidNameException e){
+            logger.warning("Name validation failed: Input empty");
             signUpView.showError(e.getMessage());
-        }catch (InvalidEmailFormatException e){
+        }
+        catch (InvalidEmailFormatException e){
+            logger.severe("Email validation failed: Invalid format");
             signUpView.showError(e.getMessage());
             return null;
 
-        }catch (InvalidEmailException e){
+        }
+        catch ( InvalidEmailException e){
+            logger.warning("Email validation failed: Email already registered.");
             signUpView.showError(e.getMessage());
+        }
+////               | InvalidEmailException | InvalidPasswordException | InvalidBalanceException |
+////               InvalidAddressException
+//                ;}
 
-        }catch (InvalidPasswordException e){
+
+        catch (InvalidPasswordException e){
+            logger.severe("Password validation failed: Invalid format");
             signUpView.showError(e.getMessage());
 
         }catch (InvalidBalanceException e){
+            logger.warning("Balance validation failed: Invalid input");
             signUpView.showError(e.getMessage());
 
         }catch (InvalidAddressException e){
+            logger.warning("Address validation failed: Input empty");
             signUpView.showError(e.getMessage());
         }
-        logger.log(Level.WARNING,"Error during user registration for username: {0}",name);
-        return null;
+            logger.log(Level.WARNING, "Error during  registration");
+//            signUpView.showError(e.getMessage());
+            return null;
+        }
     }
-}

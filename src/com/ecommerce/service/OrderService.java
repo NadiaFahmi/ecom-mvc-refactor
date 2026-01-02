@@ -128,8 +128,6 @@ public class OrderService {
         return cartService.getCartForCustomer(customer);
     }
 
-    public List<CartItem> getCartItems(Cart cart) {
-        return cartService.getLoadedItems(cart);
-    }
+
 }
 

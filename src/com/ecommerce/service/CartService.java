@@ -24,29 +24,26 @@ public class CartService {
     }
 
     public void addProductToCart(Customer customer, int productId, int quantity) {
-    logger.log(Level.INFO,"Attempting to find product id={0}",productId);
               Product product = productService.getProductById(productId);
         if (product == null) {
-            logger.log(Level.WARNING, "No product with id={0}", productId);
-            throw new InvalidProductException("Invalid product.");}
+            throw new CartItemNotFoundException("Invalid product.");}
          if (quantity <= 0){
-             logger.log(Level.WARNING, "Invalid quantity of:{0}", quantity);
-             throw new InvalidQuantityException("Quantity cannot be negative");
+             throw new InvalidQuantityException("Quantity cannot be zero or negative");
         }
+
 
         Cart cart =cartRepository.findByCustomerId(customer.getId());
         if (cart == null) {
             cart = cartRepository.createCartForCustomer(customer.getId());
         }
         List<CartItem> items = getLoadedItems(cart);
-        logger.log(Level.INFO,"Items loaded for customer id={0}",customer.getId());
 
         CartItem item = findItem(items, productId);
         if (item != null) {
-            logger.log(Level.INFO,"Updated item id={0} - Quantity={1} ",new Object[]{productId,quantity});
+            logger.log(Level.INFO,"Item id={0} updated. previous quantity={1} , added={2} ",new Object[]{productId,item.getQuantity(),quantity});
             increaseItemQuantity(item, quantity);
         } else {
-            logger.log(Level.INFO,"Added item id={0} - Quantity={1}",new Object[]{productId,quantity});
+            logger.log(Level.INFO,"Item id={0} added,  Quantity={1}, price={2}",new Object[]{product.getId(),quantity,product.getPrice()});
             CartItem newItem = new CartItem(
                     cart.getId(),
                     product.getId(),
@@ -62,11 +59,9 @@ public class CartService {
 
     public void removeItemFromCart(Customer customer, int productId) {
         Cart cart =cartRepository.findByCustomerId(customer.getId());
-        logger.log(Level.INFO,"Attempting to load items for customer id={0}",customer.getId());
         List<CartItem> items = getLoadedItems(cart);
         CartItem item = findItem(items, productId);
         if (item == null) {
-            logger.log(Level.WARNING,"No product with id={0}",productId);
             throw new CartItemNotFoundException("Product not found in cart.");
         }
         items.remove(item);
@@ -76,17 +71,16 @@ public class CartService {
 
     public void updateCartItemQuantity(Customer customer, int productId, int newQuantity) {
         Cart cart = cartRepository.findByCustomerId(customer.getId());
-        logger.log(Level.INFO,"Attempting to load items for customer id={0}",customer.getId());
         List<CartItem> items = getLoadedItems(cart);
 
             CartItem item = findItem(items, productId);
         if (item == null) {
-            logger.log(Level.WARNING,"No product with id={0}",productId);
+
             throw new CartItemNotFoundException("Product ID " + productId + " not found in cart.");
         }
             if (newQuantity > 0) {
                 item.setQuantity(newQuantity);
-                logger.log(Level.INFO,"Updated Quantity={0} - product id={1} - customer id={2}",new Object[]{newQuantity,productId,customer.getId()});
+                logger.log(Level.INFO,"Updated Quantity={0} - product id={1}",new Object[]{newQuantity,productId});
                 saveCartItems(cart, items);
             } else {
                 throw new InvalidQuantityException("Quantity must be greater than 0.");
@@ -106,24 +100,24 @@ public void saveCartItems(Cart cart, List<CartItem> items) {
     public double calculateTotalPrice(Customer customer) {
 
         Cart cart= cartRepository.findByCustomerId(customer.getId());
-        logger.log(Level.INFO,"Attempting to find cart id={0}",cart.getId());
         List<CartItem> items = cartRepository.loadCartItemsFromFile(cart);
 
         if(items == null || items.isEmpty()){
-            logger.log(Level.WARNING,"No items in cart id={0}",cart.getId());
             throw new CartItemNotFoundException("No items - cart empty");
         }
 
         double total = 0.0;
         total = calculateTotal(items);
-        logger.log(Level.INFO,"Total calculated:{0}",total);
+        logger.log(Level.INFO,"Total calculated={0} for cart id={1}",new Object[]{total,cart.getId()});
         return total;
     }
     public double calculateTotal(List<CartItem> items){
+
         double total = 0.0;
         for (CartItem item : items) {
             Product product = productService.getProductById(item.getProductId());
             if (product != null) {
+                logger.log(Level.INFO,"Product ID={0}, price={1}, quantity={2}",new Object[]{product.getId(),product.getPrice(),item.getQuantity()});
                 total += product.getPrice() * item.getQuantity();
             }else{
                 throw new InvalidProductException("Invalid product in cart");
@@ -135,6 +129,7 @@ public void saveCartItems(Cart cart, List<CartItem> items) {
     public CartItem findItem(List<CartItem> items, int productId) {
         for (CartItem item :items) {
             if (item.getProductId() == productId) {
+                logger.log(Level.INFO,"Found cartItem with productId={0}",productId);
                 return item;
             }
         }

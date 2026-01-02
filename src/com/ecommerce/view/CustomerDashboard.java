@@ -86,7 +86,7 @@ public class CustomerDashboard {
 
                 case "12" -> customerController.deleteCustomerByEmail();
 
-                case "13" -> customerController.showLoggedInCustomerOrders(customer);
+                case "13" -> customerController.getCustomerProfileWithOrders(customer);
 
                 case "exit" -> {
                     System.out.println("👋 Logging out. See you soon, " + customer.getName() + "!");

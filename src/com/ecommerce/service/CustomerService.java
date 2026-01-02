@@ -54,6 +54,7 @@ public class CustomerService {
         isValidEmail(newEmail);
 
         customer.setEmail(newEmail);
+        logger.log(Level.INFO,"Email updated Successful. Customer name={0}",customer.getName());
         repository.updateCustomer(customer);
         repository.saveAll();
 
@@ -70,15 +71,11 @@ public class CustomerService {
 
     }
 
-    public void resetPassword(
-//            Customer customer,
-            String inputEmail, String newPassword, String confirmPassword) {
+    public void resetPassword(String inputEmail, String newPassword, String confirmPassword) {
         Customer customer = repository.getCustomerByEmail(inputEmail);
         if (customer == null) {
-            logger.warning("Reset failed: customer null");
             throw new CustomerNotFoundException("❌ Customer not found.");
         }
-        logger.log(Level.INFO,"Attempting to reset password for customer id={0}",customer.getId());
         isEmailMatching(customer, inputEmail);
         isValidLength(newPassword);
         isPasswordConfirmed(newPassword, confirmPassword);
@@ -172,10 +169,9 @@ public class CustomerService {
     public void updateCustomerBalance(Customer customer, double amount) {
 
         double currentBalance = customer.getBalance();
-        logger.log(Level.INFO,"Logging current balance={0} for customer email={1} ",new Object[]{currentBalance,customer.getEmail()});
+        logger.log(Level.INFO,"Logging current balance={0} for customer name={1} ",new Object[]{currentBalance,customer.getName()});
         double newBalance = currentBalance + amount;
         if (newBalance < 0) {
-            logger.log(Level.WARNING,"Adjustment of ={0} rejected. Would result balance={1} for customer email={2}",new Object[]{amount,newBalance,customer.getEmail()});
             throw new InvalidBalanceException();
         }
 
@@ -196,13 +192,12 @@ public class CustomerService {
         repository.saveAll();
     }
 
-    public void getLoggedInCustomerWithOrders(Customer input,List<Order> outputOrders) {
+    public void getCustomerProfileWithOrders(Customer input, List<Order> outputOrders) {
         logger.log(Level.INFO,"Fetching customer by Id={0}",input.getId());
         input = repository.getCustomerById(input.getId());
 
-        logger.log(Level.INFO,"Calling getOrdersForCustomer for customer email={0}",input.getEmail());
         List<Order> orders = orderService.getOrdersForCustomer(input.getEmail());
-        logger.log(Level.INFO,"Fetched {0} orders for customer email={1}", new Object[]{orders.size(), input.getEmail()});
+        logger.log(Level.INFO,"Fetched {0} orders for customer name={1}", new Object[]{orders.size(), input.getName()});
 
         outputOrders.clear();
         outputOrders.addAll(orders);
