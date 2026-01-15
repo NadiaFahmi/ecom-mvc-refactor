@@ -50,14 +50,14 @@ private Scanner scanner;
     }
     public String promptProductCategory() {
         String category;
-        do {
+//        do {
             System.out.println("Enter product category: ");
             category = scanner.nextLine();
-            if (category.isEmpty()) {
-                System.out.println("Category must not be empty.");
-            }
+//            if (category.isEmpty()) {
+//                System.out.println("Category must not be empty.");
+//            }
 
-        } while (category.isEmpty());
+//        } while (category.isEmpty());
         return category;
 
     }
@@ -89,16 +89,11 @@ private Scanner scanner;
 
     public String promptProductName() {
         String name;
-        do {
             System.out.println("Enter product name or (type 'exit' to cancel and return :");
             name = scanner.nextLine();
             if(name.equalsIgnoreCase("exit")){
                 return null;
             }
-            if (name.isEmpty()) {
-                System.out.println("Product name must not be empty.");
-            }
-        }while(name.isEmpty()) ;
 
         return name;
     }
@@ -117,22 +112,14 @@ private Scanner scanner;
 
         return name;
     }
-    public double promptPrice() {
-        while (true) {
-            System.out.println("Enter product price (or 'exit' to cancel :");
-            String input = scanner.nextLine();
-            if(input.equalsIgnoreCase("exit")){
-                return -1;
-            }
-            try {
 
-                return Double.parseDouble(input);
-            } catch (NumberFormatException e) {
-
-                System.out.println("Invalid input. Please enter a valid numerical price.");
-            }
+    public String promptPrice() {
+        System.out.println("Enter product price (or 'exit' to cancel :");
+        String input = scanner.nextLine();
+        if (input.equalsIgnoreCase("exit")) {
+            return null;
         }
-
+        return input;
     }
     public int promptId() {
         System.out.println("Enter product Id or type 'exit' to cancel:");
@@ -163,7 +150,7 @@ private Scanner scanner;
         }}
 
         public void showError(String message){
-        System.out.println(message);
+            System.out.println("Product cancelled");
     }
     public void showUpdatedProduct(){
         System.out.println("✅ Product updated: ");

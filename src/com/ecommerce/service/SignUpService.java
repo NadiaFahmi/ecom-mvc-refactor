@@ -61,7 +61,7 @@ private final CustomerService customerService;
         }
 
         if (!isBalanceValid(balance)) {
-            throw  new InvalidBalanceException();
+            throw  new InvalidBalanceException("Balance cannot be negative");
 
         }
 

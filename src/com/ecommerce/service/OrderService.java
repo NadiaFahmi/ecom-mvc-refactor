@@ -56,7 +56,7 @@ public class OrderService {
 
 
         if (customer.getBalance() < total) {
-          throw new InvalidBalanceException();
+          throw new InvalidBalanceException("Balance cannot be negative");
 
         }
 

@@ -48,6 +48,8 @@ public class CustomerRepository {
         saveAll();
     }
 
+
+
     public Customer getCustomerByEmail(String email) {
         String normalized = email.trim().toLowerCase();
         for (Customer customer : customerMap.values()) {
@@ -127,5 +129,8 @@ public class CustomerRepository {
             throw new IllegalArgumentException("Failed to load customers to file");
 
         }
+    }
+    public int getIdCounter(){
+        return idCounter;
     }
 }

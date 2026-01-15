@@ -57,10 +57,10 @@ public class AdminService {
     public List<Customer> getUsersByBalanceRange(double min, double max) {
 
         if(min == -1 || max== -1){
-            throw new InvalidBalanceException();
+            throw new InvalidBalanceException("Balance cannot be negative");
         }
         if(min <0 || max <0){
-            throw new InvalidBalanceException();
+            throw new InvalidBalanceException("Balance cannot be negative");
         }
         List<Customer> matching = new ArrayList<>();
         List<Integer> matchingIds = new ArrayList<>();

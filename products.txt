@@ -14,3 +14,5 @@
 15,product_soso,2000.0,women
 16,product_azza,2000.0,women
 17,product_nora,1900.0,women
+18,Product_Shirt,300.0,men
+19,product_Updat_19,1000.0,men

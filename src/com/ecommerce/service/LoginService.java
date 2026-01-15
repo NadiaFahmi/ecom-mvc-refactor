@@ -4,6 +4,8 @@ import com.ecommerce.exception.InvalidEmailException;
 import com.ecommerce.exception.InvalidPasswordException;
 import com.ecommerce.model.entities.Admin;
 import com.ecommerce.model.entities.Customer;
+//import static org.mockito.Mockito.*;
+
 
 
 import com.ecommerce.model.entities.User;
@@ -26,13 +28,13 @@ public class LoginService {
     public User login(String email, String password) {
         email = email.trim().toLowerCase();
         password = password.trim();
-
         if (email.equals("admin@gmail.com")) {
             logger.info("Admin login attempt detected");
             if (password.equals("adminPass")) {
                 logger.info( "Admin logged in successful");
                 return new Admin(0, "Jailan(Admin)", email, password);
             } else {
+
                 throw new InvalidPasswordException(" Invalid admin password.");
             }
         }
@@ -43,9 +45,10 @@ public class LoginService {
         }
 
         if (customer.getPassword().equals(password)) {
-            logger.info("User login successful");
+            logger.info("Successfully User login ");
             return customer;
         }
+
         throw new InvalidPasswordException("Incorrect password.");
 
     }

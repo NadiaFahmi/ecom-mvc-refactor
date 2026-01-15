@@ -23,30 +23,32 @@ public class ProductController {
 
     public void getProducts() {
         List<Product> products = productService.getAllProducts();
+
         productView.displayAllProducts(products);
     }
 
     public void createProduct() {
         String name = productView.promptProductName();
-        if (name == null || name.equalsIgnoreCase("exit")) {
-            return;
+
+        String inputPrice= productView.promptPrice();
+
+        String category = productView.promptProductCategory();
+
+        try {
+            double price = Double.parseDouble(inputPrice);
+            productService.addProduct(name, price, category);
+//
+        } catch (NumberFormatException e) {
+            productView.showError(e.getMessage());
+            logger.warning("Invalid number format: ");
         }
-        double price= productView.promptPrice();
-        if (price == -1 ) {
-            return;
-        }
-        String category= productView.promptProductCategory();
-        if (category == null) {
-            return;
-        }
-        try{
-        productService.addProduct(name, price, category);
-//            logger.log(Level.INFO,"Added new product: name={0}, price={1}, category={2}", new Object[]{name,price,category});
-    }catch(InvalidProductException e){
-            logger.warning("Invalid product");
+
+        catch (InvalidProductException e) {
+            logger.warning("Invalid product: " + e.getMessage());
             productView.showError(e.getMessage());
         }
     }
+
 
 
     public void updateProduct() {

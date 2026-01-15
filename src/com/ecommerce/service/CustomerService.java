@@ -25,6 +25,7 @@ public class CustomerService {
 
     public Customer registerCustomer(String name, String email, String password,
                                      double balance, String address) {
+
         return repository.createCustomer(name, email, password, balance, address);
     }
 
@@ -175,7 +176,7 @@ public class CustomerService {
         double currentBalance = customer.getBalance();
         double newBalance = currentBalance + amount;
         if (newBalance < 0) {
-            throw new InvalidBalanceException();
+            throw new InvalidBalanceException("Balance cannot be negative");
         }
         customer.setBalance(newBalance);
         repository.updateCustomer(customer);
