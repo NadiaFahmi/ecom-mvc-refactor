@@ -10,6 +10,7 @@ import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -17,25 +18,38 @@ import static org.junit.Assert.assertEquals;
 
 public class LoginServiceTest {
 
-    ProductRepository productRepo = new ProductRepository("products.txt");
-    CustomerRepository customerRepository = new CustomerRepository("customers.txt");
+    ProductRepository productRepo;
+    CustomerRepository customerRepository;
+    ProductService productService;
+    CartRepository cartRepository;
+    CartService cartService;
+    OrderRepository orderRepository;
+    OrderService orderService;
+    CustomerService customerService;
+    LoginService loginService;
 
-    ProductService productService = new ProductService(productRepo);
-    CartRepository cartRepository = new CartRepository();
-    CartService cartService = new CartService(productService, cartRepository);
-    OrderRepository orderRepository = new OrderRepository(productService);
-    OrderService orderService = new OrderService(cartService, orderRepository, customerRepository);
-    CustomerService customerService = new CustomerService(customerRepository, orderService);
-
-
+    @Before
+    public void setUp() {
+        productRepo = new ProductRepository("products.txt");
+        customerRepository = new CustomerRepository("customers.txt");
+        productService = new ProductService(productRepo);
+        cartRepository = new CartRepository();
+        cartService = new CartService(productService, cartRepository);
+        orderRepository = new OrderRepository(productService);
+        orderService = new OrderService(cartService, orderRepository, customerRepository);
+        customerService = new CustomerService(customerRepository, orderService);
+        loginService = new LoginService(customerService);
+    }
     @Test
     public void testAdminLoginSuccess() {
-        LoginService loginService = new LoginService(customerService);
+        // Arrange (implicit: LoginService)
         String adminEmail = "admin@gmail.com";
         String adminPass = "adminPass";
 
+        //Act
         User user = loginService.login(adminEmail, adminPass);
 
+        //Assert
         assertNotNull(user);
         assertTrue(user instanceof Admin);
         assertEquals(adminEmail, user.getEmail());
@@ -44,11 +58,11 @@ public class LoginServiceTest {
 
     @Test
     public void testLogin_WrongPassword() {
-        LoginService loginService = new LoginService(customerService);
-
+        // Arrange (implicit: LoginService)
         String adminEmail = "admin@gmail.com";
         String wrongPass = "wrongPass";
 
+        //Act + Assert
         assertThrows(InvalidPasswordException.class, () -> {
             loginService.login(adminEmail, wrongPass);
         });
@@ -58,13 +72,16 @@ public class LoginServiceTest {
 
     @Test
     public void testUserLoginSuccess() {
-        LoginService loginService = new LoginService(customerService);
+
+        // Arrange (implicit: CustomerService and LoginService)
         customerService.loadCustomers();
         String userEmail = "rona@gmail.com";
         String userPassword = "123456";
 
+        //Act
         User user = loginService.login(userEmail, userPassword);
 
+        //Assert
         assertNotNull(user);
         assertTrue(user instanceof Customer);
         assertEquals(userEmail, user.getEmail());
@@ -74,12 +91,13 @@ public class LoginServiceTest {
 
     @Test()
     public void testUserLoginFailed() {
-        LoginService loginService = new LoginService(customerService);
+
+        // Arrange (implicit: CustomerService and LoginService)
         customerService.loadCustomers();
         String userEmail = "ron@gmail.com";
         String userPassword = "123456";
 
-
+        //Act + Assert
         assertThrows(InvalidEmailException.class, () ->
         {
             loginService.login(userEmail, userPassword);
@@ -90,11 +108,13 @@ public class LoginServiceTest {
 
     @Test
     public void testUserLoginPasswordFailed() {
-        LoginService loginService = new LoginService(customerService);
+
+        // Arrange (implicit: CustomerService and LoginService)
         customerService.loadCustomers();
         String userEmail = "rona@gmail.com";
         String userPassword = "1234567";
 
+        //Act + Assert
         assertThrows(InvalidPasswordException.class, () ->
         {
             loginService.login(userEmail, userPassword);
@@ -103,7 +123,4 @@ public class LoginServiceTest {
 
     }
 
-    public static void main(String[] args) {
-
-    }
 }

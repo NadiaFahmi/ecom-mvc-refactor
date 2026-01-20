@@ -55,7 +55,7 @@ public class CustomerDashboard {
             System.out.println("👤 --- Account ---");
             System.out.println("11 - Update My Account Info");
             System.out.println("12 - Delete My Account");
-            System.out.println("13 - Customer info");
+            System.out.println("13 - View My Info");
             System.out.println("exit - Logout and Exit Dashboard");
 
             System.out.print("Your choice: ");

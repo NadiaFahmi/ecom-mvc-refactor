@@ -4,123 +4,180 @@ import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Product;
 import com.ecommerce.repository.ProductRepository;
 import junit.framework.TestCase;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertEquals;
+
 
 public class ProductServiceTest extends TestCase {
 
+    private ProductRepository productRepository;
+    private ProductService productService;
+
+
+    @Before
+    public void setUp() {
+        productRepository = new ProductRepository("products.txt");
+        productService = new ProductService(productRepository);
+    }
 
     @Test
     public void testAddProduct() {
+        // Arrange (implicit: productService ready)
+        String name = "product_testing";
+        double price = 1200.0;
+        String category = "women";
 
-        ProductService productService = new ProductService(new ProductRepository("products.txt"));
+        //Act
+        productService.addProduct(name, price, category);
+        List<Product> products = productService.getAllProducts();
+        Product added = products.get(products.size() - 1);
 
-        productService.addProduct("product_testing", 1200.0,"women");
-        List<Product> products=productService.getAllProducts();
-
-        Product added=products.get(products.size() -1);
-
-        assertEquals("product_testing",added.getName());
-        assertEquals(1200.0,added.getPrice());
-        assertEquals("women",added.getCategory());
-        assertTrue(added.getId() >1);
-
+        //Assert
+        assertEquals("product_testing", added.getName());
+        assertEquals(1200.0, added.getPrice());
+        assertEquals("women", added.getCategory());
+        assertTrue(added.getId() > 1);
 
     }
+
     @Test
     public void testNegativePriceThrowsInvalidProductException() {
 
-        ProductService productService = new ProductService(new ProductRepository("products.txt"));
+        // Arrange (implicit: productService ready)
+        String name = "Product_woman";
+        double invalidPrice = -2.0;
+        String category = "women";
+
+        //Act + Assert
 
         assertThrows(InvalidProductException.class, () -> {
-                    productService.addProduct("Product_woman", -2.0, "women");
-                });
-    }
-    @Test
-    public void testEmptyNameThrowsInvalidProductException() {
-
-        ProductService productService = new ProductService(new ProductRepository("products.txt"));
-
-        assertThrows(InvalidProductException.class, () -> {
-            productService.addProduct("", 2222, "women");
+            productService.addProduct(name, invalidPrice, category);
         });
     }
 
     @Test
+    public void testEmptyNameThrowsInvalidProductException() {
 
+        // Arrange (implicit: productService ready)
+        String name = "";
+        double price = 2222.0;
+        String category = "women";
+
+        //Act + Assert
+        assertThrows(InvalidProductException.class, () -> {
+            productService.addProduct(name, price, category);
+        });
+    }
+
+    @Test
     public void testEmptyCategoryThrowsInvalidProductException() {
 
-        ProductService productService = new ProductService(new ProductRepository("products.txt"));
+        // Arrange (implicit: productService ready)
+        String name = "product";
+        double price = 2222.0;
+        String category = "";
 
+        //Act + Assert
         assertThrows(InvalidProductException.class, () -> {
-            productService.addProduct("product", 2222, "");
+            productService.addProduct(name, price, category);
         });
     }
 
     @Test
     public void testIsNameValid() {
-        ProductService service = new ProductService(new ProductRepository("products.txt"));
-        assertTrue(service.isNameValid("Women"));
-        assertFalse(service.isNameValid(""));
-        assertFalse(service.isNameValid(null));
+        // Arrange (implicit: productService ready)
+        String validName="Women";
+        String EmptyName="";
+        String NullName=null;
+
+        //Act
+        boolean resultValid = productService.isNameValid(validName);
+        boolean resulEmpty = productService.isNameValid(EmptyName);
+        boolean resulNull = productService.isNameValid(NullName);
+
+        //Assert
+        assertTrue(resultValid);
+        assertFalse(resulEmpty);
+        assertFalse(resulNull);
     }
 
     @Test
     public void testIsPriceValid() {
+        // Arrange (implicit: productService ready)
+        String invalidInput = "ab";
 
-        ProductService service = new ProductService(new ProductRepository("products.txt"));
-        String invalidInput="ab";
+        //Act + Assert
+        assertThrows(NumberFormatException.class, () -> {
+            double price = Double.parseDouble(invalidInput);
+            productService.isPriceValid(price);
+        });
+        assertTrue(productService.isPriceValid(0.0));
 
-            assertThrows(NumberFormatException.class, () -> {
-                double price = Double.parseDouble(invalidInput);
-                service.isPriceValid(price);
-            });
-        assertTrue(service.isPriceValid(0.0));
-
-        assertFalse(service.isPriceValid(-5.0));
+        assertFalse(productService.isPriceValid(-5.0));
 
     }
+
     @Test
     public void testIsCategoryValid() {
-        ProductService service = new ProductService(new ProductRepository("products.txt"));
-        assertTrue(service.isCategoryValid("Women"));
-        assertFalse(service.isCategoryValid(""));
-        assertFalse(service.isCategoryValid(null));
+
+        // Arrange (implicit: productService ready)
+        String validCategory="Women";
+        String EmptyCategory="";
+        String NullCategory=null;
+
+        //Act
+        boolean resultValid = productService.isCategoryValid(validCategory);
+        boolean resulEmpty = productService.isCategoryValid(EmptyCategory);
+        boolean resulNull = productService.isCategoryValid(NullCategory);
+
+        //Assert
+        assertTrue(resultValid);
+        assertFalse(resulEmpty);
+        assertFalse(resulNull);
     }
+
     @Test
-    public void testUpdateProduct(){
+    public void testUpdateProduct() {
+        // Arrange (implicit: productService ready)
+        int productId = 19;
+        String newName= "product_Updated_19";
+        double newPrice= 1000.0;
+        String newCategory = "men";
 
-        ProductService service = new ProductService(new ProductRepository("products.txt"));
+        //Act
+        productService.updateProduct(productId,newName,newPrice,newCategory);
+        Product updated = productService.getProductById(19);
 
-       service.updateProduct(19,"product_Updat_19",1000.0,"men");
-
-        Product updated = service.getProductById(19);
-
-       assertEquals("product_Updat_19",updated.getName());
-       assertEquals(1000.0,updated.getPrice());
-       assertEquals("men",updated.getCategory());
+        //Assert
+        assertEquals("product_Updated_19", updated.getName());
+        assertEquals(1000.0, updated.getPrice());
+        assertEquals("men", updated.getCategory());
 
     }
+
     @Test
-    public void testReplaceProduct(){
-        ProductService service = new ProductService(new ProductRepository("products.txt"));
+    public void testReplaceProduct() {
+
+        // Arrange (implicit: productService ready)
         List<Product> products = new ArrayList<>();
-        products.add(new Product(1,"Product_1",300.0,"men"));
-        products.add(new Product(2,"Product_2",300.0,"woman"));
+        products.add(new Product(1, "Product_1", 300.0, "men"));
+        products.add(new Product(2, "Product_2", 300.0, "woman"));
+        Product updateProduct = new Product(2, "Product_333", 100.0, "men");
 
-        Product updateProduct = new Product(2,"Product_3",100.0,"men");
+        //Act
+        boolean result = productService.replaceProduct(products, 2, updateProduct);
 
-        boolean result= service.replaceProduct(products,2,updateProduct);
-
+        //Assert
         assertTrue(result);
-        assertEquals("Product_1",products.get(0).getName());
-        assertEquals("Product_3",products.get(1).getName());
-        assertEquals(100.0,products.get(1).getPrice());
-        assertEquals("men",products.get(1).getCategory());
+        assertEquals("Product_1", products.get(0).getName());
+        assertEquals("Product_333", products.get(1).getName());
+        assertEquals(100.0, products.get(1).getPrice());
+        assertEquals("men", products.get(1).getCategory());
 
     }
 

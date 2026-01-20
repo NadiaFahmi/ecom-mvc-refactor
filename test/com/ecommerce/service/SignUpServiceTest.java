@@ -6,36 +6,55 @@ import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.CustomerRepository;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class SignUpServiceTest {
-    ProductRepository productRepo = new ProductRepository("products.txt");
-    CustomerRepository customerRepository = new CustomerRepository("customers.txt");
-    ProductService productService = new ProductService(productRepo);
-    CartRepository cartRepository = new CartRepository();
-    CartService cartService = new CartService(productService, cartRepository);
-    OrderRepository orderRepository = new OrderRepository(productService);
-    OrderService orderService = new OrderService(cartService, orderRepository, customerRepository);
-    CustomerService customerService = new CustomerService(customerRepository, orderService);
+
+    ProductRepository productRepo;
+    CustomerRepository customerRepository;
+    ProductService productService;
+    CartRepository cartRepository;
+    CartService cartService;
+    OrderRepository orderRepository;
+    OrderService orderService;
+    CustomerService customerService;
+    LoginService loginService;
+    SignUpService signUpService;
+
+    @Before
+    public void setUp() {
+        productRepo = new ProductRepository("products.txt");
+        customerRepository = new CustomerRepository("customers.txt");
+        productService = new ProductService(productRepo);
+        cartRepository = new CartRepository();
+        cartService = new CartService(productService, cartRepository);
+        orderRepository = new OrderRepository(productService);
+        orderService = new OrderService(cartService, orderRepository, customerRepository);
+        customerService = new CustomerService(customerRepository, orderService);
+        loginService = new LoginService(customerService);
+        signUpService = new SignUpService(customerService);
+    }
+
 
     @Test
     public void testRegisterCustomerSuccess(){
-
+        // Arrange (implicit: CustomerService, CustomerRepository and SignUpService ready)
         customerService.loadCustomers();
-        SignUpService signUpService = new SignUpService(customerService);
-
-        String name="Suzan";
-        String email="suzan@gmail.com";
+        String name="Jailan";
+        String email="jailan@gmail.com";
         String password ="123456";
-        double balance = 4000;
-        String address = "tagamo3";
+        double balance = 6000;
+        String address = "Zaied";
 
+        //Act
         int id=customerRepository.getIdCounter();
         Customer expected = new Customer(id,name, email, password, balance, address);
         Customer actual = signUpService.registerNewCustomer(name, email, password, balance, address);
 
+        //Assert
         assertNotNull(actual);
         assertTrue(actual.getId() >0);
         assertEquals(name,actual.getName());
@@ -47,7 +66,7 @@ public class SignUpServiceTest {
     }
     @Test
     public void testRegisterFailedName(){
-        SignUpService signUpService = new SignUpService(customerService);
+        // Arrange (implicit: CustomerService and SignUpService ready)
         customerService.loadCustomers();
         String name="";
         String email="mahmoud@gmail.com";
@@ -55,14 +74,14 @@ public class SignUpServiceTest {
         double balance = 123.50;
         String address = "Zayed";
 
+        //Act + Assert
         assertThrows(InvalidNameException.class, () -> signUpService.registerNewCustomer(name, email, password, balance, address));
 
     }
 
     @Test
     public void testRegisterFailedEmail(){
-
-        SignUpService signUpService = new SignUpService(customerService);
+        // Arrange (implicit: CustomerService and SignUpService ready)
         customerService.loadCustomers();
         String name="mahmoud";
         String email="mahmoud@gmail.com";
@@ -70,50 +89,53 @@ public class SignUpServiceTest {
         double balance = 123.50;
         String address = "Zayed";
 
+        //Act + Assert
         assertThrows(InvalidEmailException.class, () -> signUpService.registerNewCustomer(name, email, password, balance, address));
 
     }
     @Test()
     public void testRegisterFailedPassword(){
+        // Arrange (implicit: CustomerService and SignUpService ready)
         customerService.loadCustomers();
-        SignUpService signUpService = new SignUpService(customerService);
-
         String name="Salwa";
         String email="salwaa@gmail.com";
         String password ="8888";
         double balance = 123.50;
         String address = "New Giza";
 
+        //Act + Assert
         assertThrows(InvalidPasswordException.class, ()-> signUpService.registerNewCustomer(name,email,password,balance,address));
 
     }
     @Test
     public void testRegisterFailedBalance(){
+        // Arrange (implicit: CustomerService and SignUpService ready)
         customerService.loadCustomers();
-        SignUpService signUpService = new SignUpService(customerService);
-
         String name="Salwa";
         String email="salwaaa@gmail.com";
         String password ="888887";
         double balance = -2;
         String address = "New Giza";
 
-        assertThrows(InvalidBalanceException.class,()-> signUpService.registerNewCustomer(name, email, password, balance, address));
+        //Act + Assert
+        assertThrows(InvalidBalanceException.class,
+                ()-> signUpService.registerNewCustomer(name, email, password, balance, address));
 
     }
     @Test
     public void testRegisterFailedAdress(){
-        customerService.loadCustomers();
-        SignUpService signUpService = new SignUpService(customerService);
 
+        // Arrange (implicit: CustomerService and SignUpService ready)
+        customerService.loadCustomers();
         String name="Salwa";
         String email="salwaaa@gmail.com";
         String password ="888887";
         double balance = 200;
         String address = "";
 
-
-        assertThrows(InvalidAddressException.class,()-> signUpService.registerNewCustomer(name, email, password, balance, address));
+       //Act + Assert
+        assertThrows(InvalidAddressException.class,
+                ()-> signUpService.registerNewCustomer(name, email, password, balance, address));
 
     }
 }

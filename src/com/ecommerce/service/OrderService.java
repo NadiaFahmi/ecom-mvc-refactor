@@ -107,7 +107,7 @@ public class OrderService {
 
     public double calculateTotal(List<CartItem> cartItems) {
         double total = 0.0;
-        total = cartService.calculateTotal(cartItems);
+        total = cartService.calculateItemsTotalPrice(cartItems);
 
         return total;
     }

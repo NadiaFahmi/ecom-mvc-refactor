@@ -1,6 +1,5 @@
 package com.ecommerce.view;
 
-import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 
@@ -111,7 +110,7 @@ public class CustomerView {
         System.out.println("Name: " + customer.getName());
 
         System.out.println("Address: " + customer.getAddress());
-        System.out.println("Balance: " + customer.getBalance());
+        System.out.println("Balance: " +"$"+ customer.getBalance());
         System.out.println("------");
 
         if (orders == null || orders.isEmpty()) {

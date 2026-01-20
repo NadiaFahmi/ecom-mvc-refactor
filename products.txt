@@ -15,4 +15,6 @@
 16,product_azza,2000.0,women
 17,product_nora,1900.0,women
 18,Product_Shirt,300.0,men
-19,product_Updat_19,1000.0,men
+19,product_Updated_19,1000.0,men
+20,test,99.0,kids
+21,test1,100.0,kids
