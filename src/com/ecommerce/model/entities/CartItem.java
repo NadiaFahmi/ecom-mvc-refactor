@@ -2,22 +2,17 @@ package com.ecommerce.model.entities;
 
 public class CartItem {
 
-    private int cartId;
     private int productId;
     private String name;
     private int quantity;
     private double price;
 
-    public CartItem(int cartId, int productId, String name, int quantity, double price) {
-        this.cartId = cartId;
+
+    public CartItem(int productId, String name, int quantity, double price) {
         this.productId = productId;
         this.name = name;
         this.quantity = quantity;
         this.price = price;
-    }
-
-    public int getCartId() {
-        return cartId;
     }
 
     public int getProductId() {

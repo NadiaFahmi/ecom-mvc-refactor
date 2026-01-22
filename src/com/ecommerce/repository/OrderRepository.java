@@ -78,7 +78,7 @@ public class OrderRepository {
                     Product product = productService.getProductById(productId);
                     if (product != null) {
                         cartItems.add(new CartItem(
-                                customerId,
+//                                customerId,
                                 product.getId(),
                                 product.getName(),
                                 quantity,

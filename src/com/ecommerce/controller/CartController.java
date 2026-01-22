@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.exception.CartItemNotFoundException;
+import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.exception.InvalidQuantityException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
@@ -45,6 +46,8 @@ public class CartController {
                 logger.log(Level.SEVERE, "Exception encountered {0} ", e.getMessage());
                 cartView.showProductError();
 
+            }catch(InvalidProductException e){
+                cartView.showErrorMessage(e.getMessage());
             }
         }catch (NumberFormatException e) {
             cartView.showErrorMessage(e.getMessage());
@@ -68,10 +71,14 @@ public class CartController {
             cartService.removeItemFromCart(customer, productId);
             cartView.showRemovedMessage();
 
-        } catch (CartItemNotFoundException e) {
+        }catch (InvalidProductException e){
             logger.warning("No such item");
             cartView.showErrorMessage(e.getMessage());
         }
+//        catch (CartItemNotFoundException e) {
+//            logger.warning("No such item");
+//            cartView.showErrorMessage(e.getMessage());
+//        }
     }
 
     public void UpdateQuantity(Customer customer) {
@@ -85,13 +92,16 @@ public class CartController {
             cartService.updateCartItemQuantity(customer, productId, newQuantity);
             cartView.showQuantityUpdated();
         } catch (NumberFormatException e) {
-            System.out.println("❌ Invalid input. Please enter valid number");
+            cartView.showErrorMessage("Invalid input. Please enter valid number");
         } catch (InvalidQuantityException e) {
             cartView.showErrorMessage(e.getMessage());
         } catch (CartItemNotFoundException e) {
-            System.out.println("! " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("❌ Unexpected error: " + e.getMessage());
+            logger.warning("no item found");
+            cartView.showErrorMessage(e.getMessage());
+        }
+        catch (InvalidProductException e){
+            logger.warning("Product invalid");
+            cartView.showErrorMessage("product not found");
         }
 
     }

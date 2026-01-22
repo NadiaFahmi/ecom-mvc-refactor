@@ -32,24 +32,23 @@ public class CartService {
         Cart cart = getCart(customer);
         List<CartItem> items = getLoadedItems(cart);
 
-        CartItem item = findItem(items, productId);
-        if (item != null) {
-            increment_cart_item_quantity(item, productId, quantity);
+        CartItem existingItem = findItem(items, productId);
+        if (existingItem != null) {
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+            increaseItemQuantity( existingItem,  quantity);
         } else {
-            items.add(createNewCartItems(cart, product, quantity));
+
+            items.add(createNewCartItems(
+                    product, quantity));
         }
         cartRepository.saveCartItems(cart, items);
     }
 
-    public void increment_cart_item_quantity(CartItem item, int productId, int quantity) {
-        logger.log(Level.INFO, "Item id={0} updated. previous quantity={1} , added={2} ",
-                new Object[]{productId, item.getQuantity(), quantity});
-        increaseItemQuantity(item, quantity);
-    }
+    public CartItem createNewCartItems(
 
-    public CartItem createNewCartItems(Cart cart, Product product, int quantity) {
+            Product product, int quantity) {
         logger.log(Level.INFO, "Item id={0} added,  Quantity={1}, price={2}", new Object[]{product.getId(), quantity, product.getPrice()});
-        return new CartItem(cart.getId(),
+        return new CartItem(
                 product.getId(),
                 product.getName(),
                 quantity,
@@ -59,7 +58,7 @@ public class CartService {
     public Product validateProduct(int productId) {
         Product product = productService.getProductById(productId);
         if (product == null) {
-            throw new CartItemNotFoundException("Invalid product.");
+            throw new InvalidProductException("Invalid product.");
         }
         return product;
     }
@@ -72,7 +71,6 @@ public class CartService {
     }
 
     public Cart getCart(Customer customer) {
-
         Cart cart = cartRepository.findByCustomerId(customer.getId());
         if (cart == null) {
             cart = cartRepository.createCartForCustomer(customer.getId());
@@ -83,10 +81,8 @@ public class CartService {
     public void removeItemFromCart(Customer customer, int productId) {
         Cart cart = cartRepository.findByCustomerId(customer.getId());
         List<CartItem> items = getLoadedItems(cart);
-        CartItem item = findItem(items, productId);
-        if (item == null) {
-            throw new CartItemNotFoundException("Product not found in cart.");
-        }
+        CartItem item= requiredItem(items,productId);
+
         items.remove(item);
         logger.log(Level.INFO, "Product id={0} removed", productId);
         saveCartItems(cart, items);
@@ -96,11 +92,8 @@ public class CartService {
         Cart cart = cartRepository.findByCustomerId(customer.getId());
         List<CartItem> items = getLoadedItems(cart);
 
-        CartItem item = findItem(items, productId);
-        if (item == null) {
+        CartItem item = requiredItem(items,productId);
 
-            throw new CartItemNotFoundException("Product ID " + productId + " not found in cart.");
-        }
         if (newQuantity > 0) {
             item.setQuantity(newQuantity);
             logger.log(Level.INFO, "Updated Quantity={0} - product id={1}", new Object[]{newQuantity, productId});
@@ -109,7 +102,6 @@ public class CartService {
             throw new InvalidQuantityException("Quantity must be greater than 0.");
         }
     }
-
 
     public void saveCartItems(Cart cart, List<CartItem> items) {
         cartRepository.saveCartItems(cart, items);
@@ -122,7 +114,6 @@ public class CartService {
     }
 
     public double calculateTotalPrice(Customer customer) {
-
         Cart cart = cartRepository.findByCustomerId(customer.getId());
         List<CartItem> items = cartRepository.loadCartItemsFromFile(cart);
 
@@ -160,17 +151,27 @@ public class CartService {
         }
         return null;
     }
+    //
+    public CartItem requiredItem(List<CartItem> items, int productId) {
+        CartItem item = findItem(items, productId);
+        if (item == null) {
+            throw new InvalidProductException("Invalid product");
+        }
+        return item;
+    }
 
     public void increaseItemQuantity(CartItem item, int amount) {
-
         if (amount > 0) {
             item.setQuantity(item.getQuantity() + amount);
-
         }
     }
 
     public List<CartItem> getLoadedItems(Cart cart) {
-        return cartRepository.loadCartItemsFromFile(cart);
+
+        List<CartItem> loaded= cartRepository.loadCartItemsFromFile(cart);
+        cart.setItems(loaded);
+        return loaded;
+
     }
 
     public Cart getCartForCustomer(Customer customer) {

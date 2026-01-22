@@ -3,9 +3,6 @@ package com.ecommerce.repository;
 import com.ecommerce.exception.CartItemNotFoundException;
 import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
-import com.ecommerce.model.entities.Customer;
-import com.ecommerce.model.entities.Product;
-import com.ecommerce.service.ProductService;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ public CartRepository(){
         if(cart == null){
             throw new CartItemNotFoundException("No items in cart.");
         }
-        File file = new File(getCartFilePath(cart.getId()));
+        File file = new File(getCartFilePath(cart.getCustomerId()));
 
         if (!file.exists()) return items;
 
@@ -41,7 +38,9 @@ public CartRepository(){
                     String name = parts[1];
                     int quantity = Integer.parseInt(parts[2]);
                     double price = Double.parseDouble(parts[3]);
-                    items.add(new CartItem(cart.getId(), productId, name, quantity, price));
+                    items.add(new CartItem(
+//                            cart.getCustomerId(),
+                            productId, name, quantity, price));
                 }
             }
         } catch (IOException | NumberFormatException e) {
@@ -52,7 +51,7 @@ public CartRepository(){
 
     // --- Save Items ---
     public void saveCartItems(Cart cart, List<CartItem> items) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getCartFilePath(cart.getId())))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getCartFilePath(cart.getCustomerId())))) {
             for (CartItem item : items) {
                 writer.write(item.getProductId() + DELIMITER
                         + item.getName() + DELIMITER
@@ -67,7 +66,7 @@ public CartRepository(){
 
     // --- Initialize Cart File ---
     public void saveCart(Cart cart) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getCartFilePath(cart.getId())))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getCartFilePath(cart.getCustomerId())))) {
         } catch (IOException e) {
             System.err.println("Failed to initialize cart file: " + e.getMessage());
         }
@@ -75,9 +74,9 @@ public CartRepository(){
 
     // --- Clear Cart ---
     public void clearCartFileContents(Cart cart) {
-        try (PrintWriter writer = new PrintWriter(getCartFilePath(cart.getId()))) {
+        try (PrintWriter writer = new PrintWriter(getCartFilePath(cart.getCustomerId()))) {
             writer.write("");
-            System.out.println("Cart file cleared for cartId=" + cart.getId());
+            System.out.println("Cart file cleared for cartId=" + cart.getCustomerId());
         } catch (IOException e) {
             System.err.println("Failed to clear cart file: " + e.getMessage());
         }

@@ -1,20 +1,28 @@
 package com.ecommerce.model.entities;
 
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cart {
 
-    private int id;
-
+    private int CustomerId;
+    List<CartItem> items= new ArrayList<>();
 
     public Cart(int customerId){
-        this.id = customerId;
+        this.CustomerId = customerId;
     }
 
-    public int getId() {
-        return id;
+    public int getCustomerId() {
+        return CustomerId;
     }
 
+    public List<CartItem> getItems() {
+        return items;
+    }
 
+    public void setItems(List<CartItem> items) {
+        this.items = items;
+    }
 }
 
