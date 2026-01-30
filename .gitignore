@@ -30,6 +30,7 @@ bin/
 # ignore txt files
 *.txt
 !products.txt
+!customers.txt
 
 *.log
 *.tmp

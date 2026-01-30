@@ -17,6 +17,9 @@ private final CustomerService customerService;
     }
 
     public boolean isEmailValid(String email) {
+        if(email == null || email.isEmpty()){
+            throw new InvalidEmailException("Email cannot be empty");
+        }
         return email.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$");
 
     }
@@ -53,11 +56,13 @@ private final CustomerService customerService;
         }
 
         if (isEmailTaken(email)) {
-            throw new InvalidEmailException("Email already registered. Try logging in or use a different email.");
+//            throw new InvalidEmailException("Email already registered. Try logging in or use a different email.");
+            throw new DuplicateEmailException("Email already registered. Try logging in or use a different email.");
         }
 
         if (!isPasswordValid(password)) {
             throw new InvalidPasswordException("❌ Password must be at least 6 characters long.");
+
         }
 
         if (!isBalanceValid(balance)) {

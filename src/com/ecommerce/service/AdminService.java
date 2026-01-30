@@ -1,9 +1,7 @@
 package com.ecommerce.service;
 
 import com.ecommerce.exception.CustomerNotFoundException;
-import com.ecommerce.exception.EmptyDataException;
 import com.ecommerce.exception.InvalidBalanceException;
-import com.ecommerce.exception.NoOrdersFoundException;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 import com.ecommerce.repository.CustomerRepository;

@@ -34,15 +34,19 @@ public class CustomerUpdateView {
             String choice = scanner.nextLine();
 
             switch (choice) {
-                case "1" -> customerController.updateName(customer.getId());
+//                case "1" -> customerController.updateName(customer.getId());
+                case "1" -> customerController.updateName(customer);
 
                 case "2" -> customerController.updateCustomerEmail(customer);
 
-                case "3" -> customerController.updateAddress(customer.getId());
+//                case "3" -> customerController.updateAddress(customer.getId());
+                case "3" -> customerController.updateAddress(customer);
 
-                case "4" -> customerController.updateBalance(customer.getId());
+//                case "4" -> customerController.updateBalance(customer.getId());
+                case "4" -> customerController.updateBalance(customer);
 
-                case "5" -> customerController.updatePassword(customer.getId());
+//                case "5" -> customerController.updatePassword(customer.getId());
+                case "5" -> customerController.updatePassword(customer);
 
                 case "0" -> {
                     System.out.println("👋 Exiting update menu.");

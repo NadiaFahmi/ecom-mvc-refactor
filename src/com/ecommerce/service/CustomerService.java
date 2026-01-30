@@ -173,14 +173,16 @@ public class CustomerService {
 
     public void updateCustomerBalance(Customer customer, double amount) {
 
-        double currentBalance = customer.getBalance();
-        double newBalance = currentBalance + amount;
-        if (newBalance < 0) {
+        if (amount < 0) {
             throw new InvalidBalanceException("Balance cannot be negative");
         }
+
+        double currentBalance = customer.getBalance();
+        double newBalance = currentBalance + amount;
+
         customer.setBalance(newBalance);
         repository.updateCustomer(customer);
-        logger.log(Level.INFO,"Updated current balance={0} for customer name={1} ",new Object[]{currentBalance,customer.getName()});
+//        logger.log(Level.INFO,"Updated current balance={0} for customer name={1} ",new Object[]{currentBalance,customer.getName()});
         repository.saveAll();
 
     }
@@ -200,7 +202,10 @@ public class CustomerService {
         logger.log(Level.INFO,"Fetching customer by Id={0}",input.getId());
         input = repository.getCustomerById(input.getId());
 
-        List<Order> orders = orderService.getOrdersForCustomer(input.getEmail());
+        List<Order> orders = orderService.getOrdersForCustomer(
+//                input.getEmail()
+                input.getId()
+        );
         logger.log(Level.INFO,"Fetched {0} orders for customer name={1}", new Object[]{orders.size(), input.getName()});
 
         outputOrders.clear();

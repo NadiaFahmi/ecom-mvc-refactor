@@ -33,38 +33,29 @@ public class SignUpController {
             return customer;
         }
         catch (InvalidNameException e){
-            logger.warning("Name validation failed: Input empty");
-            signUpView.showError(e.getMessage());
+            return handleError(Level.WARNING,"Name validation failed: Input empty",e);
         }
         catch (InvalidEmailFormatException e){
-            logger.severe("Email validation failed: Invalid format");
-            signUpView.showError(e.getMessage());
-            return null;
-
+            return handleError(Level.SEVERE,"Email validation failed: Invalid format",e);
+        } catch (InvalidEmailException e){
+            return handleError(Level.SEVERE,"Email validation failed: Invalid input",e);
         }
-        catch ( InvalidEmailException e){
-            logger.warning("Email validation failed: Email already registered.");
-            signUpView.showError(e.getMessage());
+        catch ( DuplicateEmailException e){
+            return handleError(Level.WARNING, "Email validation failed: Email already registered.",e);
         }
-////               | InvalidEmailException | InvalidPasswordException | InvalidBalanceException |
-////               InvalidAddressException
-//                ;}
-
-
         catch (InvalidPasswordException e){
-            logger.severe("Password validation failed: Invalid format");
-            signUpView.showError(e.getMessage());
-
+            return handleError(Level.SEVERE,"Password validation failed: Invalid format",e);
         }catch (InvalidBalanceException e){
-            logger.warning("Balance validation failed: Invalid input");
-            signUpView.showError(e.getMessage());
-
+            return handleError(Level.WARNING,"Balance validation failed: Invalid input",e);
         }catch (InvalidAddressException e){
-            logger.warning("Address validation failed: Input empty");
-            signUpView.showError(e.getMessage());
+            return handleError(Level.WARNING,"Address validation failed: Input empty",e);
         }
-            logger.log(Level.WARNING, "Error during  registration");
-//            signUpView.showError(e.getMessage());
-            return null;
         }
+
+        private Customer handleError(Level level,String logMessage, Exception e){
+        logger.log(level,logMessage,e);
+        signUpView.showError(e.getMessage());
+        return null;
+        }
+
     }

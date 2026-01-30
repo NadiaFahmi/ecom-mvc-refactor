@@ -6,12 +6,13 @@ import com.ecommerce.model.entities.Cart;
 import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Product;
-import com.ecommerce.repository.CartRepository;
+import com.ecommerce.repository.FakeCartRepository;
 import com.ecommerce.repository.ProductRepository;
 import org.junit.Before;
 import org.junit.Test;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,80 +24,117 @@ public class CartServiceTest {
     private CartService cartService;
     private ProductRepository productRepository;
     private ProductService productService;
+    private FakeCartRepository cartRepository;
 
     @Before
     public void setUp() {
-        cart= new Cart(1);
+        cart= new Cart(4);
         productRepository= new ProductRepository("products.txt");
         productService = new ProductService(productRepository);
-        cartService = new CartService(productService,new CartRepository());
+        cartRepository = new FakeCartRepository();
+        cartService = new CartService(productService,cartRepository);
 
     }
 
     @Test
     public void testAddProductToCart() {
-        // Arrange (implicit: CartService)
+        // Arrange
+        cartRepository.clear();
         Customer customer = new Customer(4,"Jailan","jailan@gmail.com","123456",6000.0,"Zaied");
-        Product product = new Product(11,"Product_NadiaFahmi",40000.0,"women");
+        Product product = new Product(3,"product_3",457.5,"men");
+        CartItem item= new CartItem(1,"Product_1_1",2,300.0);
+        CartItem item1= new CartItem(2,"product_2",2,345.5);
 
+       List<CartItem> items = new ArrayList<>();
+       items.add(item);
+       items.add(item1);
+       cartRepository.saveCartItems(cart,items);
         //Act
+
         cartService.addProductToCart(customer,product.getId(),2);
 
         //Assert
-        Cart cart = cartService.getCartForCustomer(customer);
-        List<CartItem> items = cartService.getLoadedItems(cart);
+        List<CartItem> updatedCart= cartRepository.loadCartItemsFromFile(cart);
+        CartItem addedItem = cartService.requiredItem(updatedCart,product.getId());
+        assertNotNull(addedItem);
+        assertEquals(3,updatedCart.size());
+        assertEquals("product_3",addedItem.getName());
+        assertEquals(2,addedItem.getQuantity());
+        assertEquals(3,addedItem.getProductId());
+        assertEquals(457.5,addedItem.getPrice(),0.0);
 
-        CartItem targetItem =cartService.requiredItem(items,product.getId());
+    }
+    @Test
+    public void testAddProductToCartWithIncrementQuantity() {
+        //Arrange
+        cartRepository.clear();
+        Customer customer = new Customer(4,"Jailan","jailan@gmail.com","123456",6000.0,"Zaied");
 
-        assertNotNull(cart);
-        assertNotNull(items);
+        Product product = new Product(3,"product_3",457.5,"men");
+        CartItem item= new CartItem(product.getId(),product.getName(),2,product.getPrice());
 
-        assertEquals(11,targetItem.getProductId());
-        assertEquals(2,targetItem.getQuantity());
-        assertEquals("Product_NadiaFahmi",targetItem.getName());
-        assertEquals(40000.0,targetItem.getPrice(),0.0);
+        cartRepository.saveItem(item);
+//
+        //Act
+        cartService.addProductToCart(customer,product.getId(),3);
+
+        //Assert
+        List<CartItem> updatedCart= cartRepository.loadCartItemsFromFile(cart);
+
+       CartItem itemFound= cartService.findItem(updatedCart,product.getId());
+
+        assertEquals(1,updatedCart .size());
+        assertEquals(5,itemFound.getQuantity());
+
 
     }
 
     @Test
     public void updateCartItemQuantitySuccess() {
-        // Arrange (implicit: CartService)
+        // Arrange
         Customer customer = new Customer(4,"Jailan","jailan@gmail.com","123456",6000.0,"Zaied");
-        Product product = new Product(10,"product_super",200.0,"men");
+        Product product = new Product(2,"product_2",345.5,"women");
+////
+        CartItem item= new CartItem(1,"Product_1_1",2,300.0);
+        CartItem item1= new CartItem(2,"Product_2",2,345.5);
+
+        List<CartItem> items = Arrays.asList(item,item1);
+        cartRepository.saveCartItems(cart,items);
 
         //Act
-        cartService.updateCartItemQuantity(customer,product.getId(),4);
+        cartRepository.loadCartItemsFromFile(cart);
+        cartService.updateCartItemQuantity(customer,product.getId(),6);
 
         //Assert
         Cart cart = cartService.getCartForCustomer(customer);
-        List<CartItem> items = cartService.getLoadedItems(cart);
+        cartService.getLoadedItems(cart);
         CartItem targetItem =cartService.requiredItem(items,product.getId());
 
-        assertEquals(10,targetItem.getProductId());
-        assertEquals(4,targetItem.getQuantity());
+        assertEquals(2,targetItem.getProductId());
+        assertEquals(6,targetItem.getQuantity());
 
     }
 
     @Test
     public void updateCartItemQuantityFailed() {
-        // Arrange (implicit: CartService)
+        // Arrange
         Customer customer = new Customer(4,"Jailan","jailan@gmail.com","123456",6000.0,"Zaied");
-        Product product = new Product(10,"product_super",200.0,"men");
+        Product product = new Product(2,"product_2",345.5,"women");
         //Act + Assert
         assertThrows(InvalidQuantityException.class,()->
                cartService.addProductToCart(customer,product.getId(),-3) );
     }
 
     @Test
-    public void calculateItemsTotalPriceSuccess() {
-        // Arrange (implicit: CartService)
+    public void calculateCartItemsTotalPriceSuccess() {
+        // Arrange
 
         CartItem item= new CartItem(1,"Product_1_1",2,300.0);
         CartItem item2 = new CartItem(2,"product_2",2,345.5);
         List<CartItem> items = Arrays.asList(item,item2);
 
         //Act
-        double total = cartService.calculateItemsTotalPrice(items);
+        double total = cartService.calculateCartItemsTotalPrice(items);
 
         //Assert
         assertEquals(1291.0,total,0.0);
@@ -105,7 +143,7 @@ public class CartServiceTest {
 
     @Test
     public void findItemSuccess() {
-        // Arrange (implicit: CartService)
+        // Arrange
 
         CartItem item= new CartItem(1,"Product_1_1",2,300.0);
         CartItem item2 = new CartItem(2,"product_2",2,345.5);
@@ -125,7 +163,7 @@ public class CartServiceTest {
     }
     @Test
     public void findItem_ItemNotFound() {
-        // Arrange (implicit: CartService)
+        // Arrange
         CartItem item= new CartItem(1,"Product_1_1",1,300.0);
         CartItem item2 = new CartItem(2,"product_2",2,345.5);
 
@@ -136,7 +174,7 @@ public class CartServiceTest {
     }
     @Test
     public void requiredItemFalse() {
-        // Arrange (implicit: CartService)
+        // Arrange
         CartItem item= new CartItem(1,"Product_1_1",1,300.0);
         CartItem item2 = new CartItem(2,"product_2",2,345.5);
 

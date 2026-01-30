@@ -3,7 +3,9 @@ package com.ecommerce.view;
 import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.model.entities.Product;
 
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ProductView {
@@ -50,14 +52,9 @@ private Scanner scanner;
     }
     public String promptProductCategory() {
         String category;
-//        do {
             System.out.println("Enter product category: ");
             category = scanner.nextLine();
-//            if (category.isEmpty()) {
-//                System.out.println("Category must not be empty.");
-//            }
 
-//        } while (category.isEmpty());
         return category;
 
     }
@@ -89,12 +86,8 @@ private Scanner scanner;
 
     public String promptProductName() {
         String name;
-            System.out.println("Enter product name or (type 'exit' to cancel and return :");
+            System.out.println("Enter product name: ");
             name = scanner.nextLine();
-            if(name.equalsIgnoreCase("exit")){
-                return null;
-            }
-
         return name;
     }
     public String promptNewName() {
@@ -113,14 +106,19 @@ private Scanner scanner;
         return name;
     }
 
-    public String promptPrice() {
-        System.out.println("Enter product price (or 'exit' to cancel :");
+    public double promptPrice() {
+        System.out.println("Enter product price:");
         String input = scanner.nextLine();
-        if (input.equalsIgnoreCase("exit")) {
-            return null;
+        Double value;
+        if(input.isEmpty()){
+            value =0.0;
+            System.out.println("price set to zero");
+        }else{
+            value= Double.parseDouble(input);
         }
-        return input;
+        return value;
     }
+
     public int promptId() {
         System.out.println("Enter product Id or type 'exit' to cancel:");
         while (true) {
@@ -147,7 +145,8 @@ private Scanner scanner;
 
                 System.out.println("Invalid input. Please enter a valid numerical price.");
             }
-        }}
+        }
+    }
 
         public void showError(String message){
             System.out.println("Product cancelled");

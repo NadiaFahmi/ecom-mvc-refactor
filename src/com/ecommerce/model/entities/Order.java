@@ -5,7 +5,6 @@ import java.util.*;
 
 public class Order {
 
-
 private int orderId;
     private int customerId;
     private double orderTotal;

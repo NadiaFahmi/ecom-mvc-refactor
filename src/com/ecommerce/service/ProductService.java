@@ -43,9 +43,11 @@ public class ProductService {
         if (!isPriceValid(price)) {
             throw new InvalidProductException("Price must be greater than zero.");
         }
+
         if (!isCategoryValid(category)) {
             throw new InvalidProductException("category cannot be empty");
         }
+
 
         int id = calculateInitialCounter(loadProductList());
         logger.log(Level.INFO, "productIdCounter={0}", id);

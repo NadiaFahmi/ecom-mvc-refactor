@@ -41,13 +41,18 @@ public class CustomerView {
         return scanner.nextLine();
     }
     public double promptNewBalance() {
-        System.out.print("💰 Enter your new balance: ");
-        try {
-            return Double.parseDouble(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.println("❌ Invalid balance. Defaulting to 0.");
-            return 0;
+
+        while (true) {
+            System.out.println("Enter your new balance: " );
+            String input = scanner.nextLine();
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+
+                System.out.println("Invalid input. Please enter a valid numerical balance.");
+            }
         }
+
     }
 
     public void showAllCustomers(Collection<Customer> customers) {

@@ -1,9 +1,11 @@
 package com.ecommerce.service;
 
-import com.ecommerce.exception.CartItemNotFoundException;
+import com.ecommerce.exception.CustomerNotFoundException;
+import com.ecommerce.exception.EmptyCartException;
 import com.ecommerce.exception.InvalidBalanceException;
 import com.ecommerce.model.entities.*;
 import com.ecommerce.repository.CustomerRepository;
+
 import com.ecommerce.repository.OrderRepository;
 
 import java.time.DateTimeException;
@@ -13,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class OrderService {
-    private   Logger logger = Logger.getLogger(OrderService.class.getName());
+    private Logger logger = Logger.getLogger(OrderService.class.getName());
     private final List<Order> orders = new ArrayList<>();
     private final CartService cartService;
     private final OrderRepository orderRepository;
@@ -25,61 +27,74 @@ public class OrderService {
         this.cartService = cartService;
         this.customerRepository = customerRepository;
     }
+    ///
+    ///
 
-    public boolean hasSufficientBalance(Customer customer
-            ,double requiredTotal) {
-        return customer.getBalance() >= requiredTotal;
+    public Order createOrder(Customer customer) {
+     Customer   persistedCustomer = validateCustomer(customer);
+
+        Cart cart = getCartForCustomer(persistedCustomer);
+
+        List<CartItem> cartItems =validateCartItems(cart);
+
+        double total = calculateTotal(cartItems);
+
+        validateBalance(persistedCustomer,total);
+
+        Order newOrder = persistOrder(persistedCustomer,cartItems,total);
+
+        cartService.clearCartFileContents(cart);
+
+        logger.log(Level.INFO, "user={0}, orderId={1}, price={2}, status={3}", new Object[]{customer.getName(), newOrder.getOrderId(), total, newOrder.getStatus()});
+        return newOrder;
     }
-    public void addFunds(Customer customer, double amount){
-        customer.setBalance(customer.getBalance() + amount);
-        customerRepository.saveCustomer(customer);
 
+    public List<Order> getOrders() {
+        if (!ordersLoaded) {
+            List<Order> loadedOrders = orderRepository.loadOrders(id -> customerRepository.getCustomerById(id));
+            if (loadedOrders == null || loadedOrders.isEmpty()) {
+                return Collections.emptyList();
+            }
+            orders.addAll(loadedOrders);
+            ordersLoaded = true;
 
+        }
+        return orders;
     }
-    public double getCartTotal(Customer customer){
+
+public List<Order> getOrdersForCustomer(int customerId) {
+
+    List<Order> customerOrders =orderRepository.findOrdersForCustomer(customerId);
+
+    return customerOrders;
+}
+
+    public double getCartTotal(Customer customer) {
         Cart cart = getCartForCustomer(customer);
         List<CartItem> cartItems = cartService.getLoadedItems(cart);
         return calculateTotal(cartItems);
     }
-        public Order createOrder(Customer customer) {
-
-        customer = customerRepository.getCustomerById(customer.getId());
-        if (customer == null) return null;
-        Cart cart = getCartForCustomer(customer);
-
-        List<CartItem> cartItems = cartService.getLoadedItems(cart);
-        if (cartItems.isEmpty()) {
-            throw new CartItemNotFoundException("!");
-        }
-
-        double total = calculateTotal(cartItems);
-
-
-        if (customer.getBalance() < total) {
-          throw new InvalidBalanceException("Balance cannot be negative");
-
-        }
-
-        Order newOrder = orderRepository.saveOrder(customer, cartItems, total);
-        newOrder.setOrderTotal(total);
-        customer.setBalance(customer.getBalance() - total);
-
+    public boolean hasSufficientBalance(Customer customer
+            , double requiredTotal) {
+        return customer.getBalance() >= requiredTotal;
+    }
+    public void addFunds(Customer customer, double amount) {
+        customer.setBalance(customer.getBalance() + amount);
         customerRepository.saveCustomer(customer);
-        orders.add(newOrder);
-        logger.info( "createOrder called");
-        cartService.clearCartFileContents(cart);
 
-        logger.log(Level.INFO,"user={0}, orderId={1}, price={2}, status={3}",new Object[]{customer.getName(),newOrder.getOrderId(),total,newOrder.getStatus()});
-        return newOrder;
+    }
+
+    public Cart getCartForCustomer(Customer customer) {
+        return cartService.getCartForCustomer(customer);
     }
 
     public List<Order> filterCustomerOrdersByDate(Customer customer, LocalDate date) {
         List<Order> allOrders = getOrders();
 
-        if (date== null){
+        if (date == null) {
             throw new DateTimeException("Invalid date");
         }
-        logger.log(Level.INFO,"Attempt to get order date={0}",date.toString());
+        logger.log(Level.INFO, "Attempt to get order date={0} for customerId={1}", new Object[]{date.toString(),customer.getId()});
 
         List<Order> filteredOrders = new ArrayList<>();
 
@@ -91,43 +106,45 @@ public class OrderService {
 
         return filteredOrders;
     }
-    public List<Order> getOrders() {
-        if (!ordersLoaded) {
-            List<Order> loadedOrders = orderRepository.loadOrders(id -> customerRepository.getCustomerById(id));
-            if (loadedOrders == null || loadedOrders.isEmpty()) {
-                return Collections.emptyList();
 
-            }
-            orders.addAll(loadedOrders);
-            ordersLoaded = true;
-
+    //validation
+    public Customer validateCustomer(Customer customer) {
+        Customer persistedCustomer = customerRepository.getCustomerById(customer.getId());
+        if (persistedCustomer == null) {
+            throw new CustomerNotFoundException("Customer not found");
         }
-        return orders;
+        return persistedCustomer;
     }
 
+    public List<CartItem> validateCartItems(Cart cart){
+        List<CartItem> items = cartService.getLoadedItems(cart);
+        if (items.isEmpty()) {
+            throw new EmptyCartException("Cart is empty");
+        }
+        return items;
+    }
+
+    public void validateBalance(Customer customer, double total){
+        if (customer.getBalance() < total) {
+            throw new InvalidBalanceException("Balance cannot be negative");
+        }
+    }
+
+    //helper methods
+    public Order persistOrder(Customer customer,List<CartItem> cartItems, double total){
+        Order order = orderRepository.saveOrder(customer, cartItems, total);
+        order.setOrderTotal(total);
+        customer.setBalance(customer.getBalance() - total);
+        customerRepository.saveCustomer(customer);
+        orders.add(order);
+        return order;
+    }
     public double calculateTotal(List<CartItem> cartItems) {
         double total = 0.0;
-        total = cartService.calculateItemsTotalPrice(cartItems);
+        total = cartService.calculateCartItemsTotalPrice(cartItems);
 
         return total;
     }
-
-    public List<Order> getOrdersForCustomer(String email) {
-        List<Order> customerOrders = new ArrayList<>();
-
-        for (Order order : orders) {
-            Customer customer = customerRepository.getCustomerById(order.getCustomerId());
-            if (customer != null && customer.getEmail().equals(email)) {
-                customerOrders.add(order);
-            }
-        }
-        return customerOrders;
-    }
-
-    public Cart getCartForCustomer(Customer customer) {
-        return cartService.getCartForCustomer(customer);
-    }
-
 
 }
 

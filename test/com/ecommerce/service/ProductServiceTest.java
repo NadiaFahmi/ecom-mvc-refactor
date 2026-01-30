@@ -27,8 +27,8 @@ public class ProductServiceTest extends TestCase {
 
     @Test
     public void testAddProduct() {
-        // Arrange (implicit: productService ready)
-        String name = "product_testing";
+        // Arrange
+        String name = "product_testing_newOne";
         double price = 1200.0;
         String category = "women";
 
@@ -38,23 +38,21 @@ public class ProductServiceTest extends TestCase {
         Product added = products.get(products.size() - 1);
 
         //Assert
-        assertEquals("product_testing", added.getName());
+        assertEquals("product_testing_newOne", added.getName());
         assertEquals(1200.0, added.getPrice());
         assertEquals("women", added.getCategory());
         assertTrue(added.getId() > 1);
-
     }
 
     @Test
     public void testNegativePriceThrowsInvalidProductException() {
 
-        // Arrange (implicit: productService ready)
+        // Arrange
         String name = "Product_woman";
         double invalidPrice = -2.0;
         String category = "women";
 
         //Act + Assert
-
         assertThrows(InvalidProductException.class, () -> {
             productService.addProduct(name, invalidPrice, category);
         });
@@ -63,7 +61,7 @@ public class ProductServiceTest extends TestCase {
     @Test
     public void testEmptyNameThrowsInvalidProductException() {
 
-        // Arrange (implicit: productService ready)
+        // Arrange
         String name = "";
         double price = 2222.0;
         String category = "women";
@@ -77,7 +75,7 @@ public class ProductServiceTest extends TestCase {
     @Test
     public void testEmptyCategoryThrowsInvalidProductException() {
 
-        // Arrange (implicit: productService ready)
+        // Arrange
         String name = "product";
         double price = 2222.0;
         String category = "";
@@ -87,28 +85,24 @@ public class ProductServiceTest extends TestCase {
             productService.addProduct(name, price, category);
         });
     }
+    @Test
+    public void testValidName() {
+        assertTrue( productService.isNameValid("Women"));
+    }
 
     @Test
-    public void testIsNameValid() {
-        // Arrange (implicit: productService ready)
-        String validName="Women";
-        String EmptyName="";
-        String NullName=null;
+    public void testEmptyName() {
+        assertFalse( productService.isNameValid(""));
+    }
+    @Test
+    public void testNullName() {
+        assertFalse( productService.isNameValid(null));
 
-        //Act
-        boolean resultValid = productService.isNameValid(validName);
-        boolean resulEmpty = productService.isNameValid(EmptyName);
-        boolean resulNull = productService.isNameValid(NullName);
-
-        //Assert
-        assertTrue(resultValid);
-        assertFalse(resulEmpty);
-        assertFalse(resulNull);
     }
 
     @Test
     public void testIsPriceValid() {
-        // Arrange (implicit: productService ready)
+        // Arrange
         String invalidInput = "ab";
 
         //Act + Assert
@@ -123,27 +117,23 @@ public class ProductServiceTest extends TestCase {
     }
 
     @Test
-    public void testIsCategoryValid() {
+    public void testValidCategory() {
+        assertTrue( productService.isCategoryValid("Women"));
+    }
 
-        // Arrange (implicit: productService ready)
-        String validCategory="Women";
-        String EmptyCategory="";
-        String NullCategory=null;
+    @Test
+    public void testEmptyCategory() {
+        assertFalse(productService.isCategoryValid(""));
+    }
+    @Test
+    public void testNullCategory() {
+        assertFalse( productService.isCategoryValid(null));
 
-        //Act
-        boolean resultValid = productService.isCategoryValid(validCategory);
-        boolean resulEmpty = productService.isCategoryValid(EmptyCategory);
-        boolean resulNull = productService.isCategoryValid(NullCategory);
-
-        //Assert
-        assertTrue(resultValid);
-        assertFalse(resulEmpty);
-        assertFalse(resulNull);
     }
 
     @Test
     public void testUpdateProduct() {
-        // Arrange (implicit: productService ready)
+        // Arrange
         int productId = 19;
         String newName= "product_Updated_19";
         double newPrice= 1000.0;
@@ -163,7 +153,7 @@ public class ProductServiceTest extends TestCase {
     @Test
     public void testReplaceProduct() {
 
-        // Arrange (implicit: productService ready)
+        // Arrange
         List<Product> products = new ArrayList<>();
         products.add(new Product(1, "Product_1", 300.0, "men"));
         products.add(new Product(2, "Product_2", 300.0, "woman"));

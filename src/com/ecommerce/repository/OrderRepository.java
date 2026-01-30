@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class OrderRepository {
 
@@ -78,7 +79,6 @@ public class OrderRepository {
                     Product product = productService.getProductById(productId);
                     if (product != null) {
                         cartItems.add(new CartItem(
-//                                customerId,
                                 product.getId(),
                                 product.getName(),
                                 quantity,
@@ -134,6 +134,17 @@ public class OrderRepository {
 
         return order;
     }
+
+        public List<Order> findOrdersForCustomer(int customerId) {
+            if (orderMap.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            return orderMap.values().stream()
+                    .filter(order -> order.getCustomerId() == customerId)
+                    .collect(Collectors.toList());
+        }
+
 
     }
 

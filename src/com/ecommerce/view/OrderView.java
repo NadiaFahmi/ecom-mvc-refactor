@@ -1,17 +1,9 @@
 package com.ecommerce.view;
 
-import com.ecommerce.model.entities.CartItem;
-import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Order;
 
-import javax.xml.crypto.Data;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 

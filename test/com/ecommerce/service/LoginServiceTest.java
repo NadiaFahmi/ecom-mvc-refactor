@@ -42,7 +42,7 @@ public class LoginServiceTest {
     }
     @Test
     public void testAdminLoginSuccess() {
-        // Arrange (implicit: LoginService)
+        // Arrange
         String adminEmail = "admin@gmail.com";
         String adminPass = "adminPass";
 
@@ -58,7 +58,7 @@ public class LoginServiceTest {
 
     @Test
     public void testLogin_WrongPassword() {
-        // Arrange (implicit: LoginService)
+        // Arrange
         String adminEmail = "admin@gmail.com";
         String wrongPass = "wrongPass";
 
@@ -73,9 +73,9 @@ public class LoginServiceTest {
     @Test
     public void testUserLoginSuccess() {
 
-        // Arrange (implicit: CustomerService and LoginService)
+        // Arrange
         customerService.loadCustomers();
-        String userEmail = "rona@gmail.com";
+        String userEmail = "youssef@gmail.com";
         String userPassword = "123456";
 
         //Act
@@ -92,9 +92,9 @@ public class LoginServiceTest {
     @Test()
     public void testUserLoginFailed() {
 
-        // Arrange (implicit: CustomerService and LoginService)
+        // Arrange
         customerService.loadCustomers();
-        String userEmail = "ron@gmail.com";
+        String userEmail = "yousseff@gmail.com";
         String userPassword = "123456";
 
         //Act + Assert
@@ -109,9 +109,9 @@ public class LoginServiceTest {
     @Test
     public void testUserLoginPasswordFailed() {
 
-        // Arrange (implicit: CustomerService and LoginService)
+        // Arrange
         customerService.loadCustomers();
-        String userEmail = "rona@gmail.com";
+        String userEmail = "youssef@gmail.com";
         String userPassword = "1234567";
 
         //Act + Assert

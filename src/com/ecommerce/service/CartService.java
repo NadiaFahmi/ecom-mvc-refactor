@@ -1,6 +1,6 @@
 package com.ecommerce.service;
 
-import com.ecommerce.exception.CartItemNotFoundException;
+import com.ecommerce.exception.EmptyCartException;
 import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.exception.InvalidQuantityException;
 import com.ecommerce.model.entities.Cart;
@@ -8,7 +8,6 @@ import com.ecommerce.model.entities.CartItem;
 import com.ecommerce.model.entities.Customer;
 import com.ecommerce.model.entities.Product;
 import com.ecommerce.repository.CartRepository;
-
 
 
 import java.util.List;
@@ -34,49 +33,17 @@ public class CartService {
 
         CartItem existingItem = findItem(items, productId);
         if (existingItem != null) {
-            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+//            existingItem.setQuantity(existingItem.getQuantity() + quantity);
             increaseItemQuantity( existingItem,  quantity);
         } else {
 
             items.add(createNewCartItems(
                     product, quantity));
         }
-        cartRepository.saveCartItems(cart, items);
+
+        saveCartItems(cart,items);
     }
 
-    public CartItem createNewCartItems(
-
-            Product product, int quantity) {
-        logger.log(Level.INFO, "Item id={0} added,  Quantity={1}, price={2}", new Object[]{product.getId(), quantity, product.getPrice()});
-        return new CartItem(
-                product.getId(),
-                product.getName(),
-                quantity,
-                product.getPrice());
-    }
-
-    public Product validateProduct(int productId) {
-        Product product = productService.getProductById(productId);
-        if (product == null) {
-            throw new InvalidProductException("Invalid product.");
-        }
-        return product;
-    }
-
-    public void validateQuantity(int quantity) {
-        if (quantity <= 0) {
-            throw new InvalidQuantityException("Quantity cannot be zero or negative");
-        }
-
-    }
-
-    public Cart getCart(Customer customer) {
-        Cart cart = cartRepository.findByCustomerId(customer.getId());
-        if (cart == null) {
-            cart = cartRepository.createCartForCustomer(customer.getId());
-        }
-        return cart;
-    }
 
     public void removeItemFromCart(Customer customer, int productId) {
         Cart cart = cartRepository.findByCustomerId(customer.getId());
@@ -103,43 +70,57 @@ public class CartService {
         }
     }
 
-    public void saveCartItems(Cart cart, List<CartItem> items) {
-        cartRepository.saveCartItems(cart, items);
 
-    }
 
     public void clearCartFileContents(Cart cart) {
         cartRepository.clearCartFileContents(cart);
 
     }
 
-    public double calculateTotalPrice(Customer customer) {
+    public double calculateCartTotalPrice(Customer customer) {
         Cart cart = cartRepository.findByCustomerId(customer.getId());
         List<CartItem> items = cartRepository.loadCartItemsFromFile(cart);
 
         if (items == null || items.isEmpty()) {
-            throw new CartItemNotFoundException("No items - cart empty");
+            throw new EmptyCartException("No items - cart empty");
+
         }
 
         double total;
-        total = calculateItemsTotalPrice(items);
+        total = calculateCartItemsTotalPrice(items);
         return total;
     }
 
-    public double calculateItemsTotalPrice(List<CartItem> items) {
+    public double calculateCartItemsTotalPrice(List<CartItem> items) {
 
         double total = 0.0;
         for (CartItem item : items) {
             Product product = productService.getProductById(item.getProductId());
             if (product != null) {
                 double itemTotal = product.getPrice() * item.getQuantity();
+                logger.log(Level.INFO, "Product ID={0}, price=${1}, quantity={2}, itemTotal=${3}", new Object[]{product.getId(), product.getPrice(), item.getQuantity(),itemTotal});
                 total +=itemTotal;
-                logger.log(Level.INFO, "Product ID={0}, price=${1}, quantity={2}, itemTotal=${3} total=${4}", new Object[]{product.getId(), product.getPrice(), item.getQuantity(),itemTotal,total});
+
             } else {
                 throw new InvalidProductException("Invalid product in cart");
             }
         }
+
         return total;
+    }
+    public Product validateProduct(int productId) {
+        Product product = productService.getProductById(productId);
+        if (product == null) {
+            throw new InvalidProductException("Invalid product.");
+        }
+        return product;
+    }
+
+    public void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new InvalidQuantityException("Quantity cannot be zero or negative");
+        }
+
     }
 
     public CartItem findItem(List<CartItem> items, int productId) {
@@ -184,6 +165,25 @@ public class CartService {
         return cart;
     }
 
+    public Cart getCart(Customer customer) {
+        Cart cart = cartRepository.findByCustomerId(customer.getId());
+        if (cart == null) {
+            cart = cartRepository.createCartForCustomer(customer.getId());
+        }
+        return cart;
+    }
+    public CartItem createNewCartItems(Product product, int quantity) {
+        logger.log(Level.INFO, "Item id={0} added,  Quantity={1}, price={2}", new Object[]{product.getId(), quantity, product.getPrice()});
+        return new CartItem(
+                product.getId(),
+                product.getName(),
+                quantity,
+                product.getPrice());
+    }
+    public void saveCartItems(Cart cart, List<CartItem> items) {
+        cartRepository.saveCartItems(cart, items);
+
+    }
 }
 
 

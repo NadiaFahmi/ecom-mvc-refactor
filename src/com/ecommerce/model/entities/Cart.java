@@ -6,15 +6,15 @@ import java.util.List;
 
 public class Cart {
 
-    private int CustomerId;
+    private int customerId;
     List<CartItem> items= new ArrayList<>();
 
     public Cart(int customerId){
-        this.CustomerId = customerId;
+        this.customerId = customerId;
     }
 
     public int getCustomerId() {
-        return CustomerId;
+        return customerId;
     }
 
     public List<CartItem> getItems() {

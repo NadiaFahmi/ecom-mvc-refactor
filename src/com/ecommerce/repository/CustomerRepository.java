@@ -2,11 +2,14 @@ package com.ecommerce.repository;
 
 import com.ecommerce.exception.CustomerNotFoundException;
 import com.ecommerce.model.entities.Customer;
+import com.ecommerce.service.CartService;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class CustomerRepository {
+    private Logger logger = Logger.getLogger(CustomerRepository.class.getName());
     private int idCounter =1;
     private static final String DELIMITER = ",";
     private final String filePath;
@@ -57,6 +60,7 @@ public class CustomerRepository {
                 return customer;
             }
         }
+        logger.fine("Checking if email is taken: " + email);
         return null;
     }
     public boolean isEmailTakenByAnother(String newEmail, int currentCustomerId){

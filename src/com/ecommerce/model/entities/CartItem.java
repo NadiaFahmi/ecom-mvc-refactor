@@ -27,7 +27,8 @@ public class CartItem {
         return quantity;
     }
 
-    public double getPrice() {
+    public double getPrice()
+    {
         return price;
     }
 

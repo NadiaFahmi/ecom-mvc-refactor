@@ -49,10 +49,9 @@ public class CustomerController {
         }
     }
 
-    public void updateName(int customerId) {
+        public void updateName(Customer customer) {
         String newName = customerView.promptNewName();
         try {
-            Customer customer = customerService.findCustomerById(customerId);
             customerService.updateCustomerName(customer, newName);
             logger.info("Successfully updated name" );
             customerView.showNameUpdated();
@@ -62,10 +61,9 @@ public class CustomerController {
         }
     }
 
-    public void updateAddress(int customerId) {
+        public void updateAddress(Customer customer) {
         String newAddress =customerView.promptNewAddress();
         try {
-            Customer customer = customerService.findCustomerById(customerId);
             customerService.updateCustomerAddress(customer, newAddress);
             logger.info("Successfully updated address" );
         } catch (InvalidAddressException e) {
@@ -74,15 +72,20 @@ public class CustomerController {
         }
     }
 
-    public void updateBalance(int customerId) {
+        public void updateBalance(Customer customer) {
+
         double amount =customerView.promptNewBalance();
-        Customer customer = customerService.findCustomerById(customerId);
+
+
         try {
             customerService.updateCustomerBalance(customer, amount);
             logger.log(Level.INFO,"Successfully updated balance for customer name={0}",customer.getName());
-        } catch (InvalidBalanceException e) {
+        }catch (NumberFormatException e){
+            customerView.showError(e.getMessage());
+        }
+        catch (InvalidBalanceException e) {
             logger.warning("Cannot set negative balance");
-            customerView.showInvalidBalance(e.getMessage());
+            customerView.showError(e.getMessage());
         }
     }
 
@@ -109,12 +112,11 @@ public class CustomerController {
 
     }
 
-    public void updatePassword(int customerId
+        public void updatePassword(Customer customer
     ) {
         String currentPassword = customerView.promptCurrentPassword();
         String newPassword = customerView.promptNewPassword();
         String confirmPassword = customerView.promptConfirmedPassword();
-        Customer customer = customerService.findCustomerById(customerId);
         customerService.updatePassword(customer, currentPassword, newPassword, confirmPassword);
 
     }

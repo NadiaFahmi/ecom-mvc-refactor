@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.exception.CartItemNotFoundException;
+import com.ecommerce.exception.EmptyCartException;
 import com.ecommerce.exception.InvalidProductException;
 import com.ecommerce.exception.InvalidQuantityException;
 import com.ecommerce.model.entities.Cart;
@@ -51,13 +52,27 @@ public class CartController {
             }
         }catch (NumberFormatException e) {
             cartView.showErrorMessage(e.getMessage());
+        }catch (EmptyCartException e){
+            logger.log(Level.SEVERE, "Exception encountered {0} ", e.getMessage());
+            cartView.showErrorMessage(e.getMessage());
         }
     }
 
     public void getCartItems(Customer customer) {
+        //
+
         Cart cart = new Cart(customer.getId());
-        List<CartItem> items = cartService.getLoadedItems(cart);
-        cartView.display(items);
+        try {
+            List<CartItem> items = cartService.getLoadedItems(cart);
+            if(items == null || items.isEmpty()){
+                cartView.showErrorMessage("No items found in your cart");
+            }else {
+
+                cartView.display(items);
+            }
+        }catch (EmptyCartException e){
+            cartView.showErrorMessage(e.getMessage());
+        }
     }
 
 
@@ -75,42 +90,43 @@ public class CartController {
             logger.warning("No such item");
             cartView.showErrorMessage(e.getMessage());
         }
-//        catch (CartItemNotFoundException e) {
-//            logger.warning("No such item");
-//            cartView.showErrorMessage(e.getMessage());
-//        }
+        catch (EmptyCartException e) {
+            logger.warning("No such item");
+            cartView.showErrorMessage(e.getMessage());
+        }
     }
 
-    public void UpdateQuantity(Customer customer) {
-        try {
-            int productId = cartView.productIdPrompt();
-            if (productId == -1) {
-                return;
-            }
-            int newQuantity = cartView.newQuantityPrompt();
+    public void UpdateQuantity(Customer customer){
+            try {
+                int productId = cartView.productIdPrompt();
+                if (productId == -1) {
+                    return;
+                }
+                int newQuantity = cartView.newQuantityPrompt();
 
-            cartService.updateCartItemQuantity(customer, productId, newQuantity);
-            cartView.showQuantityUpdated();
-        } catch (NumberFormatException e) {
-            cartView.showErrorMessage("Invalid input. Please enter valid number");
-        } catch (InvalidQuantityException e) {
-            cartView.showErrorMessage(e.getMessage());
-        } catch (CartItemNotFoundException e) {
-            logger.warning("no item found");
-            cartView.showErrorMessage(e.getMessage());
-        }
-        catch (InvalidProductException e){
-            logger.warning("Product invalid");
-            cartView.showErrorMessage("product not found");
-        }
+                cartService.updateCartItemQuantity(customer, productId, newQuantity);
+                cartView.showQuantityUpdated();
+            } catch (NumberFormatException e) {
+                cartView.showErrorMessage("Invalid input. Please enter valid number");
+            } catch (InvalidQuantityException e) {
+                cartView.showErrorMessage(e.getMessage());
+            } catch (CartItemNotFoundException e) {
+                logger.warning("no item found");
+                cartView.showErrorMessage(e.getMessage());
+            } catch (InvalidProductException e) {
+                logger.warning("Product invalid");
+                cartView.showErrorMessage("product not found");
+            } catch (EmptyCartException e) {
+                cartView.showErrorMessage(e.getMessage());
+            }
 
     }
 
     public void calculatePrice(Customer customer) {
         try {
-            double totalPrice = cartService.calculateTotalPrice(customer);
+            double totalPrice = cartService.calculateCartTotalPrice(customer);
             cartView.showTotalCartPrice(totalPrice);
-        } catch (CartItemNotFoundException e) {
+        } catch (EmptyCartException e) {
             logger.warning(e.getMessage());
             cartView.showErrorMessage(e.getMessage());
         }

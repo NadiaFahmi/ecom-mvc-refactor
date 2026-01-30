@@ -6,7 +6,9 @@ import com.ecommerce.model.entities.Product;
 import com.ecommerce.service.ProductService;
 import com.ecommerce.view.ProductView;
 
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,15 +32,22 @@ public class ProductController {
     public void createProduct() {
         String name = productView.promptProductName();
 
-        String inputPrice= productView.promptPrice();
+
+        double inputPrice= productView.promptPrice();
+//        String inputPrice= productView.promptPrice();
 
         String category = productView.promptProductCategory();
 
         try {
-            double price = Double.parseDouble(inputPrice);
-            productService.addProduct(name, price, category);
+//            double price = Double.parseDouble(inputPrice);
+            productService.addProduct(name, inputPrice, category);
 //
-        } catch (NumberFormatException e) {
+        }catch (InputMismatchException e){
+            productView.showError(e.getMessage());
+            logger.warning("Invalid number : ");
+        }
+
+        catch (NumberFormatException e) {
             productView.showError(e.getMessage());
             logger.warning("Invalid number format: ");
         }
